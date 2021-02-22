@@ -34,7 +34,6 @@ export GGATE=/u01/app/oracle/product/gg
 #VALIDATE
 source .bash_profile
 echo $GGATE
-/u01/app/oracle/product/gg
 cd /u01/app/oracle/product/gg
 
 #DOWNLOAD SOFTWARE GOLDENGATE
