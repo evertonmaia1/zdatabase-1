@@ -34,9 +34,10 @@ export GGATE=/u01/app/oracle/product/gg
 #VALIDATE
 source .bash_profile
 echo $GGATE
-cd /u01/app/oracle/product/gg
 
 #DOWNLOAD SOFTWARE GOLDENGATE
+mkdir -p /tmp/gg
+cd /tmp/gg
 wget https://download.oracle.com/otn/goldengate/191000/191004_fbo_ggs_Linux_x64_shiphome.zip?AuthParam=1587092260_2f2c8c93592f924eeddd0bd7aedabad6
 
 ls -ltr
