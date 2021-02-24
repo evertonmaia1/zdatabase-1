@@ -55,7 +55,7 @@ drwxr-xr-x. 3 oracle oinstall      4096 Oct 18 10:20 fbo_ggs_Linux_x64_shiphome
 -rw-r--r--. 1 oracle oinstall 556240981 Oct 24 00:53 191004_fbo_ggs_Linux_x64_shiphome.zip
 
 #NAVIGATE TO 
-cd /u01/app/oracle/product/gg/fbo_ggs_Linux_x64_shiphome/Disk1
+cd /tmp/gg/fbo_ggs_Linux_x64_shiphome/Disk1/
 ls -ltr 
 total 16
 drwxr-xr-x.  4 oracle oinstall 4096 Oct 18 10:20 install
