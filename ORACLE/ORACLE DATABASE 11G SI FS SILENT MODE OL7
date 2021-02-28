@@ -341,6 +341,45 @@ READ WRITE           PRIMARY
 
 SQL> exit
 
+#CONFIGURE AUTOMATIC STARTUP ORACLE DATABASE
+exit
+
+vim /etc/oratab
+appscdb1:/u01/app/oracle/product/11.2.0.4/dbhome_1:Y
+
+vim /etc/init.d/dbora
+
+#!/bin/sh
+# chkconfig: 345 99 10
+# description: Oracle auto start-stop script.
+#
+# Set ORA_OWNER to the user id of the owner of the 
+# Oracle database software.
+
+ORA_OWNER=oracle
+
+case "$1" in
+    'start')
+        # Start the Oracle databases:
+        # The following command assumes that the oracle login 
+        # will not prompt the user for any values
+        # Remove "&" if you don't want startup as a background process.
+        su $ORA_OWNER -c "/home/oracle/scripts/start_all.sh >> /home/oracle/scripts/startup_shutdown.log 2>&1" &
+
+        touch /var/lock/subsys/dbora
+        ;;
+    'stop')
+        # Stop the Oracle databases:
+        # The following command assumes that the oracle login 
+        # will not prompt the user for any values
+        su $ORA_OWNER -c "/home/oracle/scripts/stop_all.sh >> /home/oracle/scripts/startup_shutdown.log 2>&1"
+        rm -f /var/lock/subsys/dbora
+        ;;
+esac
+
+chmod 750 /etc/init.d/dbora
+chkconfig --add dbora
+
 
 
 
