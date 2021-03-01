@@ -233,3 +233,24 @@ Grant succeeded.
 SQL> exit
 Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
 With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+############################################################################################################################################################
+# ON ORACLE DATABASE 19C MACHINE #
+##################################
+
+#SETTING THE ENABLE_GOLDENGATE_REPLICATION PARAMETER
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Mar 1 10:08:04 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL>
+
