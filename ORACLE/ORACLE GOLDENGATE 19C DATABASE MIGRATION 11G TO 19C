@@ -422,22 +422,22 @@ Session altered.
 SQL> CREATE OR REPLACE TRIGGER GRANT_TABLE_HR_GGADMIN
 AFTER CREATE ON DATABASE
 DECLARE
-v_job NUMBER;
-l_SQL VARCHAR2(4000);
-  2    3  BEGIN
-IF ora_sysevent = 'CREATE' AND ora_dict_obj_type  4   = 'TABLE' AND SYS.DICTIONARY_OBJ_OWNER = 'HR' THEN
-  FOR cur IN (
-    SELECT * FROM all_tables WHERE OWNER = 'HR')
+V_JOB NUMBER;
+L_SQL VARCHAR2(4000);
+BEGIN
+IF ORA_SYSEVENT = 'CREATE' AND ORA_DICT_OBJ_TYPE = 'TABLE' AND SYS.DICTIONARY_OBJ_OWNER = 'HR' THEN
+  FOR CUR IN (
+    SELECT * FROM ALL_TABLES WHERE OWNER = 'HR')
   LOOP
-    l_sql := 'execute immediate ''grant insert,update,delete on ' || cur.owner || '.' || cur.table_name || ' to c##ggadmin'';';
-  5    dbms_job.submit(job=>v_job, what=>l_SQL);
+    L_SQL := 'EXECUTE IMMEDIATE ''GRANT INSERT,UPDATE,DELETE ON ' || CUR.OWNER || '.' || CUR.TABLE_NAME || ' TO C##GGADMIN'';';
+  DBMS_JOB.SUBMIT(JOB=>V_JOB, WHAT=>L_SQL);
   END LOOP;
     END IF;
 EXCEPTION
   WHEN OTHERS THEN
   NULL;
 END;
-/  6    7    8    9   10   11   12   13   14   15   16   17   18   19
+/
 
 Trigger created.
 
