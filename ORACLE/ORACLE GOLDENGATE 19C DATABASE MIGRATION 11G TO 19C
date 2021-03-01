@@ -386,6 +386,28 @@ SQL> exec dbms_goldengate_auth.grant_admin_privilege('c##ggadmin',container=>'AL
 
 PL/SQL procedure successfully completed.
 
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+#CREATE TRIGGER TO GRANT AUTOMATIC PRIVILEGES TO USER C##GGADMIN
+
+#NOTE
+When it is necessary to migrate a schema with its objects, it is necessary to grant some permissions to the objects such as tables. 
+There is a possibility to create a trigger to automate this process in the pluggable database 19c
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Mar 1 13:10:48 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
 SQL> select name from v$pdbs;
 
 NAME
@@ -396,5 +418,56 @@ APPSPDB
 SQL> alter session set container=APPSPDB;
 
 Session altered.
+
+SQL> CREATE OR REPLACE TRIGGER GRANT_TABLE_HR_GGADMIN
+AFTER CREATE ON DATABASE
+DECLARE
+v_job NUMBER;
+l_SQL VARCHAR2(4000);
+  2    3  BEGIN
+IF ora_sysevent = 'CREATE' AND ora_dict_obj_type  4   = 'TABLE' AND SYS.DICTIONARY_OBJ_OWNER = 'HR' THEN
+  FOR cur IN (
+    SELECT * FROM all_tables WHERE OWNER = 'HR')
+  LOOP
+    l_sql := 'execute immediate ''grant insert,update,delete on ' || cur.owner || '.' || cur.table_name || ' to c##ggadmin'';';
+  5    dbms_job.submit(job=>v_job, what=>l_SQL);
+  END LOOP;
+    END IF;
+EXCEPTION
+  WHEN OTHERS THEN
+  NULL;
+END;
+/  6    7    8    9   10   11   12   13   14   15   16   17   18   19
+
+Trigger created.
+
+#USE THE FOLLOWING CONSULTATION TO VALIDATE THE TABLES THAT RECEIVED GRANT
+SQL> COL GRANTEE FOR A35
+COL TABLE_NAME FOR A45
+COL OWNER FOR A35
+COL GRANTOR FOR A35
+SET LINES 300 PAGES 100SQL> SQL> SQL> SQL>
+SQL> SELECT GRANTEE, OWNER, TABLE_NAME, GRANTOR, PRIVILEGE FROM DBA_TAB_PRIVS WHERE OWNER='HR' AND TABLE_NAME='TESTE';
+
+GRANTEE                             OWNER                               TABLE_NAME                                    GRANTOR                             PRIVILEGE
+----------------------------------- ----------------------------------- --------------------------------------------- ----------------------------------- ----------------------------------------
+C##GGADMIN                          HR                                  TESTE                                         HR                                  DELETE
+C##GGADMIN                          HR                                  TESTE                                         HR                                  INSERT
+C##GGADMIN                          HR                                  TESTE                                         HR                                  UPDATE
+
+#IF YOU CREATE TABLE METADATA BEFORE CONNECTING REPLICATION WITH GOLDENGATE USE THE FOLLOWING COMMAND
+
+#NOTE
+Capture the command output and execute to grant the grants
+
+SQL> select 'GRANT INSERT, UPDATE, DELETE ON ' || OWNER || '.' || TABLE_NAME || ' TO C##GGADMIN;' from all_tables where owner='HR';
+
+'GRANTINSERT,UPDATE,DELETEON'||OWNER||'.'||TABLE_NAME||'TOC##GGADMIN;'
+--------------------------------------------------------------------------------
+GRANT INSERT, UPDATE, DELETE ON HR.EMPLOYEES TO C##GGADMIN;
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
 
 
