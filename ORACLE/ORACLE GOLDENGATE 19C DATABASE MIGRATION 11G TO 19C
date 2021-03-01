@@ -107,10 +107,6 @@ SQL> alter system set streams_pool_size=1250M scope=spfile;
 
 System altered.
 
-SQL> alter system set sga_target=1552M scope=spfile;
-
-System altered.
-
 SQL> shu immediate;
 Database closed.
 Database dismounted.
@@ -252,5 +248,153 @@ Connected to:
 Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.3.0.0.0
 
-SQL>
+SQL> alter system set enable_goldengate_replication=true;
+
+System altered.
+
+#SETTING THE STREAMS_POOL_SIZE PARAMETER
+
+#NOTE
+Set the STREAMS_POOL_SIZE parameter required to start the LogMining Server for the source database. 
+As the laboratory is being made in a vm with little resource, it is necessary to increase the space in the sga_target. 
+If you followed the oracle database 11g installation guide, your sga_targer will have 1536M, which is insufficient
+A reboot is required for the settings to take effect.
+
+SQL> show parameter streams_pool_size;
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+streams_pool_size                    big integer 0
+
+SQL> alter system set sga_target=1632M scope=spfile;
+
+System altered.
+
+SQL> alter system set streams_pool_size=1250M scope=spfile;
+
+System altered.
+
+SQL> shu immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup;
+ORACLE instance started.
+
+Total System Global Area 1711274072 bytes
+Fixed Size                  9136216 bytes
+Variable Size            1593835520 bytes
+Database Buffers          100663296 bytes
+Redo Buffers                7639040 bytes
+Database mounted.
+Database opened.
+SQL> sho parameter sga_target;
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+sga_target                           big integer 1632M
+
+SQL> sho parameter streams_pool_size;
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+streams_pool_size                    big integer 1264M
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+#CREATING A SCHEMA AND DIRECTORY TO STORE THE TARGET TABLE
+#NOTE
+Create an HR schema with the EMPLOYEES tables that you plan to replicate in this article in the target database, 
+and a directory to store the data you want to import. 
+Specify the location to put the file to be read by impdp at the time of initial data migration.
+
+[oracle@ol7db1 ~]$ mkdir /home/oracle/dp_dir
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Mar 1 12:00:42 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> select name from v$pdbs;
+
+NAME
+--------------------------------------------------------------------------------
+PDB$SEED
+APPSPDB
+
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
+SQL> create user hr identified by oracle default tablespace users temporary tablespace temp quota unlimited on users;
+
+User created.
+
+SQL> grant connect, resource to hr;
+
+Grant succeeded.
+
+SQL> create or replace directory DP_DIR as '/home/oracle/dp_dir';
+
+Directory created.
+
+SQL> grant read, write on directory DP_DIR to hr;
+
+Grant succeeded.
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+#CREATING A GOLDENGATE ADMINISTRATOR USER
+
+#NOTE
+Create a GG admin user in the target database and grant the required privileges. 
+GG related objects are created in this schema. Since the target database is a CDB configuration, 
+create a common user prefixed with C ##.
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Mar 1 12:06:28 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> create user c##ggadmin identified by oracle;
+
+User created.
+
+SQL> grant dba to c##ggadmin container=all;
+
+Grant succeeded.
+
+SQL> exec dbms_goldengate_auth.grant_admin_privilege('c##ggadmin',container=>'ALL');
+
+PL/SQL procedure successfully completed.
+
+SQL> select name from v$pdbs;
+
+NAME
+--------------------------------------------------------------------------------
+PDB$SEED
+APPSPDB
+
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
 
