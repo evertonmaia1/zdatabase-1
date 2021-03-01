@@ -1,0 +1,235 @@
+#######################################################
+#	ORACLE GOLDENGATE 19C DATABASE MIGRATION 11G TO 19C	#
+#######################################################
+
+#ENVIRONMENT
+ORACLE DATABASE 11.2.0.4					ORACLE DATABASE 19.3						    ORACLE GOLDENGATE 19C
+CHARACTERSET = "AL32UTF8"					CHARACTERSET = "AL32UTF8"					
+NATIONALCHARACTERSET= "AL16UTF16"	NATIONALCHARACTERSET= "AL16UTF16"
+NO CONTAINER DATABASE						  PLUGGABLE DATABASE 
+SID APPSCDB1								      SID APPSCDB1
+											            PDB	APPSPDB
+IP 192.168.18.21							    IP 192.168.18.22							      IP 192.168.18.23
+4GB RAM										        4GB RAM										          4GB RAM
+1 CORE VM									        1 CORE VM									          1 CORE VM				
+
+#TO CREATE THE TWO DATABASE ENVIRONMENTS AND GOLDENGATE HUB, THE FOLLOWING TUTORIALS WERE USED
+#ORACLE 11G
+https://github.com/danilo19ee/zdatabase/blob/master/ORACLE/ORACLE%20DATABASE%2011G%20SI%20FS%20SILENT%20MODE%20OL7
+
+#ORACLE 19C
+https://github.com/danilo19ee/zdatabase/blob/master/ORACLE/ORACLE%20DATABASE%2019C%20SI%20FS%20ONE%20CDB%20SILENT%20MODE%20OL7
+
+#ORACLE GOLDENGATE 19C HUB
+https://github.com/danilo19ee/zdatabase/blob/master/ORACLE/ORACLE%20GOLDENGATE%2019C%20HUB%20MACHINE
+
+#TO ACTIVATE ORACLE ARCHIVELOG IN THE DATABASE, THE FOLLOWING TUTORIAL MUST BE USED
+#IT IS MANDATORY THAT BOTH DATABASES ARE IN ARCHIVELOG MODE
+ORACLE 11G AND ORACLE 19C
+https://github.com/danilo19ee/zdatabase/blob/master/ORACLE/ORACLE%20DATABASE%2019C%20ENABLE%20ARCHIVE%20LOG%20MODE%20IN%20CDB
+
+#NOTE
+With a goldengate hub, it is possible to configure the capture and replication of many databases of different versions. 
+Failing to install and configure a goldengate in each environment involved in the data replication process.
+The objective of the document is to record the migration of the HR schema from an 11g database 
+in the container database to a pluggable database in version 19c, with zero down time
+
+############################################################################################################################################################
+# ON ORACLE DATABASE 11G MACHINE #
+##################################
+
+#CONFIRMATION OF REPLICATION TARGET
+
+#NOTE 
+Before replicating data with GG, it is necessary to confirm the following points.
+* Are unsupported data types / objects used?
+* Does it include processing that requires individual settings?
+* Is it necessary to convert data with GoldenGate for migration?
+* You can see the objects that GG supports in the DBA_GOLDENGATE_SUPPORT_MODE table.
+https://docs.oracle.com/cd/F22974_01/oracle-db/1-understanding-whats-supported.html
+
+[oracle@ol711g ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Feb 28 21:33:02 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select * from dba_goldengate_support_mode where owner='HR';
+
+OWNER                          OBJECT_NAME                    SUPPOR
+------------------------------ ------------------------------ ------
+HR                             COUNTRIES                      FULL
+HR                             DEPARTMENTS                    FULL
+HR                             EMPLOYEES                      FULL
+HR                             JOBS                           FULL
+HR                             JOB_HISTORY                    FULL
+HR                             LOCATIONS                      FULL
+HR                             REGIONS                        FULL
+
+7 rows selected.
+
+#SETTING THE ENABLE_GOLDENGATE_REPLICATION PARAMETER
+
+SQL> show parameter enable_goldengate_replication;
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+enable_goldengate_replication        boolean     FALSE
+
+SQL> alter system set enable_goldengate_replication=true;
+
+System altered.
+
+#SETTING THE STREAMS_POOL_SIZE PARAMETER
+
+#NOTE
+Set the STREAMS_POOL_SIZE parameter required to start the LogMining Server for the source database. 
+As the laboratory is being made in a vm with little resource, it is necessary to increase the space in the sga_target. 
+If you followed the oracle database 11g installation guide, your sga_targer will have 1536M, which is insufficient
+A reboot is required for the settings to take effect.
+
+SQL> show parameter streams_pool_size
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+streams_pool_size                    big integer 0
+
+SQL> alter system set sga_target=1552M scope=spfile;
+
+System altered.
+
+SQL> alter system set streams_pool_size=1250M scope=spfile;
+
+System altered.
+
+SQL> alter system set sga_target=1552M scope=spfile;
+
+System altered.
+
+SQL> shu immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup;
+ORACLE instance started.
+
+Total System Global Area 1620115456 bytes
+Fixed Size                  2253704 bytes
+Variable Size            1560284280 bytes
+Database Buffers           50331648 bytes
+Redo Buffers                7245824 bytes
+Database mounted.
+Database opened.
+
+SQL> show parameter streams_pool_size;
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+streams_pool_size                    big integer 1264M
+SQL> show parameter sga_target;
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+sga_target                           big integer 1552M
+
+#CREATING A GOLDENGATE ADMINISTRATOR USER
+
+#NOTE
+Create a GG admin user in the source database and grant the required privileges. GG related objects are created in this schema.
+
+SQL> create user ggadmin identified by oracle default tablespace users temporary tablespace temp quota unlimited on users;
+
+User created.
+
+SQL> grant dba to ggadmin;
+
+Grant succeeded.
+
+SQL> exec dbms_goldengate_auth.grant_admin_privilege('ggadmin');
+
+PL/SQL procedure successfully completed.
+
+#CHECK ARCHIVE LOG MODE
+
+SQL> archive log list
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            /u01/app/oracle/oradata/appscdb/archivelog
+Oldest online log sequence     3
+Next log sequence to archive   5
+Current log sequence           5
+
+#SUPPLEMENTAL LOGGING SETTINGS
+
+#NOTE
+Configure supplemental logging for the source database so that the GG logs the information it needs in the redo log.
+The data required for these operations is automatically recorded in the redo log file. 
+GoldenGate gets the change data from the redo log, but the information in the regular redo log is not enough, 
+so you need to record additional information in the redo log file. 
+The database function for recording additional columns in the redo log is called supplemental logging.
+Use the following command to check whether the source database is in supplemental logging mode or forced logging mode.
+
+SQL> select supplemental_log_data_min, force_logging from v$database;
+
+SUPPLEME FOR
+-------- ---
+NO       NO
+
+SQL> alter database add supplemental log data;
+
+Database altered.
+
+SQL> alter database force logging;
+
+Database altered.
+
+SQL> select supplemental_log_data_min, force_logging from v$database;
+
+SUPPLEME FOR
+-------- ---
+YES      YES
+
+SQL> alter system switch logfile;
+
+System altered.
+
+#CREATING A DIRECTORY FOR DATA OUTPUT
+
+#NOTE
+Create a directory object in the database where you want the expdp utility to extract the data during the initial data migration. 
+It then grants the required permissions to users who have permission to access the source schema.
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+[oracle@ol711g ~]$ mkdir -p /home/oracle/dp_dir/
+
+[oracle@ol711g ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Feb 28 22:04:21 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> create or replace directory DP_DIR as '/home/oracle/dp_dir';
+
+Directory created.
+
+SQL> grant read, write on directory DP_DIR to hr;
+
+Grant succeeded.
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
