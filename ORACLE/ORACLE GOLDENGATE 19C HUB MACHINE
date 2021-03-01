@@ -1,0 +1,333 @@
+#####################################
+# ORACLE GOLDENGATE 19C HUB MACHINE #
+#####################################
+
+#INSTALL PRE-INSTALL PACKAGES
+yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-basic-19.9.0.0.0-1.x86_64.rpm
+yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-tools-19.9.0.0.0-1.x86_64.rpm
+yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-sqlplus-19.9.0.0.0-1.x86_64.rpm
+
+#ADD USER AND GROUP ORACLE
+groupadd -g 501 oinstall
+groupadd -g 502 dba
+groupadd -g 503 oper
+groupadd -g 504 asmadmin
+groupadd -g 506 asmdba
+groupadd -g 505 asmoper
+useradd -u 502 -g oinstall -G dba,asmdba,oper oracle
+passwd oracle
+
+#CHANGE OWNER OF LIB AND BIN FROM ORACLE INSTANT CLIENT 19C 
+chown oracle:oinstall -R /usr/lib/oracle/19.9/client64
+
+#DISABLE SELINUX AND FIREWALLD
+sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config && setenforce 0
+systemctl stop firewalld && systemctl disable firewalld
+
+#CONFIGURE STATIC NETWORK
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=enp0s3
+UUID=49c279da-7065-40f5-b914-176973db2a0a
+DEVICE=enp0s3
+ONBOOT=yes
+IPADDR=192.168.18.23
+PREFIX=24
+GATEWAY=192.168.1.1
+DNS1=8.8.8.8
+
+#CONFIGURE HOSTNAME
+hostnamectl 
+hostnamectl set-hostname ol7gghub
+hostnamectl --static 
+
+#CONFIGURE /ETC/HOSTS
+cat >> /etc/hosts << EOF
+192.168.18.21   ol711g
+192.168.18.22   ol7db1
+192.168.18.23   ol7gghub
+EOF
+
+#CREATE FILE SYSTEM
+mkdir -p /u01
+chown oracle:oinstall -R /u01
+
+#CREATE ORACLE_BASE AND ORACLE_HOME DIRECTORIES
+mkdir -p /u01/app/oracle/product/gg/19.3
+mkdir -p /u01/app/oracle/product/gg/11.2
+chown -R oracle:oinstall /u01
+chmod -R 775 /u01
+chown oracle:oinstall -R /usr/lib/oracle/19.9/client64/lib/network
+
+#CONFIGURE VARIABLES
+su - oracle
+mkdir /home/oracle/scripts
+
+cat > /home/oracle/scripts/setEnv.sh <<EOF
+# Oracle Settings
+export TMP=/tmp
+export TMPDIR=$TMP
+
+export ORACLE_HOSTNAME=ol7gghub
+export OGG_HOME19C=/u01/app/oracle/product/gg/19.3
+export OGG_HOME11G=/u01/app/oracle/product/gg/11.2
+export ORA_INVENTORY=/u01/app/oraInventory
+export TNS_ADMIN=/usr/lib/oracle/19.9/client64/lib/network/admin
+export PATH=/usr/sbin:/usr/local/bin:$PATH
+EOF
+
+echo ". /home/oracle/scripts/setEnv.sh" >> /home/oracle/.bash_profile
+chown -R oracle:oinstall /home/oracle/scripts
+chmod u+x /home/oracle/scripts/*.sh
+source /home/oracle/.bash_profile
+
+#CONFIGURE TNSNAMES.ORA FILE
+cat > /usr/lib/oracle/19.9/client64/lib/network/admin/tnsnames.ora <<EOF
+#ORACLE_11G
+APPSCDB_11G =
+  (DESCRIPTION =
+   (ADDRESS = (PROTOCOL = TCP)(HOST = ol711g)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = appscdb)
+    )
+  )
+
+#ORACLE_19C_PDB
+APPSPDB_19C =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = ol7db1)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = appspdb)
+    )
+  )
+
+#ORACLE_19C_CDB
+APPSCDB_19C =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = ol7db1)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = appscdb)
+    )
+  )
+EOF  
+
+#TEST CONNECTION TO REMOTE DATABASE
+[oracle@ol7gghub ~]$ sqlplus system/******@APPSCDB_11G
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sun Feb 28 19:03:23 2021
+Version 19.9.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+[oracle@ol7gghub ~]$ sqlplus system/******@APPSPDB_19C
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sun Feb 28 19:03:37 2021
+Version 19.9.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+[oracle@ol7gghub ~]$ sqlplus system/******@APPSCDB_19C
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sun Feb 28 19:03:55 2021
+Version 19.9.0.0.0
+
+Copyright (c) 1982, 2020, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Feb 28 2021 19:03:40 -03:00
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+#INSTALL GOLDENGATE 19C FOR CONNECT ON ORACLE DATABASE 11G
+mkdir -p /tmp/gg
+cd /tmp/gg
+wget https://download.oracle.com/otn/goldengate/191000/191004_fbo_ggs_Linux_x64_shiphome.zip?AuthParam=1587092260_2f2c8c93592f924eeddd0bd7aedabad6
+unzip 191004_fbo_ggs_Linux_x64_shiphome.zip
+
+cat > /home/oracle/oggcore11g.rsp <<EOF
+oracle.install.responseFileVersion=/oracle/install/rspfmt_ogginstall_response_schema_v19_1_0
+INSTALL_OPTION=ORA11g
+SOFTWARE_LOCATION=/u01/app/oracle/product/gg/11.2
+START_MANAGER=false
+MANAGER_PORT=
+DATABASE_LOCATION=
+INVENTORY_LOCATION=/u01/app/oraInventory
+UNIX_GROUP_NAME=oinstall
+EOF
+
+cat > /home/oracle/oggcore19c.rsp <<EOF
+oracle.install.responseFileVersion=/oracle/install/rspfmt_ogginstall_response_schema_v19_1_0
+INSTALL_OPTION=ORA19c
+SOFTWARE_LOCATION=/u01/app/oracle/product/gg/19.3
+START_MANAGER=false
+MANAGER_PORT=
+DATABASE_LOCATION=
+INVENTORY_LOCATION=/u01/app/oraInventory
+UNIX_GROUP_NAME=oinstall
+EOF
+
+cd /tmp/gg/fbo_ggs_Linux_x64_shiphome/Disk1/
+
+ ./runInstaller -silent -responseFile /home/oracle/oggcore11g.rsp
+Starting Oracle Universal Installer...
+
+Checking Temp space: must be greater than 120 MB.   Actual 17640 MB    Passed
+Checking swap space: must be greater than 150 MB.   Actual 4095 MB    Passed
+Preparing to launch Oracle Universal Installer from /tmp/OraInstall2021-02-28_07-29-08PM. Please wait ...[oracle@ol7gghub Disk1]$ You can find the log of this install session at:
+ /u01/app/oraInventory/logs/installActions2021-02-28_07-29-08PM.log
+The installation of Oracle GoldenGate Core was successful.
+Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-29-08PM.log' for more details.
+
+As a root user, execute the following script(s):
+        1. /u01/app/oraInventory/orainstRoot.sh
+
+Successfully Setup Software.
+
+/u01/app/oraInventory/orainstRoot.sh
+Changing permissions of /u01/app/oraInventory.
+Adding read,write permissions for group.
+Removing read,write,execute permissions for world.
+
+Changing groupname of /u01/app/oraInventory to oinstall.
+The execution of the script is complete.
+
+./runInstaller -silent -responseFile /home/oracle/oggcore19c.rsp
+Starting Oracle Universal Installer...
+
+Checking Temp space: must be greater than 120 MB.   Actual 16969 MB    Passed
+Checking swap space: must be greater than 150 MB.   Actual 4095 MB    Passed
+Preparing to launch Oracle Universal Installer from /tmp/OraInstall2021-02-28_07-31-03PM. Please wait ...[oracle@ol7gghub Disk1]$ You can find the log of this install session at:
+ /u01/app/oraInventory/logs/installActions2021-02-28_07-31-03PM.log
+Successfully Setup Software.
+The installation of Oracle GoldenGate Core was successful.
+Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-31-03PM.log' for more details.
+
+#THERE IS AN ERROR WITH ORACLE GOLDENGATE 11G, I WILL USE THE ORACLE DATABASE 11G INSTALLATION TO SOLVE THESE PROBLEMS
+scp root@192.168.18.21:/u01/app/oracle/product/11.2.0.4/dbhome_1/lib/libnnz11* /u01/app/oracle/product/gg/11.2/
+chmod 755 /u01/app/oracle/product/gg/11.2/libnnz11.so
+scp root@192.168.18.21:/u01/app/oracle/product/11.2.0.4/dbhome_1/lib/libclntsh.so.11.1 /u01/app/oracle/product/gg/11.2/
+chmod 755 /u01/app/oracle/product/gg/11.2/libclntsh.so.11.1
+ln -s /u01/app/oracle/product/gg/11.2/libclntsh.so.11.1 
+
+#ACCESS AND CONFIGURE ORACLE GOLDENGATE 11G
+export ORACLE_HOME=/u01/app/oracle/product/gg/11.2
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+cd $OGG_HOME11G
+[oracle@ol7gghub 11.2]$ ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 11g on Oct 17 2019 23:13:12
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
+
+
+
+GGSCI (ol7gghub) 1> create subdirs
+
+Creating subdirectories under current directory /u01/app/oracle/product/gg/11.2
+
+Parameter file                 /u01/app/oracle/product/gg/11.2/dirprm: created.
+Report file                    /u01/app/oracle/product/gg/11.2/dirrpt: created.
+Checkpoint file                /u01/app/oracle/product/gg/11.2/dirchk: created.
+Process status files           /u01/app/oracle/product/gg/11.2/dirpcs: created.
+SQL script files               /u01/app/oracle/product/gg/11.2/dirsql: created.
+Database definitions files     /u01/app/oracle/product/gg/11.2/dirdef: created.
+Extract data files             /u01/app/oracle/product/gg/11.2/dirdat: created.
+Temporary files                /u01/app/oracle/product/gg/11.2/dirtmp: created.
+Credential store files         /u01/app/oracle/product/gg/11.2/dircrd: created.
+Masterkey wallet files         /u01/app/oracle/product/gg/11.2/dirwlt: created.
+Dump files                     /u01/app/oracle/product/gg/11.2/dirdmp: created.
+
+GGSCI (ol7gghub) 2> edit param mgr
+PORT 7809
+
+GGSCI (ol7gghub) 3> start manager
+Manager started.
+
+GGSCI (ol7gghub) 4> status mgr
+
+Manager is running (IP port TCP:ol7gghub.7809, Process ID 22308).
+
+GGSCI (ol7gghub) 5> exit
+
+
+#ACCESS AND CONFIGURE ORACLE GOLDENGATE 19C
+export ORACLE_HOME=/u01/app/oracle/product/gg/19.3
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+cd $OGG_HOME19C
+./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
+
+
+
+GGSCI (ol7gghub) 1> create subdirs
+
+Creating subdirectories under current directory /u01/app/oracle/product/gg/19.3
+
+Parameter file                 /u01/app/oracle/product/gg/19.3/dirprm: created.
+Report file                    /u01/app/oracle/product/gg/19.3/dirrpt: created.
+Checkpoint file                /u01/app/oracle/product/gg/19.3/dirchk: created.
+Process status files           /u01/app/oracle/product/gg/19.3/dirpcs: created.
+SQL script files               /u01/app/oracle/product/gg/19.3/dirsql: created.
+Database definitions files     /u01/app/oracle/product/gg/19.3/dirdef: created.
+Extract data files             /u01/app/oracle/product/gg/19.3/dirdat: created.
+Temporary files                /u01/app/oracle/product/gg/19.3/dirtmp: created.
+Credential store files         /u01/app/oracle/product/gg/19.3/dircrd: created.
+Masterkey wallet files         /u01/app/oracle/product/gg/19.3/dirwlt: created.
+Dump files                     /u01/app/oracle/product/gg/19.3/dirdmp: created.
+
+GGSCI (ol7gghub) 2> edit param mgr
+PORT 7810
+
+GGSCI (ol7gghub) 3> start manager
+Manager started.
+
+GGSCI (ol7gghub) 4> status manager
+
+Manager is running (IP port TCP:ol7gghub.7810, Process ID 22397).
+
+GGSCI (ol7gghub) 5> exit
+
