@@ -245,9 +245,9 @@ chmod 755 /u01/app/oracle/product/gg/11.2/libclntsh.so.11.1
 ln -s /u01/app/oracle/product/gg/11.2/libclntsh.so.11.1 
 
 #ACCESS AND CONFIGURE ORACLE GOLDENGATE 11G
-export ORACLE_HOME=/u01/app/oracle/product/gg/11.2
-export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
-cd $OGG_HOME11G
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/gg/11.2
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME11G
 [oracle@ol7gghub 11.2]$ ./ggsci
 
 Oracle GoldenGate Command Interpreter for Oracle
@@ -289,10 +289,10 @@ GGSCI (ol7gghub) 5> exit
 
 
 #ACCESS AND CONFIGURE ORACLE GOLDENGATE 19C
-export ORACLE_HOME=/u01/app/oracle/product/gg/19.3
-export LD_LIBRARY_PATH=$ORACLE_HOME/lib
-cd $OGG_HOME19C
-./ggsci
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/gg/19.3
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME11G
+[oracle@ol7gghub 19.3]$ ./ggsci
 
 Oracle GoldenGate Command Interpreter for Oracle
 Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
