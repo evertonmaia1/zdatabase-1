@@ -474,6 +474,9 @@ Version 19.3.0.0.0
 # ON ORACLE GOLDENGATE 19 HUB MACHINE #
 #######################################
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GOLDENGATE SETTINGS (ORACLE DATABASE 11G SIDE)
+
 #NOTE
 Create a credential store to encrypt and manage the database ID and password instead of writing them directly in the parameter file.
 Store the source database ID / password in the credential store. After that, 
@@ -654,8 +657,86 @@ Program     Status      Group       Lag at Chkpt  Time Since Chkpt
 MANAGER     RUNNING
 EXTRACT     STOPPED     EXT01       00:00:00      00:03:39
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GOLDENGATE SETTINGS (ORACLE DATABASE 19c SIDE)
+
+#NOTE
+Create a credential store to encrypt and manage the database ID and password instead of writing them directly in the parameter file.
+Store the source database ID / password in the credential store. After that, 
+you can use the dblogin command to log in with only the specified alias name without specifying an ID/password.
+º Enter the database GG administrator name and SQL * Net connection string in User.
+º Enter the password of the database GG administrator in Password.
+Check the contents of the credential store with the INFO CREDENTIAL STORE command.
+
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME19C
+[oracle@ol7gghub 19.3]$ ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
 
 
+
+GGSCI (ol7gghub) 1> add credentialstore
+
+Credential store created.
+
+GGSCI (ol7gghub) 2> alter credentialstore add user c##ggadmin@APPSCDB_19C, password oracle, alias trg_cdb
+
+Credential store altered.
+
+GGSCI (ol7gghub) 3> alter credentialstore add user c##ggadmin@APPSPDB_19C, password oracle, alias trg_pdb
+
+Credential store altered.
+
+GGSCI (ol7gghub) 4> info credentialstore
+
+Reading from credential store:
+
+Default domain: OracleGoldenGate
+
+  Alias: trg_cdb
+  Userid: c##ggadmin@APPSCDB_19C
+
+  Alias: trg_pdb
+  Userid: c##ggadmin@APPSPDB_19C
+
+#REPLICAT PROCESS CONFIGURATION
+Configure the Replicat process to retrieve change information from the Trail file and reflect the update information in the target database.
+
+#SETTING THE CHECKPOINT TABLE TO BE CREATED IN THE TARGET DATABASE
+Create a checkpoint table in the target database to manage the progress of Replicat's application. 
+Before you create a checkpoint table, you need to define the name of the checkpoint table in the GLOBALS parameter file. (GLOBALS is uppercase)
+GGSCI must be closed once to reflect the contents of the GLOBALS file.
+
+GGSCI (ol7gghub) 5> edit params ./GLOBALS
+
+ENABLEMONITORING
+CHECKPOINTTABLE appspdb.c##ggadmin.repco_chkpt
+
+#CHECKPOINT TABLE SETTINGS
+
+#NOTE
+Create a checkpoint table in the target database with the names defined in 4.5.1.
+
+GGSCI (ol7gghub) 6> dblogin useridalias trg_pdb
+Successfully logged into database APPSPDB.
+
+GGSCI (ol7gghub as c##ggadmin@appscdb1/APPSPDB) 7> add checkpointtable appspdb.c##ggadmin.repco_chkpt
+
+Successfully created checkpoint table appspdb.c##ggadmin.repco_chkpt.
+
+#CREATING A PARAMETER FILE FOR THE REPLICAT PROCESS
+
+#NOTE
+The behavior of the Replicat process is controlled by parameters. 
+Define the parameters of the Replicat process before creating the Replicat process. 
+Since Parallel Integrated Replicat is configured here, specify the number of threads of LogMining Server of the target database.
 
 
 
