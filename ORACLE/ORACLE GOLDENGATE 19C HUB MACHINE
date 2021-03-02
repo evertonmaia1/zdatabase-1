@@ -237,7 +237,7 @@ Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Pr
 Version 19.3.0.0.0
 
 #ACCESS AND CONFIGURE ORACLE GOLDENGATE 11G
-[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/gg/11.2
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/11.2.0.4/dbhome_1/
 [oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 [oracle@ol7gghub ~]$ cd $OGG_HOME11G
 [oracle@ol7gghub 11.2]$ ./ggsci
