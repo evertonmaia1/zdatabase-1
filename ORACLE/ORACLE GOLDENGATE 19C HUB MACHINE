@@ -150,8 +150,9 @@ Successfully Setup Software.
 The installation of Oracle GoldenGate Core was successful.
 Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-31-03PM.log' for more details.
 
-#COPY ORACLE_HOME FROM ORACLE DATABASE 11G
+#COPY ORACLE_HOME FROM ORACLE DATABASE 11G AND ORACLE DATABASE 19C
 scp -r root@192.168.18.21:/u01/app/oracle/product/11.2.0.4 /u01/app/oracle/product/
+scp -r root@192.168.18.22:/u01/app/oracle/product/19.3.0 /u01/app/oracle/product/
 
 #CONFIGURE TNSNAMES.ORA FILE
 cat > /usr/lib/oracle/19.9/client64/lib/network/admin/tnsnames.ora <<EOF
@@ -281,7 +282,7 @@ GGSCI (ol7gghub) 5> exit
 
 
 #ACCESS AND CONFIGURE ORACLE GOLDENGATE 19C
-[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/gg/19.3
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1/
 [oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 [oracle@ol7gghub ~]$ cd $OGG_HOME19C
 [oracle@ol7gghub 19.3]$ ./ggsci
