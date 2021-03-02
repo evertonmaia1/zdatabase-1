@@ -2,6 +2,11 @@
 # ORACLE GOLDENGATE 19C HUB MACHINE #
 #####################################
 
+#INSTALL PRE-INSTALL PACKAGES
+yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-basic-19.9.0.0.0-1.x86_64.rpm
+yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-tools-19.9.0.0.0-1.x86_64.rpm
+yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-sqlplus-19.9.0.0.0-1.x86_64.rpm
+
 #ADD USER AND GROUP ORACLE
 groupadd -g 501 oinstall
 groupadd -g 502 dba
