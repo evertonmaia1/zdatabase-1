@@ -2,11 +2,6 @@
 # ORACLE GOLDENGATE 19C HUB MACHINE #
 #####################################
 
-#INSTALL PRE-INSTALL PACKAGES
-yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-basic-19.9.0.0.0-1.x86_64.rpm
-yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-tools-19.9.0.0.0-1.x86_64.rpm
-yum install -y http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient19.9-sqlplus-19.9.0.0.0-1.x86_64.rpm
-
 #ADD USER AND GROUP ORACLE
 groupadd -g 501 oinstall
 groupadd -g 502 dba
@@ -16,9 +11,6 @@ groupadd -g 506 asmdba
 groupadd -g 505 asmoper
 useradd -u 502 -g oinstall -G dba,asmdba,oper oracle
 passwd oracle
-
-#CHANGE OWNER OF LIB AND BIN FROM ORACLE INSTANT CLIENT 19C 
-chown oracle:oinstall -R /usr/lib/oracle/19.9/client64
 
 #DISABLE SELINUX AND FIREWALLD
 sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config && setenforce 0
@@ -66,7 +58,6 @@ mkdir -p /u01/app/oracle/product/gg/19.3
 mkdir -p /u01/app/oracle/product/gg/11.2
 chown -R oracle:oinstall /u01
 chmod -R 775 /u01
-chown oracle:oinstall -R /usr/lib/oracle/19.9/client64/lib/network
 
 #CONFIGURE VARIABLES
 su - oracle
@@ -81,7 +72,7 @@ export ORACLE_HOSTNAME=ol7gghub
 export OGG_HOME19C=/u01/app/oracle/product/gg/19.3
 export OGG_HOME11G=/u01/app/oracle/product/gg/11.2
 export ORA_INVENTORY=/u01/app/oraInventory
-export TNS_ADMIN=/usr/lib/oracle/19.9/client64/lib/network/admin
+#export TNS_ADMIN=/u01/app/oracle/product/11.2.0.4/dbhome_1/network/admin
 export PATH=/usr/sbin:/usr/local/bin:$PATH
 EOF
 
@@ -90,8 +81,73 @@ chown -R oracle:oinstall /home/oracle/scripts
 chmod u+x /home/oracle/scripts/*.sh
 source /home/oracle/.bash_profile
 
+#INSTALL GOLDENGATE 19C FOR CONNECT ON ORACLE DATABASE 11G
+mkdir -p /tmp/gg
+cd /tmp/gg
+wget https://download.oracle.com/otn/goldengate/191000/191004_fbo_ggs_Linux_x64_shiphome.zip?AuthParam=1587092260_2f2c8c93592f924eeddd0bd7aedabad6
+unzip 191004_fbo_ggs_Linux_x64_shiphome.zip
+
+cat > /home/oracle/oggcore11g.rsp <<EOF
+oracle.install.responseFileVersion=/oracle/install/rspfmt_ogginstall_response_schema_v19_1_0
+INSTALL_OPTION=ORA11g
+SOFTWARE_LOCATION=/u01/app/oracle/product/gg/11.2
+START_MANAGER=false
+MANAGER_PORT=
+DATABASE_LOCATION=
+INVENTORY_LOCATION=/u01/app/oraInventory
+UNIX_GROUP_NAME=oinstall
+EOF
+
+cat > /home/oracle/oggcore19c.rsp <<EOF
+oracle.install.responseFileVersion=/oracle/install/rspfmt_ogginstall_response_schema_v19_1_0
+INSTALL_OPTION=ORA19c
+SOFTWARE_LOCATION=/u01/app/oracle/product/gg/19.3
+START_MANAGER=false
+MANAGER_PORT=
+DATABASE_LOCATION=
+INVENTORY_LOCATION=/u01/app/oraInventory
+UNIX_GROUP_NAME=oinstall
+EOF
+
+/tmp/gg/fbo_ggs_Linux_x64_shiphome/Disk1/runInstaller -silent -responseFile /home/oracle/oggcore11g.rsp
+Starting Oracle Universal Installer...
+
+Checking Temp space: must be greater than 120 MB.   Actual 17640 MB    Passed
+Checking swap space: must be greater than 150 MB.   Actual 4095 MB    Passed
+Preparing to launch Oracle Universal Installer from /tmp/OraInstall2021-02-28_07-29-08PM. Please wait ...[oracle@ol7gghub Disk1]$ You can find the log of this install session at:
+ /u01/app/oraInventory/logs/installActions2021-02-28_07-29-08PM.log
+The installation of Oracle GoldenGate Core was successful.
+Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-29-08PM.log' for more details.
+
+As a root user, execute the following script(s):
+        1. /u01/app/oraInventory/orainstRoot.sh
+
+Successfully Setup Software.
+
+/u01/app/oraInventory/orainstRoot.sh
+Changing permissions of /u01/app/oraInventory.
+Adding read,write permissions for group.
+Removing read,write,execute permissions for world.
+
+Changing groupname of /u01/app/oraInventory to oinstall.
+The execution of the script is complete.
+
+/tmp/gg/fbo_ggs_Linux_x64_shiphome/Disk1/runInstaller -silent -responseFile /home/oracle/oggcore19c.rsp
+Starting Oracle Universal Installer...
+
+Checking Temp space: must be greater than 120 MB.   Actual 16969 MB    Passed
+Checking swap space: must be greater than 150 MB.   Actual 4095 MB    Passed
+Preparing to launch Oracle Universal Installer from /tmp/OraInstall2021-02-28_07-31-03PM. Please wait ...[oracle@ol7gghub Disk1]$ You can find the log of this install session at:
+ /u01/app/oraInventory/logs/installActions2021-02-28_07-31-03PM.log
+Successfully Setup Software.
+The installation of Oracle GoldenGate Core was successful.
+Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-31-03PM.log' for more details.
+
+#COPY ORACLE_HOME FROM ORACLE DATABASE 11G
+scp -r root@192.168.18.21:/u01/app/oracle/product/11.2.0.4 /u01/app/oracle/product/
+
 #CONFIGURE TNSNAMES.ORA FILE
-cat > /usr/lib/oracle/19.9/client64/lib/network/admin/tnsnames.ora <<EOF
+cat > /u01/app/oracle/product/11.2.0.4/dbhome_1/network/admin/tnsnames.ora <<EOF
 #ORACLE_11G
 APPSCDB_11G =
   (DESCRIPTION =
@@ -172,70 +228,6 @@ Version 19.3.0.0.0
 SQL> exit
 Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.3.0.0.0
-
-#INSTALL GOLDENGATE 19C FOR CONNECT ON ORACLE DATABASE 11G
-mkdir -p /tmp/gg
-cd /tmp/gg
-wget https://download.oracle.com/otn/goldengate/191000/191004_fbo_ggs_Linux_x64_shiphome.zip?AuthParam=1587092260_2f2c8c93592f924eeddd0bd7aedabad6
-unzip 191004_fbo_ggs_Linux_x64_shiphome.zip
-
-cat > /home/oracle/oggcore11g.rsp <<EOF
-oracle.install.responseFileVersion=/oracle/install/rspfmt_ogginstall_response_schema_v19_1_0
-INSTALL_OPTION=ORA11g
-SOFTWARE_LOCATION=/u01/app/oracle/product/gg/11.2
-START_MANAGER=false
-MANAGER_PORT=
-DATABASE_LOCATION=
-INVENTORY_LOCATION=/u01/app/oraInventory
-UNIX_GROUP_NAME=oinstall
-EOF
-
-cat > /home/oracle/oggcore19c.rsp <<EOF
-oracle.install.responseFileVersion=/oracle/install/rspfmt_ogginstall_response_schema_v19_1_0
-INSTALL_OPTION=ORA19c
-SOFTWARE_LOCATION=/u01/app/oracle/product/gg/19.3
-START_MANAGER=false
-MANAGER_PORT=
-DATABASE_LOCATION=
-INVENTORY_LOCATION=/u01/app/oraInventory
-UNIX_GROUP_NAME=oinstall
-EOF
-
-cd /tmp/gg/fbo_ggs_Linux_x64_shiphome/Disk1/
-
- ./runInstaller -silent -responseFile /home/oracle/oggcore11g.rsp
-Starting Oracle Universal Installer...
-
-Checking Temp space: must be greater than 120 MB.   Actual 17640 MB    Passed
-Checking swap space: must be greater than 150 MB.   Actual 4095 MB    Passed
-Preparing to launch Oracle Universal Installer from /tmp/OraInstall2021-02-28_07-29-08PM. Please wait ...[oracle@ol7gghub Disk1]$ You can find the log of this install session at:
- /u01/app/oraInventory/logs/installActions2021-02-28_07-29-08PM.log
-The installation of Oracle GoldenGate Core was successful.
-Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-29-08PM.log' for more details.
-
-As a root user, execute the following script(s):
-        1. /u01/app/oraInventory/orainstRoot.sh
-
-Successfully Setup Software.
-
-/u01/app/oraInventory/orainstRoot.sh
-Changing permissions of /u01/app/oraInventory.
-Adding read,write permissions for group.
-Removing read,write,execute permissions for world.
-
-Changing groupname of /u01/app/oraInventory to oinstall.
-The execution of the script is complete.
-
-./runInstaller -silent -responseFile /home/oracle/oggcore19c.rsp
-Starting Oracle Universal Installer...
-
-Checking Temp space: must be greater than 120 MB.   Actual 16969 MB    Passed
-Checking swap space: must be greater than 150 MB.   Actual 4095 MB    Passed
-Preparing to launch Oracle Universal Installer from /tmp/OraInstall2021-02-28_07-31-03PM. Please wait ...[oracle@ol7gghub Disk1]$ You can find the log of this install session at:
- /u01/app/oraInventory/logs/installActions2021-02-28_07-31-03PM.log
-Successfully Setup Software.
-The installation of Oracle GoldenGate Core was successful.
-Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-31-03PM.log' for more details.
 
 #ACCESS AND CONFIGURE ORACLE GOLDENGATE 11G
 [oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/gg/11.2
