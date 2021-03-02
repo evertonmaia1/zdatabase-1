@@ -17,6 +17,8 @@ groupadd -g 505 asmoper
 useradd -u 502 -g oinstall -G dba,asmdba,oper oracle
 passwd oracle
 
+chown oracle:oinstall -R /usr/lib/oracle/19.9/client64/
+
 #DISABLE SELINUX AND FIREWALLD
 sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config && setenforce 0
 systemctl stop firewalld && systemctl disable firewalld
@@ -77,8 +79,8 @@ export ORACLE_HOSTNAME=ol7gghub
 export OGG_HOME19C=/u01/app/oracle/product/gg/19.3
 export OGG_HOME11G=/u01/app/oracle/product/gg/11.2
 export ORA_INVENTORY=/u01/app/oraInventory
-#export TNS_ADMIN=/u01/app/oracle/product/11.2.0.4/dbhome_1/network/admin
-export PATH=/usr/sbin:/usr/local/bin:$PATH
+export TNS_ADMIN=/usr/lib/oracle/19.9/client64/lib/network/admin
+export PATH=/usr/sbin:/usr/local/bin:\$PATH
 EOF
 
 echo ". /home/oracle/scripts/setEnv.sh" >> /home/oracle/.bash_profile
@@ -152,7 +154,7 @@ Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-31-03PM.log'
 scp -r root@192.168.18.21:/u01/app/oracle/product/11.2.0.4 /u01/app/oracle/product/
 
 #CONFIGURE TNSNAMES.ORA FILE
-cat > /u01/app/oracle/product/11.2.0.4/dbhome_1/network/admin/tnsnames.ora <<EOF
+cat > /usr/lib/oracle/19.9/client64/lib/network/admin/tnsnames.ora <<EOF
 #ORACLE_11G
 APPSCDB_11G =
   (DESCRIPTION =
