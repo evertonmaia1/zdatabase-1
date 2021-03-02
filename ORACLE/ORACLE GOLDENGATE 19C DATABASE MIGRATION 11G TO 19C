@@ -555,4 +555,110 @@ USERIDALIAS src_db
 EXTTRAIL ./dirdat/lt
 TABLE hr.employees;
 
+#REGISTRATION OF EXTRACT PROCESS
+
+#NOTE
+Register the Extract process with the source database. This enables the Integrated Extract feature of the database.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 7> register extract ext01 database
+
+2021-03-02 15:27:59  INFO    OGG-02003  Extract EXT01 successfully registered with database at SCN 1084969.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 10> exit
+
+#VALIDATE EXTRACTION
+
+#NOTE
+You can confirm that the following information is registered on the source database side.
+
+[oracle@ol7gghub 11.2]$ sqlplus system/oracle@APPSCDB_11G
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Mar 2 15:29:37 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> set lines 300 pages 100
+SQL> col CLIENT_NAME for a45
+SQL> select capture_name,client_name,purpose from dba_capture;
+
+CAPTURE_NAME                   CLIENT_NAME                                   PURPOSE
+------------------------------ --------------------------------------------- -------------------
+OGG$CAP_EXT01                  EXT01                                         GoldenGate Capture
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+#CREATING AN EXTRACT PROCESS
+
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/11.2.0.4/dbhome_1/
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME11G
+[oracle@ol7gghub 11.2]$ ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 11g on Oct 17 2019 23:13:12
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
+
+
+
+GGSCI (ol7gghub) 1> dblogin useridalias src_db
+Successfully logged into database.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 2> add extract ext01, integrated tranlog, begin now
+EXTRACT (Integrated) added.
+
+#CREATING A TRAIL FILE
+
+#NOTE
+Creates a Trail file that the Extract process writes.
+Check the creation status of the Trail file.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 3> add exttrail ./dirdat/lt, extract ext01
+EXTTRAIL added.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 4> info exttrail ./dirdat/lt
+
+       Extract Trail: ./dirdat/lt
+        Seqno Length: 6
+   Flip Seqno Length: yes
+             Extract: EXT01
+               Seqno: 0
+                 RBA: 0
+           File Size: 500M
+
+#STARTING THE EXTRACT PROCESS
+
+#NOTE
+Start the Extract process. Check the status of the process with the INFO command to make sure it is RUNNING. 
+However, please note that RUNNING may change to STOPPED after a while if the Inbound Server does not start normally.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 5> start extract ext01
+
+Sending START request to MANAGER ...
+EXTRACT EXT01 starting
+
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 6> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING
+EXTRACT     STOPPED     EXT01       00:00:00      00:03:39
+
+
+
+
+
+
+
+
 
