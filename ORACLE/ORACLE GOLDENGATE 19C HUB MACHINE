@@ -237,16 +237,6 @@ Successfully Setup Software.
 The installation of Oracle GoldenGate Core was successful.
 Please check '/u01/app/oraInventory/logs/silentInstall2021-02-28_07-31-03PM.log' for more details.
 
-#THERE IS AN ERROR WITH ORACLE GOLDENGATE 11G, I WILL USE THE ORACLE DATABASE 11G INSTALLATION TO SOLVE THESE PROBLEMS
-mkdir -p /u01/app/oracle/product/gg/11.2/lib/stubs/
-scp root@192.168.18.21:/u01/app/oracle/product/11.2.0.4/dbhome_1/lib/stubs/libpthread* /u01/app/oracle/product/gg/11.2/lib/stubs/
-scp -r root@192.168.18.21:/u01/app/oracle/product/11.2.0.4/dbhome_1/oracore /u01/app/oracle/product/gg/11.2/
-scp root@192.168.18.21:/u01/app/oracle/product/11.2.0.4/dbhome_1/lib/libnnz11* /u01/app/oracle/product/gg/11.2/
-chmod 755 /u01/app/oracle/product/gg/11.2/libnnz11.so
-scp root@192.168.18.21:/u01/app/oracle/product/11.2.0.4/dbhome_1/lib/libclntsh.so.11.1 /u01/app/oracle/product/gg/11.2/
-chmod 755 /u01/app/oracle/product/gg/11.2/libclntsh.so.11.1
-ln -s /u01/app/oracle/product/gg/11.2/libclntsh.so.11.1 
-
 #ACCESS AND CONFIGURE ORACLE GOLDENGATE 11G
 [oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/gg/11.2
 [oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
