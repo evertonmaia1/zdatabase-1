@@ -738,7 +738,30 @@ The behavior of the Replicat process is controlled by parameters.
 Define the parameters of the Replicat process before creating the Replicat process. 
 Since Parallel Integrated Replicat is configured here, specify the number of threads of LogMining Server of the target database.
 
+GGSCI (ol7gghub as c##ggadmin@appscdb1/APPSPDB) 8> edit params rep01
 
+REPLICAT REP01
+SETENV (ORACLE_HOME='/u01/app/oracle/product/19.3.0/dbhome_1')
+SETENV (TNS_ADMIN='/usr/lib/oracle/19.9/client64/lib/network/admin')
+SETENV (LD_LIBRARY_PATH='/u01/app/oracle/product/19.3.0/dbhome_1/lib')
+USERIDALIAS trg_pdb
+MAP_PARALLELISM 3
+MIN_APPLY_PARALLELISM 2
+MAX_APPLY_PARALLELISM 10
+SPLIT_TRANS_RECS 1000
+DBOPTIONS ENABLE_INSTANTIATION_FILTERING
+MAP hr.employees, TARGET appspdb.hr.employees;
+
+#CREATING A REPLICAT PROCESS
+
+#NOTE
+The behavior of the Replicat process is controlled by parameters. 
+Define the parameters of the Replicat process before creating the Replicat process.
+
+GGSCI (ol7gghub as c##ggadmin@appscdb1/APPSPDB) 9> add replicat rep01, integrated, parallel, exttrail /u01/app/oracle/product/gg/11.2/dirdat/lt, checkpointtable c##ggadmin.repco_chkpt
+REPLICAT (Parallel) added.
+
+GGSCI (ol7gghub as c##ggadmin@appscdb1/APPSPDB) 10> exit
 
 
 
