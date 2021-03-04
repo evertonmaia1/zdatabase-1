@@ -438,135 +438,114 @@ postgres=# explain analyse SELECT title, hstore_to_json (attr) json FROM books;
 
 Time: 2.002 ms
 
-#EXAMPLE INDEXING BIG TABLES WITH HSTORE DATA
+#EXAMPLE INDEXING WITH HSTORE DATA
 
-postgres=# CREATE TABLE entity (id serial NOT NULL PRIMARY KEY, store hstore);
-CREATE TABLE
+==================================================================================================================================
 
-postgres=# INSERT INTO entity(store) SELECT ('key1 =>' || i || ',key2=>' || i || ',key3=>' || i)::hstore FROM generate_series(1,1000000) AS i;
-INSERT 0 1000000
-postgres=# INSERT INTO entity(store) SELECT ('key1 =>' || i || ',key2=>' || i)::hstore FROM generate_series(1000001,2000000) AS i;
-INSERT 0 1000000
-postgres=# INSERT INTO entity(store) SELECT ('key1 =>' || i)::hstore FROM generate_series(2000001,4000000) AS i;
-INSERT 0 2000000
-postgres=# INSERT INTO entity(store) SELECT ('key2 =>' || i)::hstore FROM generate_series(4000001,5500000) AS i;
-INSERT 0 1500000
-postgres=# INSERT INTO entity(store) SELECT ('key3 =>' || i)::hstore FROM generate_series(5500001,6000000) AS i;
-INSERT 0 500000
-postgres=# INSERT INTO entity(store) SELECT ''::hstore FROM generate_series(6000001,10000000) AS i;
-INSERT 0 4000000
+$$$ HIGHER COST WITH LESS TIME $$$
 
-postgres=# \d+ entity
-                                                Table "public.entity"
- Column |  Type   | Collation | Nullable |              Default               | Storage  | Stats target | Description
---------+---------+-----------+----------+------------------------------------+----------+--------------+-------------
- id     | integer |           | not null | nextval('entity_id_seq'::regclass) | plain    |              |
- store  | hstore  |           |          |                                    | extended |              |
-Indexes:
-    "entity_pkey" PRIMARY KEY, btree (id)
-Access method: heap
-
-postgres=# select count(1) FROM entity;
-  count
-----------
- 10000000
+postgres=# SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' = '1933988797';
+    title     |            authors
+--------------+--------------------------------
+ Flex on Java | Bernerd Allmon,Jeremy Anderson
 (1 row)
 
-postgres=# EXPLAIN ANALYZE SELECT count(*) FROM entity WHERE exist(store, 'key1');
-                                                                  QUERY PLAN
-----------------------------------------------------------------------------------------------------------------------------------------------
- Finalize Aggregate  (cost=128144.65..128144.66 rows=1 width=8) (actual time=905.441..907.177 rows=1 loops=1)
-   ->  Gather  (cost=128144.43..128144.64 rows=2 width=8) (actual time=896.853..907.162 rows=3 loops=1)
-         Workers Planned: 2
-         Workers Launched: 2
-         ->  Partial Aggregate  (cost=127144.43..127144.44 rows=1 width=8) (actual time=876.627..876.628 rows=1 loops=3)
-               ->  Parallel Seq Scan on entity  (cost=0.00..123676.59 rows=1387136 width=0) (actual time=0.059..774.047 rows=1333333 loops=3)
-                     Filter: exist(store, 'key1'::text)
-                     Rows Removed by Filter: 2000000
- Planning Time: 0.706 ms
- Execution Time: 907.368 ms
-(10 rows)
+Time: 1.089 ms
 
-postgres=# EXPLAIN ANALYZE SELECT * FROM entity WHERE store->'key1' = '950555';
-                                                         QUERY PLAN
------------------------------------------------------------------------------------------------------------------------------
- Gather  (cost=1000.00..140073.81 rows=49937 width=25) (actual time=134.879..787.523 rows=1 loops=1)
-   Workers Planned: 2
-   Workers Launched: 2
-   ->  Parallel Seq Scan on entity  (cost=0.00..134080.11 rows=20807 width=25) (actual time=554.013..769.307 rows=0 loops=3)
-         Filter: ((store -> 'key1'::text) = '950555'::text)
-         Rows Removed by Filter: 3333333
- Planning Time: 0.125 ms
- Execution Time: 787.733 ms
-(8 rows)
+postgres=# explain analyse SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' = '1933988797';
+                                           QUERY PLAN
+-------------------------------------------------------------------------------------------------
+ Seq Scan on books  (cost=0.00..18.28 rows=1 width=57) (actual time=0.034..0.164 rows=1 loops=1)
+   Filter: ((attr -> 'isbn'::text) = '1933988797'::text)
+   Rows Removed by Filter: 284
+ Planning Time: 0.076 ms
+ Execution Time: 0.190 ms
+(5 rows)
 
-postgres=# CREATE UNIQUE INDEX hidx_entiry_store ON "entity" ((store -> 'key1'));
+postgres=# CREATE INDEX hidx_books_attr_isbn ON books ((attr -> 'isbn'));
 CREATE INDEX
 
-postgres=# EXPLAIN ANALYZE SELECT count(*) FROM entity WHERE exist(store, 'key1');
-                                                                  QUERY PLAN
-----------------------------------------------------------------------------------------------------------------------------------------------
- Finalize Aggregate  (cost=128214.77..128214.78 rows=1 width=8) (actual time=898.208..902.894 rows=1 loops=1)
-   ->  Gather  (cost=128214.56..128214.77 rows=2 width=8) (actual time=898.195..902.884 rows=3 loops=1)
-         Workers Planned: 2
-         Workers Launched: 2
-         ->  Partial Aggregate  (cost=127214.56..127214.57 rows=1 width=8) (actual time=883.918..883.919 rows=1 loops=3)
-               ->  Parallel Seq Scan on entity  (cost=0.00..123742.33 rows=1388889 width=0) (actual time=0.054..800.983 rows=1333333 loops=3)
-                     Filter: exist(store, 'key1'::text)
-                     Rows Removed by Filter: 2000000
- Planning Time: 0.409 ms
- Execution Time: 902.945 ms
-(10 rows)
+postgres=# SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' = '1933988797';
+    title     |            authors
+--------------+--------------------------------
+ Flex on Java | Bernerd Allmon,Jeremy Anderson
+(1 row)
 
-postgres=# EXPLAIN ANALYZE SELECT * FROM entity WHERE store->'key1' = '950555';
-                                                        QUERY PLAN
----------------------------------------------------------------------------------------------------------------------------
- Index Scan using hidx_entiry_store on entity  (cost=0.43..8.45 rows=1 width=25) (actual time=0.197..0.200 rows=1 loops=1)
-   Index Cond: ((store -> 'key1'::text) = '950555'::text)
- Planning Time: 0.273 ms
- Execution Time: 0.227 ms
-(4 rows)
+Time: 0.767 ms
 
-postgres=# DROP INDEX hidx_entiry_store;
-DROP INDEX
-
-postgres=# CREATE UNIQUE INDEX hidx_entiry_store_exist ON "entity" ((store -> 'key1')) WHERE exist(store, 'key1');
-CREATE INDEX
-
-postgres=# EXPLAIN ANALYZE SELECT count(*) FROM entity WHERE exist(store, 'key1');
-                                                                                    QUERY PLAN
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Finalize Aggregate  (cost=71596.42..71596.43 rows=1 width=8) (actual time=387.262..387.392 rows=1 loops=1)
-   ->  Gather  (cost=71596.21..71596.41 rows=2 width=8) (actual time=387.250..387.383 rows=3 loops=1)
-         Workers Planned: 2
-         Workers Launched: 2
-         ->  Partial Aggregate  (cost=70596.21..70596.21 rows=1 width=8) (actual time=377.059..377.060 rows=1 loops=3)
-               ->  Parallel Index Only Scan using hidx_entiry_store_exist on entity  (cost=0.43..67123.98 rows=1388889 width=0) (actual time=0.175..305.992 rows=1333333 loops=3)
-                     Heap Fetches: 0
- Planning Time: 0.541 ms
- Execution Time: 387.501 ms
-(9 rows)
-
-postgres=# EXPLAIN ANALYZE SELECT * FROM entity WHERE store->'key1' = '950555';
+postgres=# explain analyse SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' = '1933988797';
                                                          QUERY PLAN
 -----------------------------------------------------------------------------------------------------------------------------
- Gather  (cost=1000.00..140159.00 rows=50000 width=25) (actual time=859.803..867.615 rows=1 loops=1)
-   Workers Planned: 2
-   Workers Launched: 2
-   ->  Parallel Seq Scan on entity  (cost=0.00..134159.00 rows=20833 width=25) (actual time=607.859..847.195 rows=0 loops=3)
-         Filter: ((store -> 'key1'::text) = '950555'::text)
-         Rows Removed by Filter: 3333333
- Planning Time: 0.228 ms
- Execution Time: 867.650 ms
-(8 rows)
-
-postgres=# EXPLAIN ANALYZE SELECT * FROM entity WHERE exist(store,'key1') AND store->'key1' = '950555';
-                                                           QUERY PLAN
----------------------------------------------------------------------------------------------------------------------------------
- Index Scan using hidx_entiry_store_exist on entity  (cost=0.43..8.45 rows=1 width=25) (actual time=1.825..1.829 rows=1 loops=1)
-   Index Cond: ((store -> 'key1'::text) = '950555'::text)
- Planning Time: 0.129 ms
- Execution Time: 1.860 ms
+ Index Scan using hidx_books_attr_isbn on books  (cost=0.27..8.29 rows=1 width=57) (actual time=0.036..0.038 rows=1 loops=1)
+   Index Cond: ((attr -> 'isbn'::text) = '1933988797'::text)
+ Planning Time: 0.607 ms
+ Execution Time: 0.479 ms
 (4 rows)
+
+==================================================================================================================================
+
+$$$ LESS COST WITH LESS TIME $$$
+
+postgres=# SELECT count(*) FROM books WHERE attr -> 'categories' = '0';
+ count
+-------
+    50
+(1 row)
+
+Time: 1.963 ms
+
+postgres=# EXPLAIN ANALYZE SELECT count(*) FROM books WHERE attr -> 'categories' = '0';
+                                              QUERY PLAN
+-------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=18.28..18.29 rows=1 width=8) (actual time=0.172..0.173 rows=1 loops=1)
+   ->  Seq Scan on books  (cost=0.00..18.27 rows=1 width=0) (actual time=0.134..0.159 rows=50 loops=1)
+         Filter: ((attr -> 'categories'::text) = '0'::text)
+         Rows Removed by Filter: 235
+ Planning Time: 0.131 ms
+ Execution Time: 0.214 ms
+(6 rows)
+
+Time: 1.134 ms
+
+postgres=# CREATE INDEX hidx_books_attr_categories ON books ((attr -> 'categories')) WHERE ((attr -> 'categories'::text) = '0'::text);
+CREATE INDEX
+
+postgres=# SELECT count(*) FROM books WHERE attr -> 'categories' = '0';
+ count
+-------
+    50
+(1 row)
+
+Time: 1.248 ms
+
+postgres=# EXPLAIN ANALYZE SELECT count(*) FROM books WHERE attr -> 'categories' = '0';
+                                                                  QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=8.16..8.17 rows=1 width=8) (actual time=0.064..0.065 rows=1 loops=1)
+   ->  Index Only Scan using hidx_books_attr_categories on books  (cost=0.14..8.15 rows=1 width=0) (actual time=0.020..0.049 rows=50 loops=1)
+         Heap Fetches: 50
+ Planning Time: 0.164 ms
+ Execution Time: 0.104 ms
+(5 rows)
+
+Time: 1.097 ms
+
+==================================================================================================================================
+
+postgres=# \d+ books
+                                                        Table "public.books"
+ Column  |          Type          | Collation | Nullable |              Default              | Storage  | Stats target | Description
+---------+------------------------+-----------+----------+-----------------------------------+----------+--------------+-------------
+ serial  | numeric(100,0)         |           | not null | nextval('serial_books'::regclass) | main     |              |
+ title   | character varying(255) |           |          |                                   | extended |              |
+ attr    | hstore                 |           |          |                                   | extended |              |
+ hashmd5 | character varying(256) |           | not null |                                   | extended |              |
+Indexes:
+    "books_pkey" PRIMARY KEY, btree (hashmd5)
+    "hidx_books_attr_categories" btree ((attr -> 'categories'::text)) WHERE (attr -> 'categories'::text) = '0'::text
+    "hidx_books_attr_isbn" btree ((attr -> 'isbn'::text))
+Triggers:
+    trg_gen_md5 BEFORE INSERT OR UPDATE ON books FOR EACH ROW EXECUTE FUNCTION fn_gen_md5()
+Access method: heap
 
 
