@@ -100,6 +100,9 @@ Access method: heap
 
 download file and run inserts https://github.com/danilo19ee/zdatabase/blob/master/POSTGRES/TRAINING/LOAD%20BOOK%20INSERTS
 
+#NOTE
+Querying data from an hstore column is similar to querying data from a column with native data type using the SELECT statement as follows:
+
 postgres=# SELECT attr FROM books limit 10;
                                                                                                                                                    attr
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -129,6 +132,11 @@ postgres=# EXPLAIN ANALYSE SELECT attr FROM books;
 
 Time: 1.173 ms
 
+#QUERY VALUE FOR A SPECIFIC KEY
+
+#NOTE
+Postgresql hstore provides the -> operator to query the value of a specific key from an hstore column. 
+
 postgres=# SELECT attr -> 'isbn' AS isbn FROM books limit 10;
     isbn
 ------------
@@ -156,6 +164,11 @@ postgres=# explain analyse SELECT attr -> 'isbn' AS isbn FROM books;
 
 Time: 0.885 ms
 
+#USE VALUE IN THE WHERE CLAUSE
+
+#NOTE
+You can use the -> operator in the WHERE clause to filter the rows whose values of the hstore column match the input value.
+
 postgres=# SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' = '1933988797';
     title     |            authors
 --------------+--------------------------------
@@ -176,9 +189,17 @@ postgres=# explain analyse SELECT title, attr -> 'authors' AS authors FROM books
 
 Time: 1.693 ms
 
+#ADD KEY-VALUE PAIRS TO EXISTING ROWS
+
+#NOTE
+With hstore column, you can easily add a new key-value pair to existing rows e.g., you can add free shipping key to the attr column of the books table as follows:
+
 postgres=# UPDATE books SET attr = attr || '"freeshipping"=>"yes"' :: hstore;
 UPDATE 285
 Time: 14.734 ms
+
+#NOTE
+Now, you can check to see if the "freeshipping" => "yes" pair has been added successfully.
 
 postgres=# SELECT title, attr -> 'freeshipping' AS freeshipping FROM books limit 10;
                title               | freeshipping
@@ -207,13 +228,29 @@ postgres=# explain analyse SELECT title, attr -> 'freeshipping' AS freeshipping 
 
 Time: 1.152 ms
 
+#UPDATE EXISTING KEY-VALUE PAIR
+
+#NOTE
+You can update existing key-value pair using the UPDATE statement. The following statement updates the value of the "freeshipping" key to "no".
+
 postgres=# UPDATE books SET attr = attr || '"freeshipping"=>"no"' :: hstore;
 UPDATE 285
 Time: 11.520 ms
 
+#REMOVE EXISTING KEY-VALUE PAIR
+
+#NOTE
+PostgreSQL allows you to remove existing key-value pair from an hstore column. 
+For example, the following statement removes the "freeshipping"=>"no" key-value pair in the attr column.
+
 postgres=# UPDATE books SET attr = delete(attr, 'freeshipping');
 UPDATE 285
 Time: 12.740 ms
+
+#CHECK FOR A SPECIFIC KEY IN HSTORE COLUMN
+
+#NOTE
+You can check for a specific key in an hstore column using the ? operator in the WHERE clause. 
 
 postgres=# SELECT title, attr->'categories' as publisher, attr FROM books WHERE attr ? 'categories' limit 10;
                title               |      publisher       |                                                                                                                                                   attr
@@ -244,6 +281,11 @@ postgres=# explain analyse SELECT title, attr->'categories' as publisher, attr F
 
 Time: 1.251 ms
 
+#CHECK FOR A KEY-VALUE PAIR
+
+#NOTE
+You can query based on the hstore key-value pair using the @> operator. 
+
 postgres=# SELECT title FROM books WHERE attr @> '"categories"=>"Java"' :: hstore limit 10;
                  title
 ---------------------------------------
@@ -273,6 +315,11 @@ postgres=# explain analyse SELECT title FROM books WHERE attr @> '"categories"=>
 
 Time: 0.945 ms
 
+#QUERY ROWS THAT CONTAIN MULTIPLE SPECIFIED KEYS
+
+#NOTE
+You can query the rows whose hstore column contain multiple keys using ?& operator. 
+
 postgres=# SELECT akeys (attr) FROM books limit 10;
                                  akeys
 -----------------------------------------------------------------------
@@ -300,6 +347,11 @@ postgres=# explain analyse SELECT akeys (attr) FROM books;
 
 Time: 1.067 ms
 
+#GET ALL KEYS FROM AND HSTORE COLUMN
+
+#NOTE
+To get all keys from an hstore column, you use the akeys() function as follows:
+
 postgres=# SELECT count(1) FROM books WHERE attr ?& ARRAY [ 'isbn', 'pageCount','publishedDate','thumbnailUrl','status','authors','categories'];
  count
 -------
@@ -320,6 +372,9 @@ postgres=# explain analyse SELECT count(1) FROM books WHERE attr ?& ARRAY [ 'isb
 (6 rows)
 
 Time: 1.716 ms
+
+#NOTE
+Or you can use the  skey() function if you want PostgreSQL to return the result as a set.
 
 postgres=# SELECT skeys (attr) FROM books limit 10;
      skeys
@@ -349,6 +404,11 @@ postgres=# explain analyse SELECT skeys (attr) FROM books;
 
 Time: 4.244 ms
 
+#GET ALL VALUES FROM AN HSTORE COLUMN
+
+#NOTE
+Like keys, you can get all values from an hstore column using the  avals() function in the form of arrays.
+
 postgres=# SELECT avals (attr) FROM books limit 10;
                                                                                                avals
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -375,6 +435,9 @@ postgres=# explain analyse SELECT avals (attr) FROM books;
 (3 rows)
 
 Time: 1.125 ms
+
+#NOTE
+Or you can use the  svals() function if you want to get the result as a set.
 
 postgres=# SELECT svals (attr) FROM books limit 10;
                                    svals
@@ -403,6 +466,11 @@ postgres=# explain analyse SELECT svals (attr) FROM books;
 (4 rows)
 
 Time: 1.529 ms
+
+#CONVERT HSTORE DATA TO JSON
+
+#NOTE
+PostgreSQL provides the hstore_to_json() function to convert hstore data to JSON. See the following statement:
 
 postgres=# SELECT title, hstore_to_json (attr) json FROM books;
          title          |                                                                   json
@@ -437,6 +505,40 @@ postgres=# explain analyse SELECT title, hstore_to_json (attr) json FROM books;
 (3 rows)
 
 Time: 2.002 ms
+
+#CONVERT HSTORE DATA TO SETS
+
+#NOTE
+To convert hstore data to sets, you use the  each() function as follows:
+
+postgres=# select title, (EACH(attr) ).* from books limit 10;
+               title               |      key      |                                    value
+-----------------------------------+---------------+-----------------------------------------------------------------------------
+ Unlocking Android                 | isbn          | 1933988673
+ Unlocking Android                 | status        | PUBLISH
+ Unlocking Android                 | authors       | W. Frank Ableson,Charlie Collins,Robi Sen
+ Unlocking Android                 | pageCount     | 416
+ Unlocking Android                 | categories    | Open Source,Mobile
+ Unlocking Android                 | thumbnailUrl  | https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ableson.jpg
+ Unlocking Android                 | publishedDate | 2009-04-01T00:00:00.000-0700
+ Android in Action, Second Edition | isbn          | 1935182722
+ Android in Action, Second Edition | status        | PUBLISH
+ Android in Action, Second Edition | authors       | W. Frank Ableson,Robi Sen
+(10 rows)
+
+Time: 1.109 ms
+
+postgres=# explain analyse select title, (EACH(attr) ).* from books;
+                                                    QUERY PLAN
+------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.00..5718.99 rows=285000 width=89) (actual time=0.039..3.120 rows=1983 loops=1)
+   ->  ProjectSet  (cost=0.00..1443.99 rows=285000 width=57) (actual time=0.033..2.388 rows=1983 loops=1)
+         ->  Seq Scan on books  (cost=0.00..16.85 rows=285 width=299) (actual time=0.018..0.151 rows=285 loops=1)
+ Planning Time: 0.124 ms
+ Execution Time: 3.332 ms
+(5 rows)
+
+Time: 4.063 ms
 
 #EXAMPLE INDEXING WITH HSTORE DATA
 
