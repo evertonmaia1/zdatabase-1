@@ -700,7 +700,7 @@ Time: 1.335 ms
 
 ==================================================================================================================================
 
-$$$ HIGHER COST WITH HIGHER TIME WITH GIN INDEX $$$
+$$$ HIGHER COST WITH HIGHER TIME WITH GIST INDEX $$$
 
 postgres=# SELECT B.* FROM books as B where B.attr @> hstore('categories','Java') limit 10;
  serial |                 title                 |                                                                                                                                                 attr																																					|             hashmd5
