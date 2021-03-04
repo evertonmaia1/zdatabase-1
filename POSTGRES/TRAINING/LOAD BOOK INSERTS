@@ -1,0 +1,3123 @@
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Unlocking Android',
+'"isbn" => "1933988673",
+    "pageCount" => "416",
+    "publishedDate" => "2009-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ableson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "W. Frank Ableson,Charlie Collins,Robi Sen",
+    "categories" => "Open Source,Mobile"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Android in Action, Second Edition',
+'"isbn" => "1935182722",
+    "pageCount" => "592",
+    "publishedDate" => "2011-01-14T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ableson2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "W. Frank Ableson,Robi Sen",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Specification by Example',
+'"isbn" => "1617290084",
+    "pageCount" => "0",
+    "publishedDate" => "2011-06-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/adzic.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Gojko Adzic",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Flex 3 in Action',
+'"isbn" => "1933988746",
+    "pageCount" => "576",
+    "publishedDate" => "2009-02-02T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ahmed.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tariq Ahmed with Jon Hirschi,Faisal Abid",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Flex 4 in Action',
+'"isbn" => "1935182420",
+    "pageCount" => "600",
+    "publishedDate" => "2010-11-15T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ahmed2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tariq Ahmed,Dan Orlando,John C. Bland II,Joel Hooks",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Collective Intelligence in Action',
+'"isbn" => "1933988312",
+    "pageCount" => "425",
+    "publishedDate" => "2008-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/alag.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Satnam Alag",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Zend Framework in Action',
+'"isbn" => "1933988320",
+    "pageCount" => "432",
+    "publishedDate" => "2008-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/allen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Rob Allen,Nick Lo,Steven Brown",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Flex on Java',
+'"isbn" => "1933988797",
+    "pageCount" => "265",
+    "publishedDate" => "2010-10-15T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/allmon.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bernerd Allmon,Jeremy Anderson",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Griffon in Action',
+'"isbn" => "1935182234",
+    "pageCount" => "375",
+    "publishedDate" => "2012-06-04T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/almiray.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Andres Almiray,Danno Ferrin,James Shingler",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'OSGi in Depth',
+'"isbn" => "193518217X",
+    "pageCount" => "325",
+    "publishedDate" => "2011-12-12T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/alves.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Alexandre de Castro Alves",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Flexible Rails',
+'"isbn" => "1933988509",
+    "pageCount" => "592",
+    "publishedDate" => "2008-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/armstrong.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter Armstrong",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hello! Flex 4',
+'"isbn" => "1933988762",
+    "pageCount" => "258",
+    "publishedDate" => "2009-11-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/armstrong3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter Armstrong",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Coffeehouse',
+'"isbn" => "1884777384",
+    "pageCount" => "316",
+    "publishedDate" => "1997-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/asher.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Levi Asher,Christian Crumlish",
+    "categories" => "Miscellaneous"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Team Foundation Server 2008 in Action',
+'"isbn" => "1933988592",
+    "pageCount" => "344",
+    "publishedDate" => "2008-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/azher.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jamil Azher",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Brownfield Application Development in .NET',
+'"isbn" => "1933988711",
+    "pageCount" => "550",
+    "publishedDate" => "2010-04-16T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/baley.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kyle Baley,Donald Belcham",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'MongoDB in Action',
+'"isbn" => "1935182870",
+    "pageCount" => "0",
+    "publishedDate" => "2011-12-12T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/banker.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kyle Banker",
+    "categories" => "Next Generation Databases"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Distributed Application Development with PowerBuilder 6.0',
+'"isbn" => "1884777686",
+    "pageCount" => "504",
+    "publishedDate" => "1998-06-01T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Michael J. Barlotta",
+    "categories" => "PowerBuilder"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Jaguar Development with PowerBuilder 7',
+'"isbn" => "1884777864",
+    "pageCount" => "550",
+    "publishedDate" => "1999-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/barlotta2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Michael Barlotta",
+    "categories" => "PowerBuilder,Client-Server"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Taming Jaguar',
+'"isbn" => "1884777686",
+    "pageCount" => "362",
+    "publishedDate" => "2000-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/barlotta3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Michael J. Barlotta,Jason R. Weiss",
+    "categories" => "PowerBuilder"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'3D User Interfaces with Java 3D',
+'"isbn" => "1884777902",
+    "pageCount" => "520",
+    "publishedDate" => "2000-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/barrilleaux.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jon Barrilleaux",
+    "categories" => "Java,Computer Graphics"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hibernate in Action',
+'"isbn" => "193239415X",
+    "pageCount" => "400",
+    "publishedDate" => "2004-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Christian Bauer,Gavin King",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hibernate in Action (Chinese Edition)',
+'"isbn" => "193239416X",
+    "pageCount" => "400",
+    "publishedDate" => "1999-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer-cn.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Christian Bauer,Gavin King",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java Persistence with Hibernate',
+'"isbn" => "1932394885",
+    "pageCount" => "880",
+    "publishedDate" => "2006-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Christian Bauer,Gavin King",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JSTL in Action',
+'"isbn" => "1930110529",
+    "pageCount" => "480",
+    "publishedDate" => "2002-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bayern.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Shawn Bayern",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'iBATIS in Action',
+'"isbn" => "1932394826",
+    "pageCount" => "384",
+    "publishedDate" => "2007-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/begin.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Clinton Begin,Brandon Goodin,Larry Meadors",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Designing Hard Software',
+'"isbn" => "133046192",
+    "pageCount" => "350",
+    "publishedDate" => "1997-02-01T00:00:00.000-0800",
+    "status" => "PUBLISH",
+    "authors" => "Douglas W. Bennett",
+    "categories" => "Object-Oriented Programming,S"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hibernate Search in Action',
+'"isbn" => "1933988649",
+    "pageCount" => "488",
+    "publishedDate" => "2008-12-21T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bernard.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Emmanuel Bernard,John Griffin",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'jQuery in Action',
+'"isbn" => "1933988355",
+    "pageCount" => "376",
+    "publishedDate" => "2008-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bibeault.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bear Bibeault,Yehuda Katz",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'jQuery in Action, Second Edition',
+'"isbn" => "1935182323",
+    "pageCount" => "488",
+    "publishedDate" => "2010-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bibeault2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bear Bibeault,Yehuda Katz",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Building Secure and Reliable Network Applications',
+'"isbn" => "1884777295",
+    "pageCount" => "591",
+    "publishedDate" => "1996-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/birman.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kenneth P. Birman",
+    "categories" => "Networking,Theory"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ruby for Rails',
+'"isbn" => "1932394699",
+    "pageCount" => "532",
+    "publishedDate" => "2006-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/black.jpg",
+    "status" => "PUBLISH",
+    "authors" => "David A. Black",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Well-Grounded Rubyist',
+'"isbn" => "1933988657",
+    "pageCount" => "520",
+    "publishedDate" => "2009-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/black2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "David A. Black",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Website Owners Manual',
+'"isbn" => "1933988452",
+    "pageCount" => "296",
+    "publishedDate" => "2009-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/boag.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Paul A. Boag",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hello! Python',
+'"isbn" => "1935182080",
+    "pageCount" => "350",
+    "publishedDate" => "2012-02-13T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/briggs.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Anthony Briggs",
+    "categories" => "Python"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PFC Programmers Reference Manual',
+'"isbn" => "1884777554",
+    "pageCount" => "368",
+    "publishedDate" => "1998-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/brooks.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Richard Brooks",
+    "categories" => "PowerBuilder"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Graphics File Formats',
+'"isbn" => "133034054",
+    "pageCount" => "484",
+    "publishedDate" => "1995-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/brown.jpg",
+    "status" => "PUBLISH",
+    "authors" => "C. Wayne Brown,Barry J. Shepherd",
+    "categories" => "Computer Graphics"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Visual Object Oriented Programming',
+'"isbn" => "131723979",
+    "pageCount" => "280",
+    "publishedDate" => "1995-02-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/burnett.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Margaret M. Burnett,Adele Goldberg,Ted G. Lewis",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'iOS in Practice',
+'"isbn" => "1617291269",
+    "pageCount" => "325",
+    "publishedDate" => "2013-11-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cahill.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bear P. Cahill",
+    "categories" => "Mobile Technology"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'iPhone in Action',
+'"isbn" => "193398886X",
+    "pageCount" => "472",
+    "publishedDate" => "2008-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/callen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Christopher Allen,Shannon Appelcline",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Silverlight 2 in Action',
+'"isbn" => "1933988428",
+    "pageCount" => "400",
+    "publishedDate" => "2008-10-31T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/campbell.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Chad A. Campbell,John Stockton",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Quick Python Book, Second Edition',
+'"isbn" => "193518220X",
+    "pageCount" => "360",
+    "publishedDate" => "2010-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ceder.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Naomi R. Ceder",
+    "categories" => "Python"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Internet and Intranet Applications with PowerBuilder 6',
+'"isbn" => "1884777600",
+    "pageCount" => "390",
+    "publishedDate" => "2000-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cervenka.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tom Cervenka",
+    "categories" => "PowerBuilder"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Practical Methods for Your Year 2000 Problem',
+'"isbn" => "188477752X",
+    "pageCount" => "236",
+    "publishedDate" => "1998-01-01T00:00:00.000-0800",
+    "status" => "PUBLISH",
+    "authors" => "Robert Chapman",
+    "categories" => "Business"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Mobile Agents',
+'"isbn" => "1884777368",
+    "pageCount" => "320",
+    "publishedDate" => "1997-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cockayne.jpg",
+    "status" => "PUBLISH",
+    "authors" => "William R. Cockayne and Michael Zyda,editors",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Spring Dynamic Modules in Action',
+'"isbn" => "1935182307",
+    "pageCount" => "450",
+    "publishedDate" => "2010-09-04T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cogoluegnes.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Arnaud Cogoluegnes,Thierry Templier,Andy Piper",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SQL Server 2008 Administration in Action',
+'"isbn" => "193398872X",
+    "pageCount" => "468",
+    "publishedDate" => "2009-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/colledge.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Rod Colledge",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Object Oriented Perl',
+'"isbn" => "1884777791",
+    "pageCount" => "512",
+    "publishedDate" => "1999-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/conway.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Damian Conway",
+    "categories" => "Object-Oriented Programming,P"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'GWT in Practice',
+'"isbn" => "1933988290",
+    "pageCount" => "376",
+    "publishedDate" => "2008-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cooper.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Robert Cooper,Charles Collins",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ajax in Action',
+'"isbn" => "1932394613",
+    "pageCount" => "680",
+    "publishedDate" => "2005-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crane.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dave Crane,Eric Pascarello with Darren James",
+    "categories" => "XML,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Prototype and Scriptaculous in Action',
+'"isbn" => "1933988037",
+    "pageCount" => "544",
+    "publishedDate" => "2007-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crane3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dave Crane,Bear Bibeault with Tom Locke",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'POJOs in Action',
+'"isbn" => "1932394583",
+    "pageCount" => "592",
+    "publishedDate" => "2006-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crichardson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Chris Richardson",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Data Munging with Perl',
+'"isbn" => "1930110006",
+    "pageCount" => "304",
+    "publishedDate" => "2001-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cross.jpg",
+    "status" => "PUBLISH",
+    "authors" => "David Cross",
+    "categories" => "Perl"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hello! HTML5 & CSS3',
+'"isbn" => "1935182897",
+    "pageCount" => "325",
+    "publishedDate" => "2012-10-17T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crowther.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Rob Crowther",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Seam in Action',
+'"isbn" => "1933988401",
+    "pageCount" => "624",
+    "publishedDate" => "2008-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dallen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dan Allen",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Wicket in Action',
+'"isbn" => "1932394982",
+    "pageCount" => "392",
+    "publishedDate" => "2008-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dashorst.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Martijn Dashorst,Eelco Hillenius",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Open Source SOA',
+'"isbn" => "1933988541",
+    "pageCount" => "448",
+    "publishedDate" => "2009-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/davis.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jeff Davis",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Struts 2 in Action',
+'"isbn" => "193398807X",
+    "pageCount" => "432",
+    "publishedDate" => "2008-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dbrown.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Donald Brown,Chad Michael Davis,Scott Stanlick",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'.NET Multithreading',
+'"isbn" => "1930110545",
+    "pageCount" => "360",
+    "publishedDate" => "2002-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dennis.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Alan Dennis",
+    "categories" => "Microsoft .NET,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SCWCD Exam Study Kit Second Edition',
+'"isbn" => "1932394389",
+    "pageCount" => "560",
+    "publishedDate" => "2005-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/deshmukh2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Hanumant Deshmukh,Jignesh Malavia,Matthew Scarpino",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Spring Roo in Action',
+'"isbn" => "193518296X",
+    "pageCount" => "500",
+    "publishedDate" => "2012-04-13T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rimple.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ken Rimple,Srini Penchikala",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SOA Governance in Action',
+'"isbn" => "1617290270",
+    "pageCount" => "0",
+    "publishedDate" => "2012-07-27T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dirksen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jos Dirksen",
+    "categories" => "java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'RSS and Atom in Action',
+'"isbn" => "1932394494",
+    "pageCount" => "400",
+    "publishedDate" => "2006-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dmjohnson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dave Johnson",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'LDAP Programming, Management and Integration',
+'"isbn" => "1930110405",
+    "pageCount" => "352",
+    "publishedDate" => "2002-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/donley.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Clayton Donley",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Mule in Action',
+'"isbn" => "1933988967",
+    "pageCount" => "432",
+    "publishedDate" => "2009-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dossot.jpg",
+    "status" => "PUBLISH",
+    "authors" => "David Dossot,John DEmic",
+    "categories" => "Java,Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java Foundation Classes',
+'"isbn" => "1884777678",
+    "pageCount" => "1088",
+    "publishedDate" => "2001-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/drye.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Stephen C. Drye,William C. Wake",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Managing Components with Modeler',
+'"isbn" => "1932394524k-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal11.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Command-line Processing with CLI',
+'"isbn" => "1932394524l-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal12.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Understanding and Using Chain',
+'"isbn" => "1932394524m-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal13.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Working with the Logging and Discovery Components',
+'"isbn" => "1932394524n-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal14.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Uploading files with FileUpload',
+'"isbn" => "1932394524b-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Handling Protocols with the Net Component',
+'"isbn" => "1932394524c-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'XML Parsing with Digester',
+'"isbn" => "1932394524d-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal4.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JXPath and Betwixt: Working with XML',
+'"isbn" => "1932394524e-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal5.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Validating Data with Validator',
+'"isbn" => "1932394524f-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal6.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Enhancing Java Core Libraries with Collections',
+'"isbn" => "1932394524g-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal7.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Enhancing Java Core Libraries with BeanUtils and Lang',
+'"isbn" => "1932394524h-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal8.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Pool and DBCP: Creating and Using Object Pools',
+'"isbn" => "1932394524i-e",
+    "pageCount" => "0",
+    "publishedDate" => "2005-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/goyal9.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vikram Goyal",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Python and Tkinter Programming',
+'"isbn" => "1884777813",
+    "pageCount" => "688",
+    "publishedDate" => "2000-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/grayson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "John E. Grayson",
+    "categories" => "Python"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Microsoft.NET for Programmers',
+'"isbn" => "1930110197",
+    "pageCount" => "386",
+    "publishedDate" => "2002-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/grimes.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Fergal Grimes",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Grails in Action',
+'"isbn" => "1933988932",
+    "pageCount" => "520",
+    "publishedDate" => "2009-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/gsmith.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Glen Smith,Peter Ledbrook",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Up to Speed with Swing, Second Edition',
+'"isbn" => "1884777759",
+    "pageCount" => "560",
+    "publishedDate" => "1999-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/gutz2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Steven Gutz",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'GWT in Action',
+'"isbn" => "1933988231",
+    "pageCount" => "632",
+    "publishedDate" => "2007-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hanson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Robert Hanson,Adam Tacy",
+    "categories" => "Internet,Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Quick Python Book',
+'"isbn" => "1884777740",
+    "pageCount" => "444",
+    "publishedDate" => "1999-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/harms.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Daryl Harms,Kenneth McDonald",
+    "categories" => "Python"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SharePoint 2010 Site Owners Manual',
+'"isbn" => "1933988754",
+    "pageCount" => "300",
+    "publishedDate" => "2012-02-13T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/harryman.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Yvonne M. Harryman",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java Development with Ant',
+'"isbn" => "1930110588",
+    "pageCount" => "672",
+    "publishedDate" => "2002-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hatcher.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Erik Hatcher,Steve Loughran",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Lucene in Action',
+'"isbn" => "1932394281",
+    "pageCount" => "456",
+    "publishedDate" => "2004-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hatcher2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Erik Hatcher,Otis Gospodnetic",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Lucene in Action, Second Edition',
+'"isbn" => "1933988177",
+    "pageCount" => "532",
+    "publishedDate" => "2010-07-09T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hatcher3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Erik Hatcher,Otis Gospodnetic,Michael McCandless",
+    "categories" => "Java,Open Source"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PowerBuilder 6.0 Questions & Answers',
+'"isbn" => "1884777708",
+    "pageCount" => "446",
+    "publishedDate" => "1998-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hatton.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tim Hatton",
+    "categories" => "PowerBuilder"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Awesome Power of PowerJ',
+'"isbn" => "1884777538",
+    "pageCount" => "378",
+    "publishedDate" => "1998-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hatton2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tim Hatton",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Awesome Power of Power++',
+'"isbn" => "1884777546",
+    "pageCount" => "416",
+    "publishedDate" => "1998-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hatton3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tim Hatton",
+    "categories" => "PowerBuilder"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Azure in Action',
+'"isbn" => "193518248X",
+    "pageCount" => "425",
+    "publishedDate" => "2010-10-22T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hay.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Chris Hay,Brian H. Prince",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Metaprogramming in .NET',
+'"isbn" => "1617290262",
+    "pageCount" => "0",
+    "publishedDate" => "2012-12-31T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hazzard.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kevin Hazzard,Jason Bock",
+    "categories" => "Microsoft/.NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Code Generation in Action',
+'"isbn" => "1930110979",
+    "pageCount" => "350",
+    "publishedDate" => "2003-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/herrington.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jack Herrington",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Illustrated Guide to HTTP',
+'"isbn" => "138582262",
+    "pageCount" => "400",
+    "publishedDate" => "1997-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hethmon.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Paul S. Hethmon",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Agile ALM',
+'"isbn" => "1935182633",
+    "pageCount" => "0",
+    "publishedDate" => "2011-08-20T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/huettermann.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Michael Hüttermann",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java Network Programming, Second Edition',
+'"isbn" => "188477749X",
+    "pageCount" => "860",
+    "publishedDate" => "1999-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hughes.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Merlin Hughes,Michael Shoffner,Derek Hamner",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Camel in Action',
+'"isbn" => "1935182366",
+    "pageCount" => "375",
+    "publishedDate" => "2011-01-04T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ibsen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Claus Ibsen,Jonathan Anstey",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JBoss in Action',
+'"isbn" => "1933988029",
+    "pageCount" => "496",
+    "publishedDate" => "2009-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jamae.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Javid Jamae,Peter Johnson",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Gnuplot in Action',
+'"isbn" => "1933988398",
+    "pageCount" => "400",
+    "publishedDate" => "2009-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/janert.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Philipp K. Janert",
+    "categories" => "Computer Graphics"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Extending and Embedding Perl',
+'"isbn" => "1930110820",
+    "pageCount" => "384",
+    "publishedDate" => "2002-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jenness.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tim Jenness,Simon Cozens",
+    "categories" => "Perl"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Elements of Programming with Perl',
+'"isbn" => "1884777805",
+    "pageCount" => "368",
+    "publishedDate" => "1999-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/johnson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Andrew L. Johnson",
+    "categories" => "Perl"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Learn Windows PowerShell in a Month of Lunches',
+'"isbn" => "1617290211",
+    "pageCount" => "0",
+    "publishedDate" => "2011-04-15T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jones.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Don Jones",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'R in Action',
+'"isbn" => "1935182390",
+    "pageCount" => "375",
+    "publishedDate" => "2011-08-15T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kabacoff.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Robert I. Kabacoff",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SOA Security',
+'"isbn" => "1932394680",
+    "pageCount" => "512",
+    "publishedDate" => "2007-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kanneganti.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ramarao Kanneganti,Prasad A. Chodavarapu",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Rails 3 in Action',
+'"isbn" => "1935182277",
+    "pageCount" => "425",
+    "publishedDate" => "2011-09-20T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/katz.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ryan Bigg,Yehuda Katz",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Continuous Integration in .NET',
+'"isbn" => "1935182552",
+    "pageCount" => "328",
+    "publishedDate" => "2011-03-14T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kawalerowicz.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Marcin Kawalerowicz,Craig Berntson",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Technology Paradise Lost',
+'"isbn" => "1932394133",
+    "pageCount" => "260",
+    "publishedDate" => "2004-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/keller.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Erik Keller",
+    "categories" => "Business"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Kermit 95+',
+'"isbn" => "1930110057",
+    "pageCount" => "0",
+    "publishedDate" => "2003-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kermit.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kermit Project at Columbia University",
+    "categories" => "Internet,Networking,Miscella"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Laszlo in Action',
+'"isbn" => "1932394834",
+    "pageCount" => "552",
+    "publishedDate" => "2008-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/klein.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Norman Klein,Max Carlson with Glenn MacEwen",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Object Technology Centers of Excellence',
+'"isbn" => "132612313",
+    "pageCount" => "200",
+    "publishedDate" => "1996-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/korson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Timothy D. Korson,Vijay K. Vaishnavi",
+    "categories" => "Object-Technology Programming,"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Test Driven',
+'"isbn" => "1932394850",
+    "pageCount" => "544",
+    "publishedDate" => "2007-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/koskela.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Lasse Koskela",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Effective Unit Testing',
+'"isbn" => "1935182579",
+    "pageCount" => "350",
+    "publishedDate" => "2013-02-04T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/koskela2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Lasse Koskela",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Making Java Groovy',
+'"isbn" => "1935182943",
+    "pageCount" => "0",
+    "publishedDate" => "2013-09-19T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kousen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kenneth A. Kousen",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Awesome Power of Direct3D/DirectX',
+'"isbn" => "1884777473",
+    "pageCount" => "840",
+    "publishedDate" => "2002-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kovach.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter J. Kovach",
+    "categories" => "Computer Graphics"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Practical Software Requirements',
+'"isbn" => "1884777597",
+    "pageCount" => "448",
+    "publishedDate" => "1998-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/kovitz.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Benjamin L. Kovitz",
+    "categories" => "Software Engineering,Theory"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Microsoft Reporting Services in Action',
+'"isbn" => "1932394222",
+    "pageCount" => "656",
+    "publishedDate" => "2004-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lachev.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Teo Lachev",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'AspectJ in Action',
+'"isbn" => "1930110936",
+    "pageCount" => "512",
+    "publishedDate" => "2003-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/laddad.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ramnivas Laddad",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'AspectJ in Action, Second Edition',
+'"isbn" => "1933988053",
+    "pageCount" => "568",
+    "publishedDate" => "2009-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/laddad2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ramnivas Laddad",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hadoop in Action',
+'"isbn" => "1935182196",
+    "pageCount" => "325",
+    "publishedDate" => "2010-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lam.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Chuck Lam",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SQR in PeopleSoft and Other Applications',
+'"isbn" => "1884777775",
+    "pageCount" => "600",
+    "publishedDate" => "2003-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/landres.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Galina,Vlad Landres",
+    "categories" => "Business,Client-Server"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SQR in PeopleSoft and Other Applications, Second Edition',
+'"isbn" => "1932394001",
+    "pageCount" => "696",
+    "publishedDate" => "2003-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/landres2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Galina Landres,Vlad Landres",
+    "categories" => "Business,Client-Server"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Client/Server Yellow Pages',
+'"isbn" => "1884777082",
+    "pageCount" => "280",
+    "publishedDate" => "1995-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lewis.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Compiled,introduced by Ted Lewis",
+    "categories" => "Client-Server"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Object Oriented Application Frameworks',
+'"isbn" => "1884777066",
+    "pageCount" => "352",
+    "publishedDate" => "1995-04-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lewis2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ted Lewis,friends",
+    "categories" => "Object-Oriented Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Tapestry in Action',
+'"isbn" => "1932394117",
+    "pageCount" => "580",
+    "publishedDate" => "2004-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lewisship.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Howard M. Lewis Ship",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'WebWork in Action',
+'"isbn" => "1932394532",
+    "pageCount" => "400",
+    "publishedDate" => "2005-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lightbody.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Patrick Lightbody,Jason Carreira",
+    "categories" => "internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'MacRuby in Action',
+'"isbn" => "1935182498",
+    "pageCount" => "0",
+    "publishedDate" => "2012-04-11T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lim.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Brendan G. Lim with Jerry Cheung,Jeremy McAnally",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Erlang and OTP in Action',
+'"isbn" => "1933988789",
+    "pageCount" => "500",
+    "publishedDate" => "2010-11-16T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/logan.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Martin Logan,Eric Merritt,Richard Carlsson",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SharePoint 2007 Developers Guide to Business Data Catalog',
+'"isbn" => "1933988819",
+    "pageCount" => "304",
+    "publishedDate" => "2009-09-09T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lonsdale.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Brett Lonsdale,Nick Swan",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Doing IT Right',
+'"isbn" => "133964256",
+    "pageCount" => "350",
+    "publishedDate" => "1995-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lorin.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Harold Lorin",
+    "categories" => "Business,Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Adobe AIR in Action',
+'"isbn" => "1933988487",
+    "pageCount" => "336",
+    "publishedDate" => "2008-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lott.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Joey Lott,Kathryn Rotondo,Sam Ahn,Ashley Atkins",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ant in Action',
+'"isbn" => "193239480X",
+    "pageCount" => "600",
+    "publishedDate" => "2007-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/loughran.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Steve Loughran,Erik Hatcher",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Restlet in Action',
+'"isbn" => "193518234X",
+    "pageCount" => "450",
+    "publishedDate" => "2012-09-26T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/louvel.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jerome Louvel,Thierry Boileau,Philippe Mougin",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'iText in Action',
+'"isbn" => "1932394796",
+    "pageCount" => "688",
+    "publishedDate" => "2006-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lowagie.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruno Lowagie",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'iText in Action, Second Edition',
+'"isbn" => "1935182617",
+    "pageCount" => "600",
+    "publishedDate" => "2010-11-22T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lowagie2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruno Lowagie",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Power-3D',
+'"isbn" => "138412146",
+    "pageCount" => "550",
+    "publishedDate" => "1997-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lussier.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kyle Lussier",
+    "categories" => "Computer Graphics"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Subversion in Action',
+'"isbn" => "1932394478",
+    "pageCount" => "356",
+    "publishedDate" => "2004-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/machols.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jeffrey Machols",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Minimal Perl',
+'"isbn" => "1932394508",
+    "pageCount" => "504",
+    "publishedDate" => "2006-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/maher.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tim Maher",
+    "categories" => "Perl"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Distributed Programming with Java',
+'"isbn" => "1884777651",
+    "pageCount" => "320",
+    "publishedDate" => "1999-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mahmoud.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Qusay H. Mahmoud",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Comprehensive Networking Glossary and Acronym Guide',
+'"isbn" => "013319955X",
+    "pageCount" => "208",
+    "publishedDate" => "1995-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/malkin.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Gary Scott Malkin",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JavaServer Faces in Action',
+'"isbn" => "1932394125",
+    "pageCount" => "744",
+    "publishedDate" => "2004-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mann.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kito D. Mann",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'LINQ in Action',
+'"isbn" => "1933988169",
+    "pageCount" => "576",
+    "publishedDate" => "2008-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/marguerie.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Fabrice Marguerie,Steve Eichert,Jim Wooley",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Internet BBSs',
+'"isbn" => "132869985",
+    "pageCount" => "400",
+    "publishedDate" => "1996-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mark.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Richard Scott Mark",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Algorithms of the Intelligent Web',
+'"isbn" => "1933988665",
+    "pageCount" => "368",
+    "publishedDate" => "2009-05-29T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/marmanis.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Haralambos Marmanis,Dmitry Babenko",
+    "categories" => "Web Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JUnit in Action',
+'"isbn" => "1930110995",
+    "pageCount" => "384",
+    "publishedDate" => "2003-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/massol.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Vincent Massol with Ted Husted",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Tika in Action',
+'"isbn" => "1935182854",
+    "pageCount" => "0",
+    "publishedDate" => "2011-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mattmann.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Chris A. Mattmann,Jukka L. Zitting",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ruby in Practice',
+'"isbn" => "1933988479",
+    "pageCount" => "360",
+    "publishedDate" => "2009-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mcanally.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jeremy McAnally,Assaf Arkin",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Inside LotusScript',
+'"isbn" => "1884777481",
+    "pageCount" => "420",
+    "publishedDate" => "1997-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mcginn.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Joe McGinn",
+    "categories" => "Business"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Maximum MIDI',
+'"isbn" => "1884777449",
+    "pageCount" => "450",
+    "publishedDate" => "1997-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/messick.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Paul Messick",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Planning and Managing ATM Networks',
+'"isbn" => "132621894",
+    "pageCount" => "320",
+    "publishedDate" => "1997-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/minoli.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Daniel Minoli,Thomas W. Golway,Norris P. Smith",
+    "categories" => "Client-Server,Networking"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Client/Server Applications on ATM Networks',
+'"isbn" => "137353006",
+    "pageCount" => "350",
+    "publishedDate" => "1997-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/minoli2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Daniel Minoli,Andrew Schmidt",
+    "categories" => "Client-Server,Networking"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JavaFX in Action',
+'"isbn" => "1933988991",
+    "pageCount" => "373",
+    "publishedDate" => "2009-10-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/morris.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Simon Morris",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'ASP.NET 2.0 Web Parts in Action',
+'"isbn" => "193239477X",
+    "pageCount" => "344",
+    "publishedDate" => "2006-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/neimke.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Darren Neimke",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Core OWL 5.0',
+'"isbn" => "1884777503",
+    "pageCount" => "500",
+    "publishedDate" => "1997-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/neward.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ted Neward",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Advanced OWL 5.0',
+'"isbn" => "1884777465",
+    "pageCount" => "570",
+    "publishedDate" => "1998-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/neward2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ted Neward",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Server-Based Java Programming',
+'"isbn" => "1884777716",
+    "pageCount" => "592",
+    "publishedDate" => "2000-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/neward3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ted Neward",
+    "categories" => "Java,Client-Server,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PostGIS in Action',
+'"isbn" => "1935182269",
+    "pageCount" => "325",
+    "publishedDate" => "2011-04-11T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/obe.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Regina O. Obe,Leo S. Hsu",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Programming Mac OS X',
+'"isbn" => "1930110855",
+    "pageCount" => "384",
+    "publishedDate" => "2003-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/omalley.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Kevin OMalley",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Art of Unit Testing',
+'"isbn" => "1933988274",
+    "pageCount" => "320",
+    "publishedDate" => "2009-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/osherove.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Roy Osherove",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Mahout in Action',
+'"isbn" => "1935182684",
+    "pageCount" => "375",
+    "publishedDate" => "2011-10-05T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/owen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Sean Owen,Robin Anil,Ted Dunning,Ellen Friedman",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'ASP.NET MVC in Action',
+'"isbn" => "1933988622",
+    "pageCount" => "392",
+    "publishedDate" => "2009-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/palermo.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jeffrey Palermo,Ben Scheirman,Jimmy Bogard",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'EJB 3 in Action',
+'"isbn" => "1933988347",
+    "pageCount" => "712",
+    "publishedDate" => "2007-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/panda.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Debu Panda,Reza Rahman,Derek Lane",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Explorers Guide to the Semantic Web',
+'"isbn" => "1932394206",
+    "pageCount" => "304",
+    "publishedDate" => "2004-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/passin.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Thomas B. Passin",
+    "categories" => "Internet,Theory,XML"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Practical LotusScript',
+'"isbn" => "1884777767",
+    "pageCount" => "512",
+    "publishedDate" => "1999-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/patton.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Anthony Patton",
+    "categories" => "Business"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Domino Development with Java',
+'"isbn" => "1930110049",
+    "pageCount" => "467",
+    "publishedDate" => "2000-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/patton2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Anthony Patton",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Windows PowerShell in Action',
+'"isbn" => "1932394907",
+    "pageCount" => "576",
+    "publishedDate" => "2007-02-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/payette.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruce Payette",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Windows PowerShell in Action, Second Edition',
+'"isbn" => "1935182137",
+    "pageCount" => "700",
+    "publishedDate" => "2011-05-15T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/payette2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruce Payette",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Silverlight 4 in Action, Revised Edition',
+'"isbn" => "1935182374",
+    "pageCount" => "425",
+    "publishedDate" => "2010-10-04T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/pbrown.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Pete Brown",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Silverlight 5 in Action',
+'"isbn" => "1617290319",
+    "pageCount" => "925",
+    "publishedDate" => "2012-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/pbrown2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Pete Brown",
+    "categories" => "Microsoft,.NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hibernate Quickly',
+'"isbn" => "1932394419",
+    "pageCount" => "456",
+    "publishedDate" => "2005-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/peak.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Patrick Peak,Nick Heudecker",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Generative Art',
+'"isbn" => "1935182625",
+    "pageCount" => "0",
+    "publishedDate" => "2011-06-30T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/pearson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Matt Pearson",
+    "categories" => "Algorithmic Art"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Windows Phone 7 in Action',
+'"isbn" => "1617290092",
+    "pageCount" => "0",
+    "publishedDate" => "2012-08-21T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/perga.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Timothy Binkley-Jones,Massimo Perga,Michael Sync",
+    "categories" => "Mobile Technology"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Lift in Action',
+'"isbn" => "1935182803",
+    "pageCount" => "450",
+    "publishedDate" => "2011-11-18T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/perrett.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Timothy Perrett",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Web Development with Apache and Perl',
+'"isbn" => "1930110065",
+    "pageCount" => "424",
+    "publishedDate" => "2002-04-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/petersen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Theo Petersen",
+    "categories" => "Perl,Client-Server"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Real-World Functional Programming',
+'"isbn" => "1933988924",
+    "pageCount" => "560",
+    "publishedDate" => "2009-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/petricek.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tomas Petricek with Jon Skeet",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Machine Learning in Action',
+'"isbn" => "1617290181",
+    "pageCount" => "0",
+    "publishedDate" => "2012-04-04T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/pharrington.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter Harrington",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Dependency Injection',
+'"isbn" => "193398855X",
+    "pageCount" => "352",
+    "publishedDate" => "2009-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/prasanna.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dhanji R. Prasanna",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Understanding Enterprise SOA',
+'"isbn" => "1932394591",
+    "pageCount" => "280",
+    "publishedDate" => "2005-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/pulier.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Eric Pulier and Hugh Taylor,Foreword by Paul Gaffney",
+    "categories" => "Theory"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Open-Source ESBs in Action',
+'"isbn" => "1933988215",
+    "pageCount" => "528",
+    "publishedDate" => "2008-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rademakers.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tijs Rademakers,Jos Dirksen",
+    "categories" => "Business"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Activiti in Action',
+'"isbn" => "1617290122",
+    "pageCount" => "0",
+    "publishedDate" => "2012-07-12T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rademakers2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Tijs Rademakers",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'DSLs in Boo: Domain-Specific Languages in .NET',
+'"isbn" => "1933988606",
+    "pageCount" => "352",
+    "publishedDate" => "2010-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rahien.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Oren Eini writing as Ayende Rahien",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JUnit Recipes',
+'"isbn" => "1932394230",
+    "pageCount" => "752",
+    "publishedDate" => "2004-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rainsberger.jpg",
+    "status" => "PUBLISH",
+    "authors" => "J. B. Rainsberger with contributions by Scott Stirling",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'wxPython in Action',
+'"isbn" => "1932394621",
+    "pageCount" => "620",
+    "publishedDate" => "2006-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rappin.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Noel Rappin,Robin Dunn",
+    "categories" => "Python"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Clojure in Action',
+'"isbn" => "1935182595",
+    "pageCount" => "475",
+    "publishedDate" => "2011-11-15T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rathore.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Amit Rathore",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Scala in Action',
+'"isbn" => "1935182757",
+    "pageCount" => "0",
+    "publishedDate" => "2013-04-09T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/raychaudhuri.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Nilanjan Raychaudhuri",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Working with Objects',
+'"isbn" => "134529308",
+    "pageCount" => "420",
+    "publishedDate" => "1995-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/reenskaug.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Trygve Reenskaug",
+    "categories" => "Object-Oriented Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PHP in Action',
+'"isbn" => "1932394753",
+    "pageCount" => "552",
+    "publishedDate" => "2007-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/reiersol.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dagfinn Reiersøl with Marcus Baker,Chris Shiflett",
+    "categories" => "PHP"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Secrets of the JavaScript Ninja',
+'"isbn" => "193398869X",
+    "pageCount" => "300",
+    "publishedDate" => "2012-12-27T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/resig.jpg",
+    "status" => "PUBLISH",
+    "authors" => "John Resig",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Microsoft Office Essentials',
+'"isbn" => "132623129",
+    "pageCount" => "480",
+    "publishedDate" => "1996-07-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/richardson2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ronny Richardson",
+    "categories" => "Business"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Swing',
+'"isbn" => "1884777848",
+    "pageCount" => "0",
+    "publishedDate" => "1999-12-01T00:00:00.000-0800",
+    "status" => "PUBLISH",
+    "authors" => "Matthew Robinson,Pavel Vorobiev",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Awesome Power of Java Beans',
+'"isbn" => "1884777562",
+    "pageCount" => "500",
+    "publishedDate" => "1998-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rodrigues.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Lawrence H. Rodrigues",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Personal Videoconferencing',
+'"isbn" => "013268327X",
+    "pageCount" => "420",
+    "publishedDate" => "1996-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rosen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Evan Rosen",
+    "categories" => "Networking"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Cloud at Your Service',
+'"isbn" => "1935182528",
+    "pageCount" => "200",
+    "publishedDate" => "2010-11-22T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rosenberg.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jothy Rosenberg,Arthur Mateos",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Implementing Elliptic Curve Cryptography',
+'"isbn" => "1884777694",
+    "pageCount" => "330",
+    "publishedDate" => "1998-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rosing.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Michael Rosing",
+    "categories" => "Theory"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SOA Patterns',
+'"isbn" => "1933988266",
+    "pageCount" => "250",
+    "publishedDate" => "2012-09-12T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/rotem.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Arnon Rotem-Gal-Oz",
+    "categories" => "SOA"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hello World!',
+'"isbn" => "1933988495",
+    "pageCount" => "432",
+    "publishedDate" => "2009-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sande.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Warren D. Sande,Carter Sande",
+    "categories" => "Programming,Python"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SCBCD Exam Study Kit',
+'"isbn" => "1932394400",
+    "pageCount" => "488",
+    "publishedDate" => "2005-06-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sanghera.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Paul Sanghera",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Portlets in Action',
+'"isbn" => "1935182544",
+    "pageCount" => "475",
+    "publishedDate" => "2011-09-16T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sarin.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ashish Sarin",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'OpenCL in Action',
+'"isbn" => "1617290173",
+    "pageCount" => "0",
+    "publishedDate" => "2011-11-14T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/scarpino2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Matthew Scarpino",
+    "categories" => "Programming"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Multiprotocol over ATM',
+'"isbn" => "138892709",
+    "pageCount" => "341",
+    "publishedDate" => "1998-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/schmidt.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Andrew Schmidt,Daniel Minoli",
+    "categories" => "Internet,Networking"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Dependency Injection in .NET',
+'"isbn" => "1935182501",
+    "pageCount" => "375",
+    "publishedDate" => "2011-10-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/seemann.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Mark Seemann",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java 3D Programming',
+'"isbn" => "1930110359",
+    "pageCount" => "400",
+    "publishedDate" => "2002-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/selman.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Daniel Selman",
+    "categories" => "Java,Internet,Computer Graph"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Liferay in Action',
+'"isbn" => "193518282X",
+    "pageCount" => "375",
+    "publishedDate" => "2011-09-20T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sezov.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Richard Sezov,Jr",
+    "categories" => "Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JSP Tag Libraries',
+'"isbn" => "193011009X",
+    "pageCount" => "656",
+    "publishedDate" => "2001-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/shachor.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Gal Shachor,Adam Chace,Magnus Rydin",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Instant Messaging in Java',
+'"isbn" => "1930110464",
+    "pageCount" => "402",
+    "publishedDate" => "2002-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/shigeoka.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Iain Shigeoka",
+    "categories" => "Internet,Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PowerShell in Practice',
+'"isbn" => "1935182005",
+    "pageCount" => "500",
+    "publishedDate" => "2010-06-08T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/siddaway.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Richard Siddaway",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PowerShell and WMI',
+'"isbn" => "1617290114",
+    "pageCount" => "0",
+    "publishedDate" => "2012-04-30T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/siddaway2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Richard Siddaway",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'C++/CLI in Action',
+'"isbn" => "1932394818",
+    "pageCount" => "416",
+    "publishedDate" => "2007-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sivakumar.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Nishant Sivakumar",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'C# in Depth',
+'"isbn" => "1933988363",
+    "pageCount" => "424",
+    "publishedDate" => "2008-04-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/skeet.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jon Skeet",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Magical A-Life Avatars',
+'"isbn" => "1884777589",
+    "pageCount" => "450",
+    "publishedDate" => "2000-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/small.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter Small",
+    "categories" => "Internet,Theory"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Becoming Agile',
+'"isbn" => "1933988258",
+    "pageCount" => "408",
+    "publishedDate" => "2009-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/smith.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Greg Smith,Ahmed Sidky",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'ActiveMQ in Action',
+'"isbn" => "1933988940",
+    "pageCount" => "408",
+    "publishedDate" => "2011-03-31T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/snyder.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruce Snyder,Dejan Bosanac,Rob Davies",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Implementing PeopleSoft Financials',
+'"isbn" => "138411808",
+    "pageCount" => "220",
+    "publishedDate" => "1997-01-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/stephens.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Early Stephens",
+    "categories" => "Business,Client-Server"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SQL Server DMVs in Action',
+'"isbn" => "1935182730",
+    "pageCount" => "352",
+    "publishedDate" => "2011-05-09T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/stirk.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ian W. Stirk",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Scala in Depth',
+'"isbn" => "1935182706",
+    "pageCount" => "0",
+    "publishedDate" => "2012-05-14T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/suereth.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Joshua D. Suereth",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JMX in Action',
+'"isbn" => "1930110561",
+    "pageCount" => "424",
+    "publishedDate" => "2002-09-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sullins.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Benjamin G. Sullins,Mark B. Whipple",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'EJB Cookbook',
+'"isbn" => "1930110944",
+    "pageCount" => "352",
+    "publishedDate" => "2003-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sullins2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Benjamin G. Sullins,Mark B. Whipple",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Bitter Java',
+'"isbn" => "193011043X",
+    "pageCount" => "368",
+    "publishedDate" => "2002-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/tate.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruce A. Tate",
+    "categories" => "Java,Business,Client Server,"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Bitter EJB',
+'"isbn" => "1930110952",
+    "pageCount" => "440",
+    "publishedDate" => "2003-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/tate2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bruce Tate,Mike Clark,Bob Lee,Patrick Linskey",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'JDK 1.4 Tutorial',
+'"isbn" => "1930110456",
+    "pageCount" => "408",
+    "publishedDate" => "2002-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/travis.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Gregory M. Travis",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SQL Server 2005 Reporting Services in Action',
+'"isbn" => "1932394761",
+    "pageCount" => "600",
+    "publishedDate" => "2006-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/updegraff.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Bret Updegraff",
+    "categories" => "Microsoft"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ten Years of UserFriendly.Org',
+'"isbn" => "1935182129",
+    "pageCount" => "1096",
+    "publishedDate" => "2008-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/userfriendly.jpg",
+    "status" => "PUBLISH",
+    "authors" => "JD \"Illiad\" Frazer",
+    "categories" => "Miscellaneous"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Graphics Programming with Perl',
+'"isbn" => "1930110022",
+    "pageCount" => "328",
+    "publishedDate" => "2002-05-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/verbruggen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Martien Verbruggen",
+    "categories" => "Computer Graphics,Perl"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'RabbitMQ in Action',
+'"isbn" => "1935182978",
+    "pageCount" => "0",
+    "publishedDate" => "2012-04-20T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/videla.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Alvaro Videla,Jason J.W. Williams",
+    "categories" => "Software Engineering"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'XDoclet in Action',
+'"isbn" => "1932394052",
+    "pageCount" => "624",
+    "publishedDate" => "2003-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/walls.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Craig Walls,Norman Richards",
+    "categories" => "XML,Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Spring in Action',
+'"isbn" => "1932394354",
+    "pageCount" => "472",
+    "publishedDate" => "2005-02-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/walls2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Craig Walls,Ryan Breidenbach",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Spring in Action, Second Edition',
+'"isbn" => "1933988134",
+    "pageCount" => "768",
+    "publishedDate" => "2007-08-01T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/walls3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Craig Walls with Ryan Breidenbach",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Spring in Action, Third Edition',
+'"isbn" => "1935182358",
+    "pageCount" => "424",
+    "publishedDate" => "2011-06-21T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/walls4.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Craig Walls",
+    "categories" => "Java"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Spring in Practice',
+'"isbn" => "1935182056",
+    "pageCount" => "600",
+    "publishedDate" => "2013-05-09T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/wheeler.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Willie Wheeler with Joshua White",
+    "categories" => "Java,Software Development"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java 2 Micro Edition',
+'"isbn" => "1930110332",
+    "pageCount" => "504",
+    "publishedDate" => "2002-03-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/white.jpg",
+    "status" => "PUBLISH",
+    "authors" => "James P. White,David A. Hemphill",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SharePoint 2010 Workflows in Action',
+'"isbn" => "1935182714",
+    "pageCount" => "360",
+    "publishedDate" => "2011-02-07T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/wicklund.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Phil Wicklund",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SharePoint 2010 Web Parts in Action',
+'"isbn" => "1935182773",
+    "pageCount" => "448",
+    "publishedDate" => "2011-04-24T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/wilen.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Wictor Wilén",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'C++ Concurrency in Action',
+'"isbn" => "1933988770",
+    "pageCount" => "325",
+    "publishedDate" => "2012-02-24T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/williams.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Anthony Williams",
+    "categories" => "Microsoft .NET"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Java Servlets by Example',
+'"isbn" => "188477766X",
+    "pageCount" => "550",
+    "publishedDate" => "2002-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/williamson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Alan R. Williamson",
+    "categories" => "Java,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'XML Programming with VB and ASP',
+'"isbn" => "1884777872",
+    "pageCount" => "320",
+    "publishedDate" => "1999-12-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/wilson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Mark Wilson,Tracey Wilson",
+    "categories" => "XML,Internet"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Oracle8i Database Administration',
+'"isbn" => "1884777783",
+    "pageCount" => "543",
+    "publishedDate" => "1999-11-01T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/yuhanna.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Noel Yuhanna",
+    "categories" => "Client-Server,Networking"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ext JS in Action, Second Edition',
+'"isbn" => "1617290327",
+    "pageCount" => "0",
+    "publishedDate" => "2014-02-04T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/garcia3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jesus Garcia,Grgur Grisogono,Jacob K. Andresen",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Arduino in Action',
+'"isbn" => "1617290246",
+    "pageCount" => "300",
+    "publishedDate" => "2013-05-30T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mevans.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Martin Evans,Joshua Noble,Jordan Hochenbaum",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Third-Party JavaScript ',
+'"isbn" => "1617290548",
+    "pageCount" => "0",
+    "publishedDate" => "2013-03-11T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/vinegar.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ben Vinegar,Anton Kovalyov",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Multimedia Computing',
+'"isbn" => "020152029X",
+    "pageCount" => "0",
+    "publishedDate" => "1993-09-01T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Matthew E. Hodges",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Web Development with JavaServer Pages',
+'"isbn" => "1884777996",
+    "pageCount" => "0",
+    "publishedDate" => "2000-05-15T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Duane K. Fields,Mark A. Kolb",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Up to Speed with Swing',
+'"isbn" => "1884777643",
+    "pageCount" => "0",
+    "publishedDate" => "1998-05-01T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Steven J. Gutz",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Managers Guide to Open Source',
+'"isbn" => "193239429X",
+    "pageCount" => "0",
+    "publishedDate" => "2004-10-01T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Maria Winslow",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Programming Web Services with Java',
+'"isbn" => "1930110421",
+    "pageCount" => "0",
+    "publishedDate" => "2002-10-01T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Ajamu A. Wesley",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'TCP/IP Programming for OS/2',
+'"isbn" => "132612496",
+    "pageCount" => "0",
+    "publishedDate" => "1996-04-23T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Steven J. Gutz",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SCWCD Exam Study Kit',
+'"isbn" => "1930110596",
+    "pageCount" => "0",
+    "publishedDate" => "2002-07-01T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "Hanumant Deshmukh,Jignesh Malavia",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'CoffeeScript in Action',
+'"isbn" => "1617290629",
+    "pageCount" => "0",
+    "publishedDate" => "2014-05-09T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lee.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Patrick Lee",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'HTML5 in Action',
+'"isbn" => "1617290491",
+    "pageCount" => "375",
+    "publishedDate" => "2014-02-10T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crowther2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Rob Crowther,Joe Lennon,Ash Blue,Greg Wanish",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hadoop in Practice',
+'"isbn" => "1617290238",
+    "pageCount" => "0",
+    "publishedDate" => "2012-10-02T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/holmes.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Alex Holmes",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'HBase in Action',
+'"isbn" => "1617290521",
+    "pageCount" => "0",
+    "publishedDate" => "2012-11-02T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dimidukkhurana.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Nicholas Dimiduk,Amandeep Khurana",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Flex Mobile in Action',
+'"isbn" => "1617290610",
+    "pageCount" => "0",
+    "publishedDate" => "2012-05-30T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/campos.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jonathan Campos",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'HTML5 for .NET Developers',
+'"isbn" => "1617290432",
+    "pageCount" => "0",
+    "publishedDate" => "2012-11-30T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jackson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jim Jackson,II,Ian Gilman",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'50 Android Hacks',
+'"isbn" => "1617290564",
+    "pageCount" => "0",
+    "publishedDate" => "2013-06-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sessa.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Carlos M. Sessa",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'PowerShell in Depth',
+'"isbn" => "1617290556",
+    "pageCount" => "0",
+    "publishedDate" => "2013-02-20T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jones2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Don Jones,Richard Siddaway,Jeffery Hicks",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Mule in Action, Second Edition',
+'"isbn" => "1617290823",
+    "pageCount" => "0",
+    "publishedDate" => "2014-02-20T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/dossot2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "David Dossot,John DEmic,Victor Romero",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Single Page Web Applications',
+'"isbn" => "1617290750",
+    "pageCount" => "0",
+    "publishedDate" => "2013-09-19T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mikowski.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Michael S. Mikowski,Josh C. Powell",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Art of Unit Testing, Second Edition',
+'"isbn" => "1617290890",
+    "pageCount" => "0",
+    "publishedDate" => "2013-11-25T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/osherove2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Roy Osherove",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Play for Java',
+'"isbn" => "1617290904",
+    "pageCount" => "0",
+    "publishedDate" => "2014-03-14T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/leroux.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Nicolas Leroux,Sietse de Kaper",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Hello World! Second Edition',
+'"isbn" => "1617290920",
+    "pageCount" => "0",
+    "publishedDate" => "2013-12-12T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/sande2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Warren Sande,Carter Sande",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Dart in Action',
+'"isbn" => "1617290866",
+    "pageCount" => "0",
+    "publishedDate" => "2012-12-31T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/buckett.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Chris Buckett",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Redis in Action',
+'"isbn" => "1617290858",
+    "pageCount" => "0",
+    "publishedDate" => "2013-06-18T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/carlson.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Josiah Carlson",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Using the TI-83 Plus/TI-84 Plus',
+'"isbn" => "161729084X",
+    "pageCount" => "0",
+    "publishedDate" => "2013-08-19T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mitchell2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Christopher R. Mitchell",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Programming the TI-83 Plus/TI-84 Plus',
+'"isbn" => "1617290777",
+    "pageCount" => "0",
+    "publishedDate" => "2012-09-14T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mitchell.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Christopher R. Mitchell",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Play for Scala',
+'"isbn" => "1617290793",
+    "pageCount" => "0",
+    "publishedDate" => "2013-10-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hilton.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter Hilton,Erik Bakker,Francisco Canedo",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'SonarQube in Action',
+'"isbn" => "1617290955",
+    "pageCount" => "0",
+    "publishedDate" => "2013-10-30T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/papapetrou.jpg",
+    "status" => "PUBLISH",
+    "authors" => "G. Ann Campbell,Patroklos P. Papapetrou",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Windows Store App Development: C# and XAML',
+'"isbn" => "1617290947",
+    "pageCount" => "0",
+    "publishedDate" => "2013-06-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/pbrown3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Peter M. Brown",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Learn Windows IIS in a Month of Lunches',
+'"isbn" => "1617290971",
+    "pageCount" => "0",
+    "publishedDate" => "2013-12-31T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/helmick.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jason C. Helmick",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Extending jQuery',
+'"isbn" => "161729103X",
+    "pageCount" => "0",
+    "publishedDate" => "2013-08-12T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/wood.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Keith B. Wood",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'OCA Java SE 7 Programmer I Certification Guide',
+'"isbn" => "1617291048",
+    "pageCount" => "0",
+    "publishedDate" => "2013-04-02T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/gupta.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Mala Gupta",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Kanban in Action',
+'"isbn" => "1617291056",
+    "pageCount" => "0",
+    "publishedDate" => "2014-03-04T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hammarberg.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Marcus Hammarberg,Joakim Sunden",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Solr in Action',
+'"isbn" => "1617291021",
+    "pageCount" => "0",
+    "publishedDate" => "2014-03-25T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/grainger.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Trey Grainger,Timothy Potter",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Making Sense of NoSQL',
+'"isbn" => "1617291072",
+    "pageCount" => "0",
+    "publishedDate" => "2013-09-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/mccreary.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Daniel G. McCreary,Ann M. Kelly",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Jaguar Development with PowerBuilder 7',
+'"isbn" => "1884777864",
+    "pageCount" => "0",
+    "publishedDate" => "1999-08-09T00:00:00.000-0700",
+    "status" => "PUBLISH",
+    "authors" => "MIchael Barlotta",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Learn Windows PowerShell in a Month of Lunches, Second Edition',
+'"isbn" => "1617291080",
+    "pageCount" => "0",
+    "publishedDate" => "2012-11-12T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jones3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Don Jones,Jeffery D. Hicks",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'AOP in .NET',
+'"isbn" => "1617291145",
+    "pageCount" => "0",
+    "publishedDate" => "2013-06-21T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/groves.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Matthew D. Groves",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Learn PowerShell Toolmaking in a Month of Lunches',
+'"isbn" => "1617291161",
+    "pageCount" => "0",
+    "publishedDate" => "2012-12-12T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jones4.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Don Jones,Jeffery Hicks",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Mikado Method',
+'"isbn" => "1617291218",
+    "pageCount" => "0",
+    "publishedDate" => "2014-03-05T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ellnestam.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Ola Ellnestam,Daniel Brolund",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Fast ASP.NET Websites',
+'"isbn" => "1617291250",
+    "pageCount" => "0",
+    "publishedDate" => "2013-08-29T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/hume.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Dean Alan Hume",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Gradle in Action',
+'"isbn" => "1617291307",
+    "pageCount" => "0",
+    "publishedDate" => "2014-02-18T00:00:00.000-0800",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/muschko.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Benjamin Muschko",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'C# in Depth, Third Edition',
+'"isbn" => "161729134X",
+    "pageCount" => "0",
+    "publishedDate" => "2013-09-19T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/skeet3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Jon Skeet",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Joy of Clojure, Second Edition',
+'"isbn" => "1617291412",
+    "pageCount" => "0",
+    "publishedDate" => "2014-05-29T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/fogus2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Michael Fogus,Chris Houser",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'iOS 7 in Action',
+'"isbn" => "1617291420",
+    "pageCount" => "0",
+    "publishedDate" => "2014-04-03T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/lim2.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Brendan G. Lim,Martin Conte Mac Donell",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Ember.js in Action',
+'"isbn" => "1617291455",
+    "pageCount" => "0",
+    "publishedDate" => "2014-06-10T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/skeie.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Joachim Haagen Skeie",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Practical Data Science with R',
+'"isbn" => "1617291560",
+    "pageCount" => "0",
+    "publishedDate" => "2014-04-02T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/zumel.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Nina Zumel,John Mount",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'The Well-Grounded Rubyist, Second Edition',
+'"isbn" => "1617291692",
+    "pageCount" => "0",
+    "publishedDate" => "2014-06-24T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/black3.jpg",
+    "status" => "PUBLISH",
+    "authors" => "David A. Black",
+    "categories" => "0"
+',null);
+
+INSERT INTO books (serial,title,attr,hashmd5) VALUES (nextval('serial_books'),
+'Learn SQL Server Administration in a Month of Lunches',
+'"isbn" => "1617292133",
+    "pageCount" => "0",
+    "publishedDate" => "2014-05-02T00:00:00.000-0700",
+    "thumbnailUrl" => "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/jones5.jpg",
+    "status" => "PUBLISH",
+    "authors" => "Don Jones",
+    "categories" => "0"
+',null);
+
