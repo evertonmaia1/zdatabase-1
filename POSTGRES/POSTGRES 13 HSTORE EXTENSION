@@ -51,9 +51,6 @@ postgres=# \dx
 
 #CREATE TABLE AND INSERT VALUES
 
-download file 
-
-
 postgres=# drop table books cascade;
 
 postgres=# drop sequence serial_books;
@@ -98,6 +95,8 @@ postgres=# \d+ books
 Triggers:
     trg_gen_md5 BEFORE INSERT OR UPDATE ON books FOR EACH ROW EXECUTE FUNCTION fn_gen_md5()
 Access method: heap
+
+download file and run inserts https://github.com/danilo19ee/zdatabase/blob/master/POSTGRES/TRAINING/LOAD%20BOOK%20INSERTS
 
 postgres=# SELECT attr FROM books limit 10;
                                                                                                                                                    attr
