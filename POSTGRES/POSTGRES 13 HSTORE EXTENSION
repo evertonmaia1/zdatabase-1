@@ -634,6 +634,72 @@ Time: 1.097 ms
 
 ==================================================================================================================================
 
+$$$ HIGHER COST WITH HIGHER TIME WITH GIN INDEX $$$
+
+postgres=# SELECT B.* FROM books as B where B.attr @> hstore('categories','Java') limit 10;
+ serial |                 title                 |                                                                                                                                                 attr																																					|             hashmd5
+--------+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------
+      2 | Android in Action, Second Edition     | "isbn"=>"1935182722", "status"=>"PUBLISH", "authors"=>"W. Frank Ableson,Robi Sen", "pageCount"=>"592", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ableson2.jpg", "publishedDate"=>"2011-01-14T00:00:00.000-0800"                         	| 22900b975aefea5393efebeb3803cbfd
+      9 | Griffon in Action                     | "isbn"=>"1935182234", "status"=>"PUBLISH", "authors"=>"Andres Almiray,Danno Ferrin,James Shingler", "pageCount"=>"375", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/almiray.jpg", "publishedDate"=>"2012-06-04T00:00:00.000-0700"         	| 46063909731aa296cf49521da6c4f2e7
+     10 | OSGi in Depth                         | "isbn"=>"193518217X", "status"=>"PUBLISH", "authors"=>"Alexandre de Castro Alves", "pageCount"=>"325", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/alves.jpg", "publishedDate"=>"2011-12-12T00:00:00.000-0800"                            	| de5fa45d2be258150fdcd926374f52da
+     21 | Hibernate in Action                   | "isbn"=>"193239415X", "status"=>"PUBLISH", "authors"=>"Christian Bauer,Gavin King", "pageCount"=>"400", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer.jpg", "publishedDate"=>"2004-08-01T00:00:00.000-0700"                           	| d1cddc48dc2965d9972b926bb13e4bc1
+     22 | Hibernate in Action (Chinese Edition) | "isbn"=>"193239416X", "status"=>"PUBLISH", "authors"=>"Christian Bauer,Gavin King", "pageCount"=>"400", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer-cn.jpg", "publishedDate"=>"1999-06-01T00:00:00.000-0700"                        	| 93bb2f00bb204a8863b59edcd7b4f153
+     23 | Java Persistence with Hibernate       | "isbn"=>"1932394885", "status"=>"PUBLISH", "authors"=>"Christian Bauer,Gavin King", "pageCount"=>"880", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer2.jpg", "publishedDate"=>"2006-11-01T00:00:00.000-0800"                          	| a23c29d56b4fe8d3ef59dbaf055cca92
+     27 | Hibernate Search in Action            | "isbn"=>"1933988649", "status"=>"PUBLISH", "authors"=>"Emmanuel Bernard,John Griffin", "pageCount"=>"488", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bernard.jpg", "publishedDate"=>"2008-12-21T00:00:00.000-0800"                      	| c52de590ace42a8bb29e018908e0998a
+     29 | jQuery in Action, Second Edition      | "isbn"=>"1935182323", "status"=>"PUBLISH", "authors"=>"Bear Bibeault,Yehuda Katz", "pageCount"=>"488", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bibeault2.jpg", "publishedDate"=>"2010-06-01T00:00:00.000-0700"                        	| 6c8ca850a234347720f21fb25794bc9a
+     45 | Spring Dynamic Modules in Action      | "isbn"=>"1935182307", "status"=>"PUBLISH", "authors"=>"Arnaud Cogoluegnes,Thierry Templier,Andy Piper", "pageCount"=>"450", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cogoluegnes.jpg", "publishedDate"=>"2010-09-04T00:00:00.000-0700" 	| fff6b4aa73be4b3ac4d3405379c7dc6a
+     51 | POJOs in Action                       | "isbn"=>"1932394583", "status"=>"PUBLISH", "authors"=>"Chris Richardson", "pageCount"=>"592", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crichardson.jpg", "publishedDate"=>"2006-01-01T00:00:00.000-0800"                               	| fb49acf85c1c4b04f3dfe0d1882f062a
+(10 rows)
+
+Time: 0.981 ms
+
+postgres=# EXPLAIN SELECT B.* FROM books as B where B.attr @> hstore('categories','Java');
+                        QUERY PLAN
+-----------------------------------------------------------
+ Seq Scan on books b  (cost=0.00..17.56 rows=52 width=337)
+   Filter: (attr @> '"categories"=>"Java"'::hstore)
+(2 rows)
+
+Time: 1.392 ms
+
+postgres=# CREATE INDEX ginidx_books_attr ON books USING GIN (attr);
+CREATE INDEX
+
+#NOTE 
+As the table is small, it is necessary to disable sequential reading for the use of the index
+
+postgres=# set enable_seqscan=false;
+SET
+
+postgres=# SELECT B.* FROM books as B where B.attr @> hstore('categories','Java') limit 10;
+ serial |                 title                 |                                                                                                                                                 attr																																					|             hashmd5
+--------+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------
+      2 | Android in Action, Second Edition     | "isbn"=>"1935182722", "status"=>"PUBLISH", "authors"=>"W. Frank Ableson,Robi Sen", "pageCount"=>"592", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ableson2.jpg", "publishedDate"=>"2011-01-14T00:00:00.000-0800"                         	| 22900b975aefea5393efebeb3803cbfd
+      9 | Griffon in Action                     | "isbn"=>"1935182234", "status"=>"PUBLISH", "authors"=>"Andres Almiray,Danno Ferrin,James Shingler", "pageCount"=>"375", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/almiray.jpg", "publishedDate"=>"2012-06-04T00:00:00.000-0700"         	| 46063909731aa296cf49521da6c4f2e7
+     10 | OSGi in Depth                         | "isbn"=>"193518217X", "status"=>"PUBLISH", "authors"=>"Alexandre de Castro Alves", "pageCount"=>"325", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/alves.jpg", "publishedDate"=>"2011-12-12T00:00:00.000-0800"                            	| de5fa45d2be258150fdcd926374f52da
+     21 | Hibernate in Action                   | "isbn"=>"193239415X", "status"=>"PUBLISH", "authors"=>"Christian Bauer,Gavin King", "pageCount"=>"400", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer.jpg", "publishedDate"=>"2004-08-01T00:00:00.000-0700"                           	| d1cddc48dc2965d9972b926bb13e4bc1
+     22 | Hibernate in Action (Chinese Edition) | "isbn"=>"193239416X", "status"=>"PUBLISH", "authors"=>"Christian Bauer,Gavin King", "pageCount"=>"400", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer-cn.jpg", "publishedDate"=>"1999-06-01T00:00:00.000-0700"                        	| 93bb2f00bb204a8863b59edcd7b4f153
+     23 | Java Persistence with Hibernate       | "isbn"=>"1932394885", "status"=>"PUBLISH", "authors"=>"Christian Bauer,Gavin King", "pageCount"=>"880", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bauer2.jpg", "publishedDate"=>"2006-11-01T00:00:00.000-0800"                          	| a23c29d56b4fe8d3ef59dbaf055cca92
+     27 | Hibernate Search in Action            | "isbn"=>"1933988649", "status"=>"PUBLISH", "authors"=>"Emmanuel Bernard,John Griffin", "pageCount"=>"488", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bernard.jpg", "publishedDate"=>"2008-12-21T00:00:00.000-0800"                      	| c52de590ace42a8bb29e018908e0998a
+     29 | jQuery in Action, Second Edition      | "isbn"=>"1935182323", "status"=>"PUBLISH", "authors"=>"Bear Bibeault,Yehuda Katz", "pageCount"=>"488", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/bibeault2.jpg", "publishedDate"=>"2010-06-01T00:00:00.000-0700"                        	| 6c8ca850a234347720f21fb25794bc9a
+     45 | Spring Dynamic Modules in Action      | "isbn"=>"1935182307", "status"=>"PUBLISH", "authors"=>"Arnaud Cogoluegnes,Thierry Templier,Andy Piper", "pageCount"=>"450", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/cogoluegnes.jpg", "publishedDate"=>"2010-09-04T00:00:00.000-0700" 	| fff6b4aa73be4b3ac4d3405379c7dc6a
+     51 | POJOs in Action                       | "isbn"=>"1932394583", "status"=>"PUBLISH", "authors"=>"Chris Richardson", "pageCount"=>"592", "categories"=>"Java", "thumbnailUrl"=>"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/crichardson.jpg", "publishedDate"=>"2006-01-01T00:00:00.000-0800"                               	| fb49acf85c1c4b04f3dfe0d1882f062a
+(10 rows)
+Time: 1.119 ms
+
+postgres=# EXPLAIN SELECT B.* FROM books as B where B.attr @> hstore('categories','Java');
+                                    QUERY PLAN
+----------------------------------------------------------------------------------
+ Bitmap Heap Scan on books b  (cost=20.40..35.05 rows=52 width=337)
+   Recheck Cond: (attr @> '"categories"=>"Java"'::hstore)
+   ->  Bitmap Index Scan on ginidx_books_attr  (cost=0.00..20.39 rows=52 width=0)
+         Index Cond: (attr @> '"categories"=>"Java"'::hstore)
+(4 rows)
+
+Time: 1.335 ms
+
+==================================================================================================================================
+
 postgres=# \d+ books
                                                         Table "public.books"
  Column  |          Type          | Collation | Nullable |              Default              | Storage  | Stats target | Description
@@ -644,10 +710,13 @@ postgres=# \d+ books
  hashmd5 | character varying(256) |           | not null |                                   | extended |              |
 Indexes:
     "books_pkey" PRIMARY KEY, btree (hashmd5)
+    "ginidx_books_attr" gin (attr)
     "hidx_books_attr_categories" btree ((attr -> 'categories'::text)) WHERE (attr -> 'categories'::text) = '0'::text
     "hidx_books_attr_isbn" btree ((attr -> 'isbn'::text))
 Triggers:
     trg_gen_md5 BEFORE INSERT OR UPDATE ON books FOR EACH ROW EXECUTE FUNCTION fn_gen_md5()
 Access method: heap
+
+
 
 
