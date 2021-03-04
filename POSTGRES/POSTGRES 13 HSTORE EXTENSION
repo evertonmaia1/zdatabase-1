@@ -59,7 +59,7 @@ postgres=# drop function fn_gen_md5();
 
 postgres=# CREATE SEQUENCE serial_books INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE;
 
-postgres=# CREATE TABLE books (serial numeric(100) NOT NULL DEFAULT nextval('serial_books'::regclass), title VARCHAR (255), attr hstore, hashmd5 CHARACTER VARYING(256));
+postgres=# CREATE TABLE books (serial numeric(100) NOT NULL DEFAULT nextval('serial_books'::regclass), title VARCHAR (255), attr hstore, hashmd5 CHARACTER VARYING(256) PRIMARY KEY);
 
 postgres=# CREATE OR REPLACE FUNCTION fn_gen_md5()
 RETURNS TRIGGER AS
@@ -91,7 +91,9 @@ postgres=# \d+ books
  serial  | numeric(100,0)         |           | not null | nextval('serial_books'::regclass) | main     |              |
  title   | character varying(255) |           |          |                                   | extended |              |
  attr    | hstore                 |           |          |                                   | extended |              |
- hashmd5 | character varying(256) |           |          |                                   | extended |              |
+ hashmd5 | character varying(256) |           | not null |                                   | extended |              |
+Indexes:
+    "books_pkey" PRIMARY KEY, btree (hashmd5)
 Triggers:
     trg_gen_md5 BEFORE INSERT OR UPDATE ON books FOR EACH ROW EXECUTE FUNCTION fn_gen_md5()
 Access method: heap
