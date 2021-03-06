@@ -763,6 +763,152 @@ REPLICAT (Parallel) added.
 
 GGSCI (ol7gghub as c##ggadmin@appscdb1/APPSPDB) 10> exit
 
+############################################################################################################################################################
+# ON ORACLE DATABASE 11G MACHINE #
+##################################
+
+#INITIAL LOAD
+
+#NOTE
+Import the same data into the target database as the EMPLOYEES table in the source database to create the initial state of synchronization.
+
+#EXPORT DATA FROM SOURCE DATABASE
+
+#NOTE
+Migrate data using the Oracle Data Pump utility for exporting and importing data in Oracle Database. 
+First, create a directory, grant permissions, and then export with the expdp command.
+
+[oracle@ol711g ~]$ expdp system/oracle directory=dp_dir dumpfile=hr.dmp logfile=hr.log tables=hr.employees content=metadata_only
+
+Export: Release 11.2.0.4.0 - Production on Sat Mar 6 10:21:03 2021
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+FLASHBACK automatically enabled to preserve database integrity.
+Starting "SYSTEM"."SYS_EXPORT_TABLE_01":  system/******** directory=dp_dir dumpfile=hr.dmp logfile=hr.log tables=hr.employees content=metadata_only
+Processing object type TABLE_EXPORT/TABLE/PROCACT_INSTANCE
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+Processing object type TABLE_EXPORT/TABLE/COMMENT
+Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type TABLE_EXPORT/TABLE/TRIGGER
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Master table "SYSTEM"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYSTEM.SYS_EXPORT_TABLE_01 is:
+  /home/oracle/dp_dir/hr.dmp
+Job "SYSTEM"."SYS_EXPORT_TABLE_01" successfully completed at Sat Mar 6 10:21:14 2021 elapsed 0 00:00:10
+
+############################################################################################################################################################
+# ON ORACLE DATABASE 19C MACHINE #
+##################################
+
+#TRANSFER THE OUTPUT FILE TO THE TARGET DATABASE SERVER.
+
+[oracle@ol7db1 ~]$ scp root@192.168.18.21:/home/oracle/dp_dir/hr.dmp /home/oracle/dp_dir/
+hr.dmp                                                                       100%  168KB  39.5MB/s   00:00
+
+#IMPORT DATA INTO TARGET DATABASE
+
+#NOTE
+Import with the impdp command.
+
+[oracle@ol7db1 ~]$ impdp system/oracle@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users tables=hr.employees
+
+Import: Release 19.0.0.0.0 - Production on Sat Mar 6 10:30:41 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Master table "SYSTEM"."SYS_IMPORT_TABLE_01" successfully loaded/unloaded
+Starting "SYSTEM"."SYS_IMPORT_TABLE_01":  system/********@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users tables=hr.employees
+Processing object type TABLE_EXPORT/TABLE/PROCACT_INSTANCE
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+Processing object type TABLE_EXPORT/TABLE/COMMENT
+Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type TABLE_EXPORT/TABLE/TRIGGER
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Job "SYSTEM"."SYS_IMPORT_TABLE_01" completed with 6 error(s) at Sat Mar 6 10:31:09 2021 elapsed 0 00:00:20
+
+#GRANT ACCESS TO TARGET TABLE $
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Mar 6 10:33:46 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> select name from v$pdbs;
+
+NAME
+--------------------------------------------------------------------------------
+PDB$SEED
+APPSPDB
+
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
+SQL> COL GRANTEE FOR A35
+SQL> COL TABLE_NAME FOR A45
+SQL> COL OWNER FOR A35
+SQL> COL GRANTOR FOR A35
+SQL> SET LINES 300 PAGES 100
+SQL> SELECT GRANTEE, OWNER, TABLE_NAME, GRANTOR, PRIVILEGE FROM DBA_TAB_PRIVS WHERE OWNER='HR' AND TABLE_NAME='EMPLOYEES';
+
+GRANTEE                             OWNER                               TABLE_NAME                                    GRANTOR                             PRIVILEGE
+----------------------------------- ----------------------------------- --------------------------------------------- ----------------------------------- ----------------------------------------
+C##GGADMIN                          HR                                  EMPLOYEES                                     HR                                  DELETE
+C##GGADMIN                          HR                                  EMPLOYEES                                     HR                                  INSERT
+C##GGADMIN                          HR                                  EMPLOYEES                                     HR                                  UPDATE
+
+SQL> EXIT
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+############################################################################################################################################################
+# ON ORACLE GOLDENGATE 19 HUB MACHINE #
+#######################################
+
+#STARTING REPLICAT PROCESS
+
+#NOTE
+Start the Replicat process. You have now replicated from the source database to the target database.
+
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME19C
+[oracle@ol7gghub 19.3]$ ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
+
+
+
+GGSCI (ol7gghub) 1>
+
+
+
 
 
 
