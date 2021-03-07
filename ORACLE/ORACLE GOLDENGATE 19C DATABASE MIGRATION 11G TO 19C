@@ -778,31 +778,40 @@ Import the same data into the target database as the EMPLOYEES table in the sour
 Migrate data using the Oracle Data Pump utility for exporting and importing data in Oracle Database. 
 First, create a directory, grant permissions, and then export with the expdp command.
 
-[oracle@ol711g ~]$ expdp system/oracle directory=dp_dir dumpfile=hr.dmp logfile=hr.log tables=hr.employees content=metadata_only
+[oracle@ol711g ~]$ expdp system/oracle directory=dp_dir dumpfile=hr.dmp logfile=hr.log schemas=hr content=metadata_only
 
-Export: Release 11.2.0.4.0 - Production on Sat Mar 6 10:21:03 2021
+Export: Release 11.2.0.4.0 - Production on Sun Mar 7 09:23:55 2021
 
 Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
 
 Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
 With the Partitioning, OLAP, Data Mining and Real Application Testing options
 FLASHBACK automatically enabled to preserve database integrity.
-Starting "SYSTEM"."SYS_EXPORT_TABLE_01":  system/******** directory=dp_dir dumpfile=hr.dmp logfile=hr.log tables=hr.employees content=metadata_only
-Processing object type TABLE_EXPORT/TABLE/PROCACT_INSTANCE
-Processing object type TABLE_EXPORT/TABLE/TABLE
-Processing object type TABLE_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
-Processing object type TABLE_EXPORT/TABLE/COMMENT
-Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
-Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
-Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
-Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
-Processing object type TABLE_EXPORT/TABLE/TRIGGER
-Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
-Master table "SYSTEM"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+Starting "SYSTEM"."SYS_EXPORT_SCHEMA_01":  system/******** directory=dp_dir dumpfile=hr.dmp logfile=hr.log schemas=hr content=metadata_only
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/PROCACT_INSTANCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/PROCEDURE/PROCEDURE
+Processing object type SCHEMA_EXPORT/PROCEDURE/ALTER_PROCEDURE
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Master table "SYSTEM"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
 ******************************************************************************
-Dump file set for SYSTEM.SYS_EXPORT_TABLE_01 is:
+Dump file set for SYSTEM.SYS_EXPORT_SCHEMA_01 is:
   /home/oracle/dp_dir/hr.dmp
-Job "SYSTEM"."SYS_EXPORT_TABLE_01" successfully completed at Sat Mar 6 10:21:14 2021 elapsed 0 00:00:10
+Job "SYSTEM"."SYS_EXPORT_SCHEMA_01" successfully completed at Sun Mar 7 09:24:27 2021 elapsed 0 00:00:31
 
 ############################################################################################################################################################
 # ON ORACLE DATABASE 19C MACHINE #
@@ -818,27 +827,7 @@ hr.dmp                                                                       100
 #NOTE
 Import with the impdp command.
 
-[oracle@ol7db1 ~]$ impdp system/oracle@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users tables=hr.employees
 
-Import: Release 19.0.0.0.0 - Production on Sat Mar 6 10:30:41 2021
-Version 19.3.0.0.0
-
-Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
-
-Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-Master table "SYSTEM"."SYS_IMPORT_TABLE_01" successfully loaded/unloaded
-Starting "SYSTEM"."SYS_IMPORT_TABLE_01":  system/********@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users tables=hr.employees
-Processing object type TABLE_EXPORT/TABLE/PROCACT_INSTANCE
-Processing object type TABLE_EXPORT/TABLE/TABLE
-Processing object type TABLE_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
-Processing object type TABLE_EXPORT/TABLE/COMMENT
-Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
-Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
-Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
-Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
-Processing object type TABLE_EXPORT/TABLE/TRIGGER
-Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
-Job "SYSTEM"."SYS_IMPORT_TABLE_01" completed with 6 error(s) at Sat Mar 6 10:31:09 2021 elapsed 0 00:00:20
 
 #GRANT ACCESS TO TARGET TABLE $
 
