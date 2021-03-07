@@ -827,7 +827,92 @@ hr.dmp                                                                       100
 #NOTE
 Import with the impdp command.
 
+[oracle@ol7db1 ~]$ impdp system/oracle@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users schemas=hr
 
+Import: Release 19.0.0.0.0 - Production on Sun Mar 7 09:35:09 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Master table "SYSTEM"."SYS_IMPORT_SCHEMA_01" successfully loaded/unloaded
+Starting "SYSTEM"."SYS_IMPORT_SCHEMA_01":  system/********@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users schemas=hr
+Processing object type SCHEMA_EXPORT/USER
+ORA-31684: Object type USER:"HR" already exists
+
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/PROCACT_INSTANCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT REFERENCES ON "HR"."COUNTRIES" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT SELECT ON "HR"."COUNTRIES" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT SELECT ON "HR"."JOB_HISTORY" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT REFERENCES ON "HR"."EMPLOYEES" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT SELECT ON "HR"."EMPLOYEES" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT SELECT ON "HR"."JOBS" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT SELECT ON "HR"."LOCATIONS" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT REFERENCES ON "HR"."LOCATIONS" TO "OE"
+
+ORA-39083: Object type OBJECT_GRANT failed to create with error:
+ORA-01917: user or role 'OE' does not exist
+
+Failing sql is:
+GRANT SELECT ON "HR"."DEPARTMENTS" TO "OE"
+
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/PROCEDURE/PROCEDURE
+Processing object type SCHEMA_EXPORT/PROCEDURE/ALTER_PROCEDURE
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Job "SYSTEM"."SYS_IMPORT_SCHEMA_01" completed with 10 error(s) at Sun Mar 7 09:35:38 2021 elapsed 0 00:00:22
 
 #GRANT ACCESS TO TARGET TABLE $
 
