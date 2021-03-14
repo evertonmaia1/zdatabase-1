@@ -2,6 +2,63 @@
 # POSTGRES 13 JSONB #
 #####################
 
+#NOSQL IN POSTGRES EVOLUTION
+
+HSTORE - 2003
+● Perl-like hash storage
+● No nesting, no arrays
+● Indexing
+
+JSON - 2012
+● Textual storage
+● JSON validation
+
+JSONB - 2014
+● Binary storage
+● Nesting objects & arrays
+● Indexing
+
+JSONPATH - 2019
+● SQL/JSON — 2016
+● Indexing
+
+SQL/JSON — 202?
+● Complete SQL/JSON
+● Better indexing, syntax
+
+#JSON TYPES
+
+Jsonb vs Json
+SELECT j::json AS json, j::jsonb AS jsonb FROM
+(SELECT '{"cc":0, "aa": 2, "aa":1,"b":1}' AS j) AS foo;
+ json | jsonb
+----------------------------------+----------------------------
+{"cc":0, "aa": 2, "aa":1,"b":1} | {"b": 1, "aa": 1, "cc": 0}
+• json: textual storage «as is»
+• jsonb: binary storage, no need to parse, has index support
+• jsonb: no whitespaces, no duplicated keys (last key win)
+• jsonb: keys are sorted by (length, key)
+• jsonb: a rich set of functions (\df jsonb*), "arrow" operators
+• jsonb: great performance, thanks to indexes
+• JsQuery ext. - json query language with GIN indexing support
+
+#JSON PATH
+• JSON Path expression specify the parts of json. It is
+an optional path mode 'strict' or 'lax' (default), followed by a path or
+unary/binary expression on paths. Path is a sequence of path elements,
+started from path variable, path literal or expression in parentheses and
+zero or more operators ( JSON accessors, filters, and item methods )
+
+#SQL/JSON STANDARD CONFORMANCE
++----------------+------------------------------+-----------------------+-------------------------------+-------------------------------+
+SQL/JSON feature | PostgreSQL 12		| Oracle 18c		| MySQL 8.0.4			| SQL Server 2017		|
++----------------+------------------------------+-----------------------+-------------------------------+-------------------------------+
+JSON PATH :15	 | 15/15 			| 11/15 		| 5/15 				| 2/15				|
++----------------+------------------------------+-----------------------+-------------------------------+-------------------------------+
+ PostgreSQL 13 has the best implementation of JSON Path 
+
+#EXAMPLE WORKING WITH JSONB
+
 #CREATE TABLE AND INSERT VALUES
 
 postgres=# drop table books cascade;
@@ -52,5 +109,7 @@ Triggers:
     trg_gen_md5 BEFORE INSERT OR UPDATE ON books FOR EACH ROW EXECUTE FUNCTION fn_gen_md5()
 Access method: heap
 
-download file and run inserts https://github.com/danilo19ee/zdatabase/blob/master/POSTGRES/TRAINING/LOAD%20BOOK%20INSERTS
+download file and run inserts https://github.com/danilo19ee/zdatabase/blob/master/POSTGRES/TRAINING/LOAD%20BOOK%20INSERTS%20JSONB
+
+
 
