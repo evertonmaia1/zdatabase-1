@@ -1,0 +1,56 @@
+#####################
+# POSTGRES 13 JSONB #
+#####################
+
+#CREATE TABLE AND INSERT VALUES
+
+postgres=# drop table books cascade;
+
+postgres=# drop sequence serial_books;
+
+postgres=# drop function fn_gen_md5();
+
+postgres=# CREATE SEQUENCE serial_books INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1 NO CYCLE;
+
+postgres=# CREATE TABLE books (serial numeric(100) NOT NULL DEFAULT nextval('serial_books'::regclass), title VARCHAR (255), attr jsonb, timestamp timestamp, hashmd5 CHARACTER VARYING(256) PRIMARY KEY);
+
+postgres=# CREATE OR REPLACE FUNCTION fn_gen_md5()
+RETURNS TRIGGER AS
+$BODY$
+	BEGIN
+		IF (NEW.hashmd5 IS NOT NULL AND TG_OP='INSERT')
+	    THEN
+	      RAISE EXCEPTION 'cannot insert into the column "hashmd5". It''s a generated column';
+	    ELSEIF (TG_OP='UPDATE' AND NEW.hashmd5 <> OLD.hashmd5)
+	    THEN
+		      RAISE EXCEPTION 'cannot update the column "hashmd5". It''s a generated column';
+	    END IF;
+		NEW.hashmd5=md5(NEW.title||NEW.attr);
+		RETURN NEW;
+	END;
+$BODY$
+LANGUAGE plpgsql;
+
+postgres=# CREATE TRIGGER trg_gen_md5
+	BEFORE INSERT OR UPDATE
+	ON books
+	FOR EACH ROW
+	EXECUTE FUNCTION fn_gen_md5();
+
+jsonb=# \d+ books
+                                                            Table "public.books"
+  Column   |            Type             | Collation | Nullable |              Default              | Storage  | Stats target | Description 
+-----------+-----------------------------+-----------+----------+-----------------------------------+----------+--------------+-------------
+ serial    | numeric(100,0)              |           | not null | nextval('serial_books'::regclass) | main     |              | 
+ title     | character varying(255)      |           |          |                                   | extended |              | 
+ attr      | jsonb                       |           |          |                                   | extended |              | 
+ timestamp | timestamp without time zone |           |          |                                   | plain    |              | 
+ hashmd5   | character varying(256)      |           | not null |                                   | extended |              | 
+Indexes:
+    "books_pkey" PRIMARY KEY, btree (hashmd5)
+Triggers:
+    trg_gen_md5 BEFORE INSERT OR UPDATE ON books FOR EACH ROW EXECUTE FUNCTION fn_gen_md5()
+Access method: heap
+
+download file and run inserts https://github.com/danilo19ee/zdatabase/blob/master/POSTGRES/TRAINING/LOAD%20BOOK%20INSERTS
+
