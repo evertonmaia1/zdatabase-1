@@ -57,6 +57,31 @@ JSON PATH :15	 | 15/15 			| 11/15 		| 5/15 				| 2/15				|
 +----------------+------------------------------+-----------------------+-------------------------------+-------------------------------+
  PostgreSQL 13 has the best implementation of JSON Path 
 
+#JSONB OPERATORS & FUNCTIONS
+
+----------------+-------------------------------------------------------------------------------------------------------------------------------------------------
+Operator	|	Description								
+----------------+-------------------------------------------------------------------------------------------------------------------------------------------------
+->	Get JSON array element (indexed from zero, negative integers count from the end)
+->	Get JSON object field by key
+->>	Get JSON array element as text
+->>	Get JSON object field as text
+#>	Get JSON object at the specified path
+#>>	Get JSON object at the specified path as text
+@>	Does the left JSON value contain the right JSON path/value entries at the top level?
+<@	Are the left JSON path/value entries contained at the top level within the right JSON value?
+?	Does the string exist as a top-level key within the JSON value?
+?|	Do any of these array strings exist as top-level keys?
+?&	Do all of these array strings exist as top-level keys?
+||	Concatenate two jsonb values into a new jsonb value
+-	Delete key/value pair or string element from left operand. Key/value pairs are matched based on their key value.
+-	Delete multiple key/value pairs or string elements from left operand. Key/value pairs are matched based on their key value.
+-	Delete the array element with specified index (Negative integers count from the end). Throws an error if top level container is not an array.
+#-	Delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+@?	Does JSON path return any item for the specified JSON value?
+@@	Returns the result of JSON path predicate check for the specified JSON value. Only the first item of the result is taken into account. If the result is not Boolean, then null is returned.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 #EXAMPLE WORKING WITH JSONB
 
 #CREATE TABLE AND INSERT VALUES
