@@ -136,5 +136,87 @@ Access method: heap
 
 download file and run inserts https://github.com/danilo19ee/zdatabase/blob/master/POSTGRES/TRAINING/LOAD%20BOOK%20INSERTS%20JSONB
 
+postgres=#\timing
+Timing is on.
 
+postgres=# SELECT attr FROM books limit 10;
+		attr                           
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"isbn": "1933988673", "status": "PUBLISH", "authors": ["W. Frank Ableson", "Charlie Collins", "Robi Sen"], "pageCount": "416", "categories": "Open Source,Mobile", "thumbnailUrl":
+ "s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ableson.jpg", "publishedDate": "2009-04-01T00:00:00.000-0700"}
+ {"isbn": "1935182722", "status": "PUBLISH", "authors": ["W. Frank Ableson", "Robi Sen"], "pageCount": "592", "categories": "Java", "thumbnailUrl": "s3.amazonaws.com/AKIAJC5RLADLUM
+VRPFDQ.book-thumb-images/ableson2.jpg", "publishedDate": "2011-01-14T00:00:00.000-0800"}
+ {"isbn": "1617290084", "status": "PUBLISH", "authors": ["Gojko Adzic"], "pageCount": "0", "categories": "Software Engineering", "thumbnailUrl": "s3.amazonaws.com/AKIAJC5RLADLUMVRP
+FDQ.book-thumb-images/adzic.jpg", "publishedDate": "2011-06-03T00:00:00.000-0700"}
+ {"isbn": "1933988746", "status": "PUBLISH", "authors": ["Tariq Ahmed", "Jon Hirschi", "Faisal Abid"], "pageCount": "576", "categories": "Internet", "thumbnailUrl": "s3.amazonaws.c
+om/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ahmed.jpg", "publishedDate": "2009-02-02T00:00:00.000-0800"}
+ {"isbn": "1935182420", "status": "PUBLISH", "authors": ["Tariq Ahmed", "Dan Orlando", "John C. Bland II", "Joel Hooks"], "pageCount": "600", "categories": "Internet", "thumbnailUr
+l": "s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/ahmed2.jpg", "publishedDate": "2010-11-15T00:00:00.000-0800"}
+ {"isbn": "1933988312", "status": "PUBLISH", "authors": ["Satnam Alag"], "pageCount": "425", "categories": "Internet", "thumbnailUrl": "s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-t
+humb-images/alag.jpg", "publishedDate": "2008-10-01T00:00:00.000-0700"}
+ {"isbn": "1933988320", "status": "PUBLISH", "authors": ["Rob Allen", "Nick Lo,Steven Brown"], "pageCount": "432", "categories": "Web Development", "thumbnailUrl": "s3.amazonaws.co
+m/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/allen.jpg", "publishedDate": "2008-12-01T00:00:00.000-0800"}
+ {"isbn": "1933988797", "status": "PUBLISH", "authors": ["Bernerd Allmon", "Jeremy Anderson"], "pageCount": "265", "categories": "Internet", "thumbnailUrl": "s3.amazonaws.com/AKIAJ
+C5RLADLUMVRPFDQ.book-thumb-images/allmon.jpg", "publishedDate": "2010-10-15T00:00:00.000-0700"}
+ {"isbn": "1935182234", "status": "PUBLISH", "authors": ["Andres Almiray", "Danno Ferrin", "James Shingler"], "pageCount": "375", "categories": "Java", "thumbnailUrl": "s3.amazonaw
+s.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/almiray.jpg", "publishedDate": "2012-06-04T00:00:00.000-0700"}
+ {"isbn": "193518217X", "status": "PUBLISH", "authors": ["Alexandre de Castro Alves"], "pageCount": "325", "categories": "Java", "thumbnailUrl": "s3.amazonaws.com/AKIAJC5RLADLUMVRP
+FDQ.book-thumb-images/alves.jpg", "publishedDate": "2011-12-12T00:00:00.000-0800"}
+(10 rows)
 
+Time: 0,400 ms
+
+postgres=# EXPLAIN ANALYSE SELECT attr FROM books;
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Seq Scan on books  (cost=0.00..14.98 rows=98 width=32) (actual time=0.013..0.201 rows=285 loops=1)
+ Planning Time: 0.057 ms
+ Execution Time: 0.274 ms
+(3 rows)
+
+#QUERY VALUE FOR A SPECIFIC KEY
+
+postgres=# SELECT attr -> 'isbn' AS isbn FROM books limit 10;
+     isbn     
+--------------
+ "1933988673"
+ "1935182722"
+ "1617290084"
+ "1933988746"
+ "1935182420"
+ "1933988312"
+ "1933988320"
+ "1933988797"
+ "1935182234"
+ "193518217X"
+(10 rows)
+
+Time: 0,386 ms
+
+postgres=# explain analyse SELECT attr -> 'isbn' AS isbn FROM books;
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Seq Scan on books  (cost=0.00..15.22 rows=98 width=32) (actual time=0.018..0.139 rows=285 loops=1)
+ Planning Time: 0.055 ms
+ Execution Time: 0.163 ms
+(3 rows)
+
+jsonb=# SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' ? '1933988797';
+    title     |                authors                
+--------------+---------------------------------------
+ Flex on Java | ["Bernerd Allmon", "Jeremy Anderson"]
+(1 row)
+
+Time: 0,467 ms
+
+jsonb=# explain analyse SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' ? '1933988797';
+                                            QUERY PLAN                                            
+--------------------------------------------------------------------------------------------------
+ Seq Scan on books  (cost=0.00..15.47 rows=1 width=548) (actual time=0.019..0.136 rows=1 loops=1)
+   Filter: ((attr -> 'isbn'::text) ? '1933988797'::text)
+   Rows Removed by Filter: 284
+ Planning Time: 0.082 ms
+ Execution Time: 0.215 ms
+(5 rows)
+
+Time: 0,863 ms
