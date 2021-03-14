@@ -201,6 +201,8 @@ postgres=# explain analyse SELECT attr -> 'isbn' AS isbn FROM books;
  Execution Time: 0.163 ms
 (3 rows)
 
+####
+
 jsonb=# SELECT title, attr -> 'authors' AS authors FROM books WHERE attr -> 'isbn' ? '1933988797';
     title     |                authors                
 --------------+---------------------------------------
@@ -220,3 +222,28 @@ jsonb=# explain analyse SELECT title, attr -> 'authors' AS authors FROM books WH
 (5 rows)
 
 Time: 0,863 ms
+
+jsonb=# CREATE INDEX idx_books_attr_gin ON books USING gin (attr);
+CREATE INDEX
+Time: 6,243 ms
+
+jsonb=# CREATE INDEX idx_books_attr_gin_jsonbops ON books USING GIN (attr jsonb_ops);
+CREATE INDEX
+Time: 6,869 ms
+
+jsonb=# CREATE INDEX idx_books_attr_ginpathops ON books USING gin (attr jsonb_path_ops);
+CREATE INDEX
+Time: 3,605 ms
+
+jsonb=# CREATE INDEX idx_books_attr_isbn_btree ON books USING BTREE ((attr->>'isbn'));
+CREATE INDEX
+Time: 2,971 ms
+
+jsonb=# CREATE INDEX idx_books_attr_isbn_hash ON books USING HASH ((attr->>'isbn'));
+CREATE INDEX
+Time: 1,717 ms
+
+jsonb=# CREATE INDEX idx_books_attr_isbn_gin ON books USING gin ((attr->'isbn'));
+CREATE INDEX
+Time: 3,835 ms
+
