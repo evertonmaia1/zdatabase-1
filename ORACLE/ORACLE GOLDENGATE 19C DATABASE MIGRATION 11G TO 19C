@@ -979,10 +979,262 @@ Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
 
 
 
-GGSCI (ol7gghub) 1>
+GGSCI (ol7gghub) 1>  start replicat rep01
+Sending START request to MANAGER ...
+REPLICAT REP01 starting
+
+GGSCI (ol7gghub) 2> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+MANAGER     RUNNING
+JAGENT      STOPPED
+PMSRVR      STOPPED
+EXTRACT     RUNNING     EXT01       00:00:04      00:00:03
+REPLICAT    RUNNING     REP01       00:00:00      00:00:09
+
+GGSCI (ol7gghub) 3> exit
+
+#CONFIRMATION OF REPLICATION
+
+#NOTE
+Insert a row into her Employees table in the source database HR schema
+
+[oracle@ol7gghub 11.2]$ sqlplus system/oracle@APPSCDB_11G
+
+SQL*Plus: Release 11.2.0.4.0 Production on Tue Mar 2 15:29:37 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> INSERT INTO employees VALUES ( 211, 'Lawrence', 'Ellison', 'LELRISON', '515.123.8181',  TO_DATE('07-06-2002', 'dd-MM-yyyy'), 'AC_ACCOUNT', 8300, NULL, 205, 110);
+
+SQL> commit;
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+[oracle@ol7gghub 19.3]$ sqlplus system/oracle@APPSPDB_19C
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat Mar 6 10:33:46 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> select * from employees where employee_id=211;
+
+EMPLOYEE_ID FIRST_NAME LAST_NAME EMAIL     PHONE_NUMBER HIRE_DATE JOB_ID      SALARY  COMMISSION_PCT MANAGER_ID DEPARTMENT_ID
+----------- ---------- --------- --------- ------------ --------- ----------- ------- -------------- ---------- ------------------
+207         Lawrence   Ellison   LELLISON  515.123.8181 07-JUN-02 AC_ACCOUNT  8300                   205        110
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+############################################################################################################################################################
+# OPERATION, MONITORING, MANAGEMENT GOLDENGATE PROCESS #
+########################################################
+
+#NOTE
+Below some examples of main commands used when using GG.
+
+#MAIN MANAGEMENT COMMANDS FOR THE MANAGER PROCESS
+
+START MANAGER	  | Start the Manager process
+STOP MANAGER	  | Stop the Manager process
+INFO MANAGER	  | Check information about Manager ports and child processes
+
+#MAIN MANAGEMENT COMMANDS FOR THE EXTRACT PROCESS
+
+ADD EXTRACT	  | Create Extract group
+ALTER EXTRACT	  | Change Extract group
+DELETE EXTRACT	  | Delete Extract group
+INFO EXTRACT 	  | Check information about Extract group
+LAG EXTRACT 	  | Check information about Extract lag
+REGISTER EXTRACT  | Register Extract group with Oracle database
+START EXTRACT	  | Start Extract group
+STOP EXTRACT 	  | Stop Extract group
+
+#MAIN MANAGEMENT COMMANDS FOR THE REPLICAT PROCESS
+
+ADD REPLICAT	  | Create Replicat group
+ALTER REPLICAT	  | Change Replicat group
+DELETE REPLICAT	  | Delete the Replicat group
+INFO REPLICAT	  | Check information about the Replicat group
+LAG REPLICAT 	  | Check information about lag in Replicat
+REGISTER REPLICAT | Register the Replicat group with the Oracle database
+START REPLICAT 	  | Start Replicat group
+STOP REPLICAT 	  | Stop the Replicat group
+
+#GOLDENGATE MONITORING
+
+#NOTE
+Checking the operating status of the GG process
+You can check the operating status of the GG process with the Info all command. If it is RUNNING, it is running.
+
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME19C
+[oracle@ol7gghub 19.3]$ ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
 
 
 
+GGSCI (ol7gghub) 1> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+MANAGER     RUNNING
+JAGENT      STOPPED
+PMSRVR      STOPPED
+EXTRACT     RUNNING     EXT01       00:00:02      00:00:05
+REPLICAT    RUNNING     REP01       00:00:00      50:06:30
+
+GGSCI (ol7gghub) 2> exit
+
+#CHECKING THE ERROR LOG
+
+#NOTE
+The error log is output directly under $ OGG_HOME. ($OGG_HOME/gsserr.log)
+
+⬧ GGSCI command history
+⬧ Oracle GoldenGate process started and stopped
+⬧ Process executed
+⬧ Error that occurred (ERROR)
+⬧ Informational and warning messages (INFO / WARNING)
+
+#REVIEW PROCESS REPORT
+
+#NOTE
+
+A report is output for each process in the dirrpt directory of $OGG_HOME. 
+All Extract, Replicat and Manager programs
+Rothes will generate a report file. 
+This report describes problems that occurred during execution (invalid mapping syntax, SQL errors, connection errors, etc.)
+Useful for diagnosing.
+
+⬧ Parameters in use
+⬧ Table and column mapping
+⬧ Database information
+⬧ Runtime messages and errors
+⬧ Runtime statistics on the number of operations processed
+
+#CONFIGURATION OF DISCARDED FILES
+
+#NOTE
+A discard file is output to the dirrpt directory of $OGG_HOME. 
+The discard file is for a failed Oracle GoldenGate operation
+Get information. This information is useful for resolving data errors, such as errors related to invalid column mappings.
+
+⬧ Database error message
+⬧ Data source or trail file sequence number
+⬧ Relative byte address of a record in a data source or trail file
+⬧ Discarded operation details (such as column values in DML statements and text in DDL statements)
+
+#LAG MONITORING
+You can see if the GG process is working properly to keep up with the amount of data updated in the source database. Table of lag statistics
+To indicate, use the LAG or SEND command with GGSCI. It can be run against Extract and Replicat processes.
+
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+[oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+[oracle@ol7gghub ~]$ cd $OGG_HOME19C
+[oracle@ol7gghub 19.3]$ ./ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
 
 
+
+GGSCI (ol7gghub) 1> dblogin useridalias src_db
+GGSCI (ol7gghub as ggadmin@appscdb1) 2> lag ext01
+Sending GETLAG request to EXTRACT EXT01 ...
+Last record lag 2 seconds.
+
+GGSCI (ol7gghub as ggadmin@appscdb1) 3> exit
+
+Another option is to use an automatic heartbeat table to see a consistent lag from source to target. Please refer to the following manual for details.
+https://docs.oracle.com/cd/F22974_01/admin/monitoring-oracle-goldengate-processing.html
+
+#TROUBLESHOOTING
+
+#NOTE
+
+➢ It becomes STOPPED after a while after the process starts.
+Corrective action: Check the commands and reports introduced in Chapter 5.2 to investigate the cause.
+
+➢ Extract does not start on OGG-02028, ORA-03113.
+Corrective action: Execute postinstall.sql of the patch applied to Oracle Database at the end.
+Reference: https://support.oracle.com/epmos/faces/DocContentDisplay? id = 2148602.1
+
+#APPENDIX: INSTANTIATION CSN FUNCTION
+
+#NOTE
+The biggest advantage of using GG during migration is that the migration can be achieved without system interruption. 
+In the process, initialize the data in the target database
+When migrating, the user had to be aware of the system cross section. 
+However, his GG instantiation CSN machine used in this document
+The function makes it easy for the user to make an initial transition with little awareness of the system cross section.
+Note: CSN: Commit Sequence Number (GoldenGate terminology) SCN: System Change Number (Oracle terminology)
+
+#THINGS TO CONSIDER WHEN MAKING AN INITIAL TRANSACTION WITHOUT INTERRUPTION
+
+#NOTE
+When making an initial transition without interruption, the following should be considered for the system cross section.
+
+-When extracting data from the source database where transactions are always occurring, at what point does the file hold the data?
+· At what point in time should the GG Replicat process start updating after putting the extracted data into the target database?
+
+#WHAT IS AN INSTANTIATED CSN?
+GG instantiation CSN feature works with Oracle Data Pump (Oracle Database data export / import utility)
+By doing so, the SCN of each table is retained in the dump file or the imported table, so the GG automatically determines when to apply the data.
+
+For details on this function, refer to the following materials.
+https://docs.oracle.com/cd/F22974_01/admin/instantiating-oracle-goldengate-initial-load.html#GUID-54ADB469-6739-4198-B093-0EDE9B442B40
+
+· Chapter 4.3.2: Set to record instantiated CSN
+• Chapter 4.6.3: ENABLE_INSTANTIATION_FILTERING parameter specifies that Replicat uses instantiated CSN
+・ Chapter 4.7.1: Data extraction at the initial load does not need to be aware of the SCN of each table.
+
+#COMPARISON WITH THE CONVENTIONAL INITIAL MIGRATION METHOD
+
+#NOTE
+By using the instance CSN method, 
+it is possible to perform initial migration more easily than the initial migration method that has been used in the past.
+
+Conventional initial migration method			Explanation of each method			                   Benefits of Instance CSN
+------------------------------------------------------- ------------------------------------------------------------------ ---------------------------------------------
+Flashback_scn Specified export				Specify Flashback_scn when exporting Data Pump			   Recognizes the SCN of each table and automatically
+							At the time of the SCN specified internally using Flashback Query  The following is a method of synchronizing
+							This is a method for exporting data. UNDO for flashback function   There are merits of.
+							You need data, so you need to consider undo management.            -SCN of each table at the time of export
+															   No need to be aware of
+Handlecollisions Use of parameters			By specifying the Handlecollisions parameter of Replicat,          -Additional management of UNDO area
+							How Replicat catches up while ignoring duplicate updates           No need to consider
+							is. There is no primary key because it is judged by the primary    ・ Initial migration method with or without primary key
+							key whether it is a duplicate line                                 No need to change the formula
+							For the table, it is necessary to consider migrating it            ・ Additional resources must be prepared 
+							by another method.                                                 No need
+
+Building a clone DB					Online backup / restore / recovery with a certain cross section
+							Create a database and export data from the clone database.
+							Su. You need to prepare additional resources 
+							to build your environment.
 
