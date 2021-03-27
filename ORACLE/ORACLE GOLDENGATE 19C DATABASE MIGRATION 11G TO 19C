@@ -1020,7 +1020,7 @@ Connected to:
 Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
 With the Partitioning, OLAP, Data Mining and Real Application Testing options
 
-SQL> INSERT INTO employees VALUES ( 211, 'Lawrence', 'Ellison', 'LELRISON', '515.123.8181',  TO_DATE('07-06-2002', 'dd-MM-yyyy'), 'AC_ACCOUNT', 8300, NULL, 205, 110);
+SQL> INSERT INTO HR.EMPLOYEES VALUES ( 211, 'Lawrence', 'Ellison', 'LELRISON', '515.123.8181',  TO_DATE('07-06-2002', 'dd-MM-yyyy'), 'AC_ACCOUNT', 8300, NULL, 205, 110);
 
 SQL> commit;
 
@@ -1040,7 +1040,7 @@ Connected to:
 Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.3.0.0.0
 
-SQL> select * from employees where employee_id=211;
+SQL> select * from HR.EMPLOYEES where employee_id=211;
 
 EMPLOYEE_ID FIRST_NAME LAST_NAME EMAIL     PHONE_NUMBER HIRE_DATE JOB_ID      SALARY  COMMISSION_PCT MANAGER_ID DEPARTMENT_ID
 ----------- ---------- --------- --------- ------------ --------- ----------- ------- -------------- ---------- ------------------
