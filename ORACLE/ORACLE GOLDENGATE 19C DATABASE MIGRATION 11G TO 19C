@@ -1176,14 +1176,14 @@ Get information. This information is useful for resolving data errors, such as e
 You can see if the GG process is working properly to keep up with the amount of data updated in the source database. Table of lag statistics
 To indicate, use the LAG or SEND command with GGSCI. It can be run against Extract and Replicat processes.
 
-[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
+[oracle@ol7gghub ~]$ export ORACLE_HOME=/u01/app/oracle/product/11.2.0.4/dbhome_1/
 [oracle@ol7gghub ~]$ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
-[oracle@ol7gghub ~]$ cd $OGG_HOME19C
-[oracle@ol7gghub 19.3]$ ./ggsci
+[oracle@ol7gghub ~]$ cd $OGG_HOME11G
+[oracle@ol7gghub 11.2]$ ./ggsci
 
 Oracle GoldenGate Command Interpreter for Oracle
 Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
-Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Linux, x64, 64bit (optimized), Oracle 11g on Oct 17 2019 23:13:12
 Operating system character set identified as UTF-8.
 
 Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
@@ -1191,9 +1191,12 @@ Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
 
 
 GGSCI (ol7gghub) 1> dblogin useridalias src_db
+Successfully logged into database.
+
 GGSCI (ol7gghub as ggadmin@appscdb1) 2> lag ext01
+
 Sending GETLAG request to EXTRACT EXT01 ...
-Last record lag 2 seconds.
+Last record lag 4 seconds.
 
 GGSCI (ol7gghub as ggadmin@appscdb1) 3> exit
 
