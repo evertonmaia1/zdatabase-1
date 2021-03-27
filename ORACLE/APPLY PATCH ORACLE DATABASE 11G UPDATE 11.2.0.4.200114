@@ -1,0 +1,512 @@
+##########################################################
+# APPLY PATCH ORACLE DATABASE 11G UPDATE 11.2.0.4.200114 #
+##########################################################
+
+#ERROR
+2021-03-07T09:47:51.521-0300  WARNING OGG-02901  Oracle GoldenGate Capture for Oracle, ext01.prm:  Replication of UDT and ANYDATA from redo logs is not supported with the Oracle compatible parameter setting. Using fetch instead.
+2021-03-07T09:47:51.521-0300  INFO    OGG-02776  Oracle GoldenGate Capture for Oracle, ext01.prm:  Native data capture is enabled for Oracle NUMBER data type.
+2021-03-07T09:47:51.521-0300  INFO    OGG-01971  Oracle GoldenGate Capture for Oracle, ext01.prm:  The previous message, 'INFO OGG-02776', repeated 1 times.
+2021-03-07T09:47:51.521-0300  ERROR   OGG-02912  Oracle GoldenGate Capture for Oracle, ext01.prm:  Patch 17030189 is required on your Oracle mining database for trail format RELEASE 12.2 or later.
+2021-03-07T09:47:51.532-0300  ERROR   OGG-01668  Oracle GoldenGate Capture for Oracle, ext01.prm:  PROCESS ABENDING.
+
+#CREATE DIRECTORY FOR APPLY PATCH
+
+[oracle@ol711g ~]$ mkdir -p /home/oracle/pa; cd /home/oracle/pa
+
+#PREREQUISITE PATCHES Patch Patch 30298532: DATABASE PATCH SET UPDATE 11.2.0.4.200114
+This Patch has been Superseded.
+Replacement Options (Patches or Patchsets known to Include or Supersede this Patch)
+		
+30670774	DATABASE PATCH SET UPDATE 11.2.0.4.200414	Patch
+31537677	DATABASE PATCH SET UPDATE 11.2.0.4.201020	Patch
+
+#DOWNLOAD Patch 17030189: LOGMINER GG DICTIONARY SUPPORT : MISSING ATTRIBUTES
+ 
+#UNCOMPRESS
+[oracle@ol711g pa]$ unzip p17030189_112040_Generic.zip
+Archive:  p17030189_112040_Generic.zip
+   creating: 17030189/
+  inflating: 17030189/postinstall.sql
+  inflating: 17030189/README.txt
+   creating: 17030189/files/
+   creating: 17030189/files/sqlpatch/
+   creating: 17030189/files/sqlpatch/17030189/
+  inflating: 17030189/files/sqlpatch/17030189/postinstall.sql
+  inflating: 17030189/files/sqlpatch/17030189/postdeinstall.sql
+   creating: 17030189/files/rdbms/
+   creating: 17030189/files/rdbms/admin/
+  inflating: 17030189/files/rdbms/admin/bug17030189_rollback.sql
+  inflating: 17030189/files/rdbms/admin/prvtlmcb.plb
+   creating: 17030189/etc/
+   creating: 17030189/etc/xml/
+  inflating: 17030189/etc/xml/ShiphomeDirectoryStructure.xml
+  inflating: 17030189/etc/xml/GenericActions.xml
+   creating: 17030189/etc/config/
+  inflating: 17030189/etc/config/deploy.xml
+  inflating: 17030189/etc/config/actions.xml
+  inflating: 17030189/etc/config/inventory.xml
+  inflating: 17030189/postdeinstall.sql
+  inflating: PatchSearch.xml
+
+[oracle@ol711g pa]$ ls -ltr
+total 68
+drwxrwxr-x 4 oracle oinstall  4096 May 17  2017 17030189
+-rw-rw-r-- 1 oracle oinstall  2488 May 17  2017 PatchSearch.xml
+-rw-r--r-- 1 oracle oinstall 59941 Mar  8 14:09 p17030189_112040_Generic.zip
+
+[oracle@ol711g pa]$ cd 17030189
+
+#CHECK PATCHES STATUS BEFORE APPLY USING BELLOW QUERY
+
+[oracle@ol711g 17030189]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Mar 27 18:30:01 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> set lines 300 pages 100
+
+SQL> col ACTION_TIME for a35
+col ACTION for a20
+col NAMESPACE for a20
+col VERSION for a20
+col BUNDLE_SERIES for a20
+col COMMENTS for a65SQL> SQL> SQL> SQL> SQL>
+
+SQL> select * from DBA_REGISTRY_HISTORY;
+
+ACTION_TIME                         ACTION               NAMESPACE            VERSION                      ID BUNDLE_SERIES        COMMENTS
+----------------------------------- -------------------- -------------------- -------------------- ---------- -------------------- -----------------------------------------------------------------
+24-AUG-13 12.03.45.119862 PM        APPLY                SERVER               11.2.0.4                      0 PSU                  Patchset 11.2.0.2.0
+28-FEB-21 04.08.22.086397 PM        APPLY                SERVER               11.2.0.4                      0 PSU                  Patchset 11.2.0.2.0
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+#TAKE BACKUP OF ORACLE_HOME AND DATABASE (Rollback plan)
+[oracle@ol711g 17030189]$ mkdir -p /home/oracle/bkpap/
+[oracle@ol711g 17030189]$ tar -czvf /home/oracle/bkpap/oracle_home_11.2.0.4_before_patch.tar.gz /u01/app/oracle/product/11.2.0.4/dbhome_1
+
+#SHUTDOWN DATABASE
+
+[oracle@ol711g 17030189]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Mar 27 18:42:01 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> shutdown immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+#STOP LISTNER
+
+[oracle@ol711g 17030189]$ lsnrctl stop
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 27-MAR-2021 18:43:13
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=EXTPROC1521)))
+The command completed successfully
+
+#EXPORT ENVIRONMENT VARIABLES
+
+[oracle@ol711g 17030189]$ export ORACLE_SID=appscdb1
+[oracle@ol711g 17030189]$ export ORACLE_HOME=/u01/app/oracle/product/11.2.0.4/dbhome_1
+[oracle@ol711g 17030189]$ export PATH=/u01/app/oracle/product/11.2.0.4/dbhome_1/OPatch/:$PATH
+
+[oracle@ol711g 17030189]$ opatch apply
+Oracle Interim Patch Installer version 11.2.0.3.4
+Copyright (c) 2012, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/11.2.0.4/dbhome_1
+Central Inventory : /u01/app/oraInventory
+   from           : /u01/app/oracle/product/11.2.0.4/dbhome_1/oraInst.loc
+OPatch version    : 11.2.0.3.4
+OUI version       : 11.2.0.4.0
+Log file location : /u01/app/oracle/product/11.2.0.4/dbhome_1/cfgtoollogs/opatch/17030189_Mar_27_2021_18_45_18/apply2021-03-27_18-45-18PM_1.log
+
+Applying interim patch '17030189' to OH '/u01/app/oracle/product/11.2.0.4/dbhome_1'
+Verifying environment and performing prerequisite checks...
+All checks passed.
+Backing up files...
+
+Patching component oracle.rdbms.dbscripts, 11.2.0.4.0...
+
+Verifying the update...
+Patch 17030189 successfully applied
+Log file location: /u01/app/oracle/product/11.2.0.4/dbhome_1/cfgtoollogs/opatch/17030189_Mar_27_2021_18_45_18/apply2021-03-27_18-45-18PM_1.log
+
+OPatch succeeded.
+
+#STARTUP DATABASE
+
+[oracle@ol711g 17030189]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Mar 27 18:46:00 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup;
+ORACLE instance started.
+
+Total System Global Area 1620115456 bytes
+Fixed Size                  2253704 bytes
+Variable Size            1560284280 bytes
+Database Buffers           50331648 bytes
+Redo Buffers                7245824 bytes
+Database mounted.
+Database opened.
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+#START LISTENER 
+
+[oracle@ol711g 17030189]$ lsnrctl start
+
+LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 27-MAR-2021 18:46:59
+
+Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+
+Starting /u01/app/oracle/product/11.2.0.4/dbhome_1/bin/tnslsnr: please wait...
+
+TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+System parameter file is /u01/app/oracle/product/11.2.0.4/dbhome_1/network/admin/listener.ora
+Log messages written to /u01/app/oracle/diag/tnslsnr/ol711g/listener/alert/log.xml
+Listening on: (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=EXTPROC1521)))
+Listening on: (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=ol711g)(PORT=1521)))
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=EXTPROC1521)))
+STATUS of the LISTENER
+------------------------
+Alias                     LISTENER
+Version                   TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+Start Date                27-MAR-2021 18:46:59
+Uptime                    0 days 0 hr. 0 min. 0 sec
+Trace Level               off
+Security                  ON: Local OS Authentication
+SNMP                      OFF
+Listener Parameter File   /u01/app/oracle/product/11.2.0.4/dbhome_1/network/admin/listener.ora
+Listener Log File         /u01/app/oracle/diag/tnslsnr/ol711g/listener/alert/log.xml
+Listening Endpoints Summary...
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=EXTPROC1521)))
+  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=ol711g)(PORT=1521)))
+The listener supports no services
+The command completed successfully
+
+#VERIFY WHETHER THE PATCH HAS BEEN SUCCESSFULLY INSTALLED
+
+[oracle@ol711g 17030189]$ opatch lsinventory
+Oracle Interim Patch Installer version 11.2.0.3.4
+Copyright (c) 2012, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /u01/app/oracle/product/11.2.0.4/dbhome_1
+Central Inventory : /u01/app/oraInventory
+   from           : /u01/app/oracle/product/11.2.0.4/dbhome_1/oraInst.loc
+OPatch version    : 11.2.0.3.4
+OUI version       : 11.2.0.4.0
+Log file location : /u01/app/oracle/product/11.2.0.4/dbhome_1/cfgtoollogs/opatch/opatch2021-03-27_18-48-50PM_1.log
+
+Lsinventory Output file location : /u01/app/oracle/product/11.2.0.4/dbhome_1/cfgtoollogs/opatch/lsinv/lsinventory2021-03-27_18-48-50PM.txt
+
+--------------------------------------------------------------------------------
+Installed Top-level Products (1):
+
+Oracle Database 11g                                                  11.2.0.4.0
+There are 1 products installed in this Oracle Home.
+
+
+Interim patches (1) :
+
+Patch  17030189     : applied on Sat Mar 27 18:45:23 BRT 2021
+Unique Patch ID:  21118136
+   Created on 17 May 2017, 17:43:14 hrs PST8PDT
+   Bugs fixed:
+     17030189
+
+
+
+--------------------------------------------------------------------------------
+
+OPatch succeeded.
+
+#POSTINSTALLATION 
+
+[oracle@ol711g 17030189]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Mar 27 18:55:34 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> !ls -ltr
+total 32
+-rw-rw-r-- 1 oracle oinstall 6553 May 17  2017 postinstall.sql
+-rw-rw-r-- 1 oracle oinstall 6558 May 17  2017 postdeinstall.sql
+-rw-rw-r-- 1 oracle oinstall 6210 May 17  2017 README.txt
+drwxr-xr-x 4 oracle oinstall 4096 May 17  2017 files
+drwxr-xr-x 4 oracle oinstall 4096 May 17  2017 etc
+
+SQL> @postinstall.sql
+
+PL/SQL procedure successfully completed.
+
+
+Function created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Check /u01/app/oracle/cfgtoollogs/postinstall/postinstall_APPSCDB_2021Mar27_18_56_03.log for errors
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Procedure created.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+
+
+
+1 row selected.
+
+
+
+
+
+1 row selected.
+
+old   1: ALTER SESSION SET CURRENT_SCHEMA = &username
+new   1: ALTER SESSION SET CURRENT_SCHEMA = SYS
+
+Session altered.
+
+old   1: SELECT 'Calling &sf on ' || SYSTIMESTAMP FROM dual
+new   1: SELECT 'Calling ?/rdbms/admin/prvtlmcb.plb on ' || SYSTIMESTAMP FROM dual
+Calling ?/rdbms/admin/prvtlmcb.plb on 27-MAR-21 06.56.03.491598 PM -03:00
+
+1 row selected.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Procedure created.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Package body created.
+
+No errors.
+
+Procedure created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Trigger created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type dropped.
+
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Function created.
+
+No errors.
+
+Function created.
+
+No errors.
+
+Function created.
+
+No errors.
+
+Function created.
+
+No errors.
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+24-AUG-13 12.03.45.119862 PM
+APPLY                          SERVER
+11.2.0.4                                0
+Patchset 11.2.0.2.0
+PSU
+
+28-FEB-21 04.08.22.086397 PM
+APPLY                          SERVER
+11.2.0.4                                0
+
+Patchset 11.2.0.2.0
+PSU
+
+27-MAR-21 06.56.04.000000 PM
+APPLY
+                                 17030189
+Patch 17030189 applied
+
+
+
+3 rows selected.
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+#CHECK PATCHES STATUS BEFORE APPLY USING BELLOW QUERY
+
+[oracle@ol711g ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sat Mar 27 18:57:36 2021
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> set lines 300 pages 100
+SQL> col ACTION_TIME for a35
+col ACTION for a20
+col NAMESPACE for a20
+col VERSION for a20
+col BUNDLE_SERIES for a20
+col COMMENTS for a65SQL> SQL> SQL> SQL> SQL>
+SQL> select * from DBA_REGISTRY_HISTORY;
+
+ACTION_TIME                         ACTION               NAMESPACE            VERSION                      ID BUNDLE_SERIES        COMMENTS
+----------------------------------- -------------------- -------------------- -------------------- ---------- -------------------- -----------------------------------------------------------------
+24-AUG-13 12.03.45.119862 PM        APPLY                SERVER               11.2.0.4                      0 PSU                  Patchset 11.2.0.2.0
+28-FEB-21 04.08.22.086397 PM        APPLY                SERVER               11.2.0.4                      0 PSU                  Patchset 11.2.0.2.0
+27-MAR-21 06.56.04.000000 PM        APPLY                                                            17030189                      Patch 17030189 applied
+
+SQL> exit
+Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
