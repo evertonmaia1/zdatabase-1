@@ -859,8 +859,6 @@ Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Produc
 Master table "SYSTEM"."SYS_IMPORT_SCHEMA_01" successfully loaded/unloaded
 Starting "SYSTEM"."SYS_IMPORT_SCHEMA_01":  system/********@appspdb directory=dp_dir dumpfile=hr.dmp REMAP_TABLESPACE=example:users schemas=hr
 Processing object type SCHEMA_EXPORT/USER
-ORA-31684: Object type USER:"HR" already exists
-
 Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
 Processing object type SCHEMA_EXPORT/ROLE_GRANT
 Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
@@ -868,6 +866,14 @@ Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
 Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
 Processing object type SCHEMA_EXPORT/TABLE/PROCACT_INSTANCE
 Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+. . imported "HR"."COUNTRIES"                            6.367 KB      25 rows
+. . imported "HR"."DEPARTMENTS"                          7.007 KB      27 rows
+. . imported "HR"."EMPLOYEES"                            16.87 KB     108 rows
+. . imported "HR"."JOBS"                                 6.992 KB      19 rows
+. . imported "HR"."JOB_HISTORY"                          7.054 KB      10 rows
+. . imported "HR"."LOCATIONS"                            8.273 KB      23 rows
+. . imported "HR"."REGIONS"                              5.476 KB       4 rows
 Processing object type SCHEMA_EXPORT/TABLE/GRANT/OWNER_GRANT/OBJECT_GRANT
 ORA-39083: Object type OBJECT_GRANT failed to create with error:
 ORA-01917: user or role 'OE' does not exist
