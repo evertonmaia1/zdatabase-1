@@ -2,7 +2,7 @@
 +  E-BUSINESS SUITE 12.2.9 WITH ORACLE DATABASE 12C OL7	    +
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#DATABASE INSTALLATION AND CONFIGURATION IS IN THE DOCUMENT (ORACLE 19C SI ONE CDB EBS)
+#DATABASE INSTALLATION AND CONFIGURATION IS IN THE DOCUMENT (ORACLE 12C SI ONE CDB EBS)
 #THIS DOCUMENT USES StartCD51 SO IT DOES NOT SUPPORT multinode installation (database / application). But it allows installation in RAC
 #IF INSTALLATION IS MULTI-NODE, CREATING APPLMGR USER ON DATABASE Node.
 useradd -g dba -d /home/applmgr/ -m applmgr
