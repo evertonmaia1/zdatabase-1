@@ -33,19 +33,21 @@ su - applmgr
 ## STOP PROCESS ##
 
 #STOP APPLICATION/MIDDLE TIER SERVICES
-/u01/oracle/PROD/fs1/inst/apps/PROD_ol7apps1/admin/scripts/adstpall.sh apps/apps
+[root@ol7apps1 ~]# su - applmgr
+[applmgr@ol7apps1 ~]$ /u01/oracle/PROD/fs1/inst/apps/PROD_ol7apps1/admin/scripts/adstpall.sh apps/apps
+Enter the WebLogic Server password:
+
+adstpall.sh:Exiting with status 0
 
 #STOP DATABASE TIER
-/u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addbctl.sh stop
+[root@ol7apps1 ~]# su - oracle
+[oracle@ol7apps1 ~]$ /u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addbctl.sh stop
+
 You are running addbctl.sh version 120.1
 
 addbctl.sh: exiting with status 0
 
-/u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addlnctl.sh stop PROD
+[oracle@ol7apps1 ~]$ /u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addlnctl.sh stop PROD
 
 addlnctl.sh: exiting with status 0
-
-
-
-
 
