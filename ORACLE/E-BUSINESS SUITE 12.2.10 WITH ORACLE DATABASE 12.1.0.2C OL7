@@ -1,16 +1,9 @@
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-+  E-BUSINESS SUITE 12.2.9 WITH ORACLE DATABASE 12C OL7	    +
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-#DATABASE INSTALLATION AND CONFIGURATION IS IN THE DOCUMENT (ORACLE 12C SI ONE CDB EBS)
-#THIS DOCUMENT USES StartCD51 SO IT DOES NOT SUPPORT multinode installation (database / application). But it allows installation in RAC
-#IF INSTALLATION IS MULTI-NODE, CREATING APPLMGR USER ON DATABASE Node.
-useradd -g dba -d /home/applmgr/ -m applmgr
-usermod -a -G dba applmgr
-passwd applmgr
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++  E-BUSINESS SUITE 12.2.10 WITH ORACLE DATABASE 12.1.0.2C OL7	 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #ORACLE APPSR12 MACHINE 
-IP 192.168.1.119
+IP 192.168.18.19
 Disk /dev/sda: 37.6 GB
 /dev/sda1 /boot 350 MB
 /dev/sda2 /	31  GB
@@ -19,20 +12,37 @@ Disk /dev/sda: 37.6 GB
 Disk /dev/sdb: 107.4 GB
 Disk /dev/sdc: 107.4 GB
 Disk /dev/sdd: 107.4 GB
-LVM  /u01 	300  GB
+Disk /dev/sde: 107.4 GB
+Disk /dev/sdf: 107.4 GB
+LVM  /u01 	400  GB
+
+MEMORY 14GB RAM
 
 INSTALL PRE-INSTALL PACKAGES
-yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/compat-libstdc++-296-2.96-144.0.2.el7.i686.rpm
-yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/xorg-x11-libs-compat-6.8.2-1.EL.33.0.1.i386.rpm
-yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/openmotif21-2.1.30-11.el7.i686.rpm
-yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/oracle-ebs-server-R12-preinstall-1.0-4.el7.x86_64.rpm
+
+[root@ol7apps1 ~]# yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/compat-libstdc++-296-2.96-144.0.2.el7.i686.rpm
+[root@ol7apps1 ~]# yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/xorg-x11-libs-compat-6.8.2-1.EL.33.0.1.i386.rpm
+[root@ol7apps1 ~]# yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/openmotif21-2.1.30-11.el7.i686.rpm
+[root@ol7apps1 ~]# yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/oracle-ebs-server-R12-preinstall-1.0-5.el7.x86_64.rpm
+[root@ol7apps1 ~]# yum install -y https://yum.oracle.com/repo/OracleLinux/OL7/addons/x86_64/getPackage/oracle-rdbms-server-12cR1-preinstall-1.0-1.el7.x86_64.rpm
+
+#ADD DBA GROUP TO USER APPLMGR
+[root@ol7apps1 ~]# usermod -a -G dba applmgr
+[root@ol7apps1 ~]# passwd applmgr
+
+#DATABASE INSTALLATION AND CONFIGURATION IS IN THE DOCUMENT (ORACLE 12C SI ONE CDB EBS)
+#THIS DOCUMENT USES StartCD51 SO IT DOES NOT SUPPORT multinode installation (database / application). But it allows installation in RAC
+#IF INSTALLATION IS MULTI-NODE, CREATING APPLMGR USER ON DATABASE Node.
+useradd -g dba -d /home/applmgr/ -m applmgr
+usermod -a -G dba applmgr
+passwd applmgr
 
 #DISABLE SELINUX AND FIREWALLD
-sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux && setenforce 0
-systemctl stop firewalld && systemctl disable firewalld
+[root@ol7apps1 ~]# sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux && setenforce 0
+[root@ol7apps1 ~]# systemctl stop firewalld && systemctl disable firewalld
 
 #CONFIGURE ORAINST.LOC
-vi /etc/oraInst.loc
+[root@ol7apps1 ~]# vi /etc/oraInst.loc
 inventory_loc=/u01/oracle/oraInventory
 inst_group=dba
 
@@ -52,108 +62,134 @@ NAME=enp0s3
 UUID=fa423a9c-0b65-4ab4-b30f-e3d36a6c3a9a
 DEVICE=enp0s3
 ONBOOT=yes
-IPADDR=192.168.1.119
+IPADDR=192.168.18.19
 PREFIX=24
 GATEWAY=192.168.1.1
 DNS1=8.8.8.8
 
 #CONFIGURE HOSTNAME
-hostnamectl 
-hostnamectl set-hostname ol7apps1
-hostnamectl --static 
+[root@ol7apps1 ~]# hostnamectl 
+[root@ol7apps1 ~]# hostnamectl set-hostname ol7apps1
+[root@ol7apps1 ~]# hostnamectl --static 
 
 #CREATE A LOCAL USE DOMAIN
-vi /etc/appsdns
-192.168.1.119   ol7apps1.appsdba.info    ol7apps1
+[root@ol7apps1 ~]# vi /etc/appsdns
+192.168.18.19   ol7apps1.appsdba.info    ol7apps1
 
-vi /etc/dnsmasq.conf
+[root@ol7apps1 ~]# vi /etc/dnsmasq.conf
 addn-hosts=/etc/appsdns
 
-vi /etc/resolv.conf
+[root@ol7apps1 ~]# vi /etc/resolv.conf
 nameserver 127.0.0.1
 search appsdba.info
-nameserver 192.168.1.1
+nameserver 192.168.18.1
 #oracle-ebs-server-R12-preinstall setting for attempts is 5
 options attempts:5
 #oracle-ebs-server-R12-preinstall setting for timeout is 15
 options timeout:15
 
-chattr +i /etc/resolv.conf
+[root@ol7apps1 ~]# chattr +i /etc/resolv.conf
 
-systemctl start dnsmasq
-systemctl enable dnsmasq
+[root@ol7apps1 ~]# systemctl start dnsmasq
+[root@ol7apps1 ~]# systemctl enable dnsmasq
 
 #CONFIGURE /ETC/HOSTS
-192.168.1.119   ol7apps1.appsdba.info    ol7apps1
+[root@ol7apps1 ~]# vim /etc/hosts
+192.168.18.19   ol7apps1.appsdba.info    ol7apps1
+
+#CHECK RESOLVE NAME
+
+[root@ol7apps1 ~]# nslookup ol7apps1.appsdba.info
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Name:   ol7apps1.appsdba.info
+Address: 192.168.18.19
+
+[root@ol7apps1 ~]# nslookup ol7apps1
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Name:   ol7apps1.appsdba.info
+Address: 192.168.18.19
 
 #CREATE LVM
 
-pvcreate /dev/sdb /dev/sdc /dev/sdd
+[root@ol7apps1 ~]# pvcreate /dev/sdb /dev/sdc /dev/sdd /dev/sde
   Physical volume "/dev/sdb1" successfully created.
   Physical volume "/dev/sdc1" successfully created.
+  Physical volume "/dev/sdd1" successfully created.
+  Physical volume "/dev/sde1" successfully created.
 
-vgcreate vg_apps /dev/sdb /dev/sdc /dev/sdd
+[root@ol7apps1 ~]# vgcreate vg_apps /dev/sdb /dev/sdc /dev/sdd /dev/sde
   Volume group "vg_apps" successfully created
 
-vgs
+[root@ol7apps1 ~]# vgs
   VG          #PV #LV #SN Attr   VSize    VFree
-  vg_database   1   0   0 wz--n- <200,00g <200,00g
+  vg_database   1   0   0 wz--n- <400,00g <400,00g
 
-lvcreate --name lv_apps -l 100%FREE vg_apps
+[root@ol7apps1 ~]# lvcreate --name lv_apps -l 100%FREE vg_apps
 
-lvs
+[root@ol7apps1 ~]# lvs
   LV      VG      Attr       LSize    Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   lv_apps vg_apps -wi-a----- <200,00g
 
-lvdisplay
+[root@ol7apps1 ~]# lvdisplay
   --- Logical volume ---
   LV Path                /dev/vg_apps/lv_apps
   LV Name                lv_apps
   VG Name                vg_apps
-  LV UUID                5O9vig-7dec-bGNT-8vTc-A5U9-Dw8v-yusG0c
+  LV UUID                uSsjAi-VIjJ-dMVq-CRko-62x9-1kE1-nq5sOX
   LV Write Access        read/write
-  LV Creation host, time ol7apps1, 2019-12-28 18:29:10 -0300
+  LV Creation host, time ol7apps1, 2021-03-28 17:37:03 -0300
   LV Status              available
-  # open                 0
-  LV Size                <200,00 GiB
-  Current LE             51198
-  Segments               1
+  # open                 1
+  LV Size                449.98 GiB
+  Current LE             115195
+  Segments               5
   Allocation             inherit
   Read ahead sectors     auto
   - currently set to     8192
   Block device           252:0
 
-vi /etc/fstab
+[root@ol7apps1 ~]# vi /etc/fstab
 /dev/vg_apps/lv_apps              /u01                    ext4    defaults        1 1
 
-mkfs.ext4 /dev/vg_apps/lv_apps
+[root@ol7apps1 ~]# mkfs.ext4 /dev/vg_apps/lv_apps
 
-mkdir -p /u01
-mount /u01
-mkdir -p /u01/oracle
-mkdir -p /u01/oracle/oraInventory
-chown oracle:dba -R /u01
+[root@ol7apps1 ~]# mkdir -p /u01
+[root@ol7apps1 ~]# mount /u01
+[root@ol7apps1 ~]# mkdir -p /u01/oracle
+[root@ol7apps1 ~]# mkdir -p /u01/oracle/oraInventory
+[root@ol7apps1 ~]# chown oracle:dba -R /u01
 
-#DOWNLOAD SOFTWARE ORACLE E-BUSINESS SUITE FROM https://edelivery.oracle.com/
+#SOFTWARE DOWNLOAD 
+#ON ORACLE E-DELIVERY CLOUD
 
-Oracle Database 12.1.0.2.0 for Linux x86-64
-		V46095-01_1of2.zip			Oracle Database 12c Release 1 (12.1.0.2.0), 1.6 GB
-		V46095-01_2of2.zip			Oracle Database 12c Release 1 (12.1.0.2.0), 967.5 MB
-Oracle E-Business Suite 12.2.9 for Linux x86-64
-		V982743-01_1of2.zip			Oracle E-Business Suite Release 12.2 Supplemental Media, 3.3 GB
-		V982743-01_2of2.zip			Oracle E-Business Suite Release 12.2 Supplemental Media, 3.4 GB
-		V982746-01_1of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 540.3 MB
-		V982746-01_2of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 544.8 MB
-		V982746-01_3of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 541.2 MB
-		V982746-01_4of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 546.4 MB
-		V982746-01_5of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 632.8 MB
-		V982746-01_6of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 565.4 MB
-		V982746-01_7of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 567.1 MB
-		V982746-01_8of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 546.2 MB
-		V982746-01_9of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 573.5 MB
-		V982746-01_10of10.zip			Oracle E-Business Suite Release 12.2.9 Update Pack for Linux x86-64, 57.9 MB
-		V983437-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V3 Quick Install for Linux x86-64, 1.9 GB
-		V983438-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V3 Supplemental Media, 274.3 MB
+https://edelivery.oracle.com/osdc/faces/SoftwareDelivery
+
+#SEARCH
+DLP:		Oracle E-Business Suite 12.2.10 ( Oracle Mobile Supply Chain Applications )		
+
+#DOWNLOAD ALL FILES
+
+Oracle E-Business Suite 12.2.10
+Oracle E-Business Suite 12.2.10 for Linux x86-64
+		V998895-01_1of2.zip			Oracle E-Business Suite Release 12.2 Supplemental Media, 3.5 GB
+		V998895-01_2of2.zip			Oracle E-Business Suite Release 12.2 Supplemental Media, 3.6 GB
+		V999625-01_1of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 473.8 MB
+		V999625-01_2of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 478.4 MB
+		V999625-01_3of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 474.7 MB
+		V999625-01_4of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 550.4 MB
+		V999625-01_5of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 500.6 MB
+		V999625-01_6of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 462.0 MB
+		V999625-01_7of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 532.7 MB
+		V999625-01_8of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 492.4 MB
+		V999625-01_9of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 476.4 MB
+		V999625-01_10of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 599.7 MB
+		V999625-01_11of11.zip		Oracle E-Business Suite Release 12.2.10 Update Pack for Linux x86-64, 122.0 MB
+		V1002361-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V5 Quick Install for Linux x86-64., 2.0 GB
+		V1002362-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V5 Supplemental Media., 2.8 GB
 Oracle E-Business Suite 12.2.0 Current for Linux x86-64
 		V35803-01_1of3.zip			Oracle E-Business Suite Release 12.2.0 for Linux x86-64 Rapid Install APPL_TOP - Disk 1, 1.2 GB
 		V35803-01_2of3.zip			Oracle E-Business Suite Release 12.2.0 for Linux x86-64 Rapid Install APPL_TOP - Disk 1, 1022.8 MB
@@ -178,55 +214,120 @@ Oracle E-Business Suite 12.2.0 Current for Linux x86-64
 		V100056-01.zip				Oracle E-Business Suite Release 12.2.0 for Linux x86-64 Rapid Install Databases VISION - Disk 4, 2.6 GB
 		V100057-01.zip				Oracle E-Business Suite Release 12.2.0 for Linux x86-64 Rapid Install Databases VISION - Disk 5, 2.4 GB
 		V100102-01.zip				Oracle Database 12c Release 1 (12.1.0.2.0) EXAMPLES for Linux x86-64, 476.1 MB
-Oracle E-Business Suite Documentation 12.2.9
-		V982742-01.zip				Oracle E-Business Suite Release 12.2 Supplemental Documentation - REVIEW FIRST, 8.3 MB
-		V983311-01.zip				Oracle E-Business Suite Release 12.2.9 Documentation Library, 627.0 MB
-		V983439-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V3 Supplemental Documentation, 495.8 KB
-Oracle E-Business Suite Mobile Application Archive 8.0 for Linux x86-64
-		V978633-01_1of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 8.0, 3.5 GB
-		V978633-01_2of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 8.0, 2.8 GB
-		V978633-01_3of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 8.0, 3.2 GB
-		V978633-01_4of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 8.0, 2.4 GB
+Oracle E-Business Suite Languages 12.2.0.0.0 for Brazilian Portuguese
+		V36821-01.zip				Oracle E-Business Suite NLS Release 12.2.0 - Brazilian Portuguese (for the base rapid install), 617.5 MB
+Oracle E-Business Suite Languages 12.2.10 for Brazilian Portuguese
+		V1002339-01.zip				Oracle E-Business Suite NLS Release 12.2.10 - Brazilian Portuguese, 365.2 MB
+		V1002808-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V5 - Brazilian Portuguese, 146.1 MB
+Oracle E-Business Suite Documentation 12.2.10
+		V998894-01.zip				Oracle E-Business Suite Release 12.2 Supplemental Documentation - REVIEW FIRST, 8.8 MB
+		V1002354-01.zip				Oracle Enterprise Command Center Framework Release 12.2 V5 Supplemental Documentation, 262.6 KB
+		V1002910-01.zip				Oracle E-Business Suite Release 12.2.10 Documentation Library, 647.0 MB
+Oracle E-Business Suite Mobile Application Archive 9.0 for Linux x86-64
+		V995061-01_1of5.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 9.0, 3.9 GB
+		V995061-01_2of5.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 9.0, 3.3 GB
+		V995061-01_3of5.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 9.0, 2.8 GB
+		V995061-01_4of5.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 9.0, 3.3 GB
+		V995061-01_5of5.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 9.0, 3.6 GB
+Oracle E-Business Suite Mobile Application Archive 7.0 for Linux x86-64
+		V861706-01_1of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 7.0, 3.2 GB
+		V861706-01_2of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 7.0, 3.2 GB
+		V861706-01_3of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 7.0, 2.2 GB
+		V861706-01_4of4.zip			Oracle E-Business Suite Mobile Foundation and Mobile Application Archive 7.0, 2.5 GB
+		V886647-01.zip				Oracle Mobile Supply Chain for E-Business Suite Mobile Application Archive 7.0, 1.7 GB
+Oracle Database 12.1.0.2.0 for Linux x86-64
+		V46095-01_1of2.zip			Oracle Database 12c Release 1 (12.1.0.2.0), 1.6 GB
+		V46095-01_2of2.zip			Oracle Database 12c Release 1 (12.1.0.2.0), 967.5 MB
 Oracle Web Tier 11.1.1.9.0 for Linux x86-64
 		V75792-01.zip				Oracle Web Tier 11.1.1.9.0 Utilities (11g Patch Set 7) - Oracle Fusion Middleware for Linux x86-64, 2.0 GB
 Oracle WebLogic Server 10.3.6.0.0 for Linux x86-64
 		V29856-01.zip				Oracle WebLogic Server 10.3.6 (11gR1) Generic with Coherence 3.7.1, 1018.5 MB
 
+Total 58 distinct files		Total Size 85.7 GB
+
+NOTE: Some downloaded parts may be split into more than one file.
+
 #CAN USE THE WGET METHOD
 
-cd /u01
-mkdir -p StageR122
-cd StageR122/
-./wget.sh
+[root@ol7apps1 ~]# su - oracle
+[oracle@ol7apps1 ~]$ cd /u01
+[oracle@ol7apps1 ~]$ mkdir -p StageR122
+[oracle@ol7apps1 ~]$ cd StageR122/
+[oracle@ol7apps1 ~]$ ./wget.sh
 SSO User Name: 
 #ENTER ORACLE EMAIL
 #ENTER PASSWORD
 
-#AFTER UNZIPPING ALL FILES THE /u01 DIRECTORY WILL HAVE 72GB, REMOVE ALL V*.zip FILES
-
-#INSTALL VNC
-yum install tigervnc-server
-cp /lib/systemd/system/vncserver@.service /lib/systemd/system/vncserver@:1.service
-
-vi /lib/systemd/system/vncserver@:1.service
-User=root
-ExecStart=/usr/bin/vncserver %i -geometry 1440x1080
-PIDFile=/root/.vnc/%H%i.pid
-
-systemctl daemon-reload
-vncpasswd
-Password:
-Verify:
-Would you like to enter a view-only password (y/n)? n
-exit
-systemctl start vncserver@:1.service
-systemctl enable vncserver@:1.service
+#CHECK DOWNLOADED FILES
+[oracle@ol7apps1 StageR122]$ ls -ltrh
+total 86G
+-rw-r--r--. 1 oracle dba 1019M Dec 22  2011 V29856-01.zip
+-rw-r--r--. 1 oracle dba  712M Dec 18  2012 V35802-01.zip
+-rw-r--r--. 1 oracle dba  1.3G Dec 18  2012 V35804-01_1of2.zip
+-rw-r--r--. 1 oracle dba  1.7G Dec 18  2012 V35804-01_2of2.zip
+-rw-r--r--. 1 oracle dba  1.3G Dec 18  2012 V35803-01_1of3.zip
+-rw-r--r--. 1 oracle dba 1023M Dec 18  2012 V35803-01_2of3.zip
+-rw-r--r--. 1 oracle dba  1.4G Dec 18  2012 V35803-01_3of3.zip
+-rw-r--r--. 1 oracle dba  618M Feb  7  2013 V36821-01.zip
+-rw-r--r--. 1 oracle dba  968M Jul 11  2014 V46095-01_2of2.zip
+-rw-r--r--. 1 oracle dba  1.6G Jul 11  2014 V46095-01_1of2.zip
+-rw-r--r--. 1 oracle dba  2.0G May  1  2015 V75792-01.zip
+-rw-r--r--. 1 oracle dba  477M Nov 30  2015 V100102-01.zip
+-rw-r--r--. 1 oracle dba  3.5G Jan  6  2016 V100053-01_2of2.zip
+-rw-r--r--. 1 oracle dba   52M Jan  6  2016 V100053-01_1of2.zip
+-rw-r--r--. 1 oracle dba  2.6G Jan  6  2016 V100056-01.zip
+-rw-r--r--. 1 oracle dba  2.9G Jan  6  2016 V100055-01.zip
+-rw-r--r--. 1 oracle dba  3.1G Jan  6  2016 V100054-01.zip
+-rw-r--r--. 1 oracle dba  2.5G Jan  6  2016 V100057-01.zip
+-rw-r--r--. 1 oracle dba  2.1G Jan  6  2016 V100058-01.zip
+-rw-r--r--. 1 oracle dba  1.6G Jan  6  2016 V100059-01_2of2.zip
+-rw-r--r--. 1 oracle dba 1007M Jan  6  2016 V100059-01_1of2.zip
+-rw-r--r--. 1 oracle dba  840M Jan  6  2016 V100061-01.zip
+-rw-r--r--. 1 oracle dba  1.1G Jan  6  2016 V100060-01_3of3.zip
+-rw-r--r--. 1 oracle dba  1.1G Jan  6  2016 V100060-01_2of3.zip
+-rw-r--r--. 1 oracle dba  1.6G Jan  6  2016 V100060-01_1of3.zip
+-rw-r--r--. 1 oracle dba   98M Jan 12  2016 V100052-01_3of3.zip
+-rw-r--r--. 1 oracle dba   82M Jan 12  2016 V100052-01_2of3.zip
+-rw-r--r--. 1 oracle dba  726M Jan 20  2016 V100052-01_1of3.zip
+-rw-r--r--. 1 oracle dba  2.5G Jun 13  2017 V861706-01_4of4.zip
+-rw-r--r--. 1 oracle dba  2.3G Jun 13  2017 V861706-01_3of4.zip
+-rw-r--r--. 1 oracle dba  3.3G Jun 13  2017 V861706-01_2of4.zip
+-rw-r--r--. 1 oracle dba  3.2G Jun 13  2017 V861706-01_1of4.zip
+-rw-r--r--. 1 oracle dba  1.8G Jul 17  2017 V886647-01.zip
+-rw-r--r--. 1 oracle dba  3.4G May 21  2020 V995061-01_4of5.zip
+-rw-r--r--. 1 oracle dba  3.7G May 21  2020 V995061-01_5of5.zip
+-rw-r--r--. 1 oracle dba  2.9G May 21  2020 V995061-01_3of5.zip
+-rw-r--r--. 1 oracle dba  3.9G May 21  2020 V995061-01_1of5.zip
+-rw-r--r--. 1 oracle dba  3.4G May 21  2020 V995061-01_2of5.zip
+-rw-r--r--. 1 oracle dba  551M Aug 17  2020 V999625-01_4of11.zip
+-rw-r--r--. 1 oracle dba  474M Aug 17  2020 V999625-01_1of11.zip
+-rw-r--r--. 1 oracle dba  123M Aug 17  2020 V999625-01_11of11.zip
+-rw-r--r--. 1 oracle dba  477M Aug 17  2020 V999625-01_9of11.zip
+-rw-r--r--. 1 oracle dba  493M Aug 17  2020 V999625-01_8of11.zip
+-rw-r--r--. 1 oracle dba  533M Aug 17  2020 V999625-01_7of11.zip
+-rw-r--r--. 1 oracle dba  462M Aug 17  2020 V999625-01_6of11.zip
+-rw-r--r--. 1 oracle dba  475M Aug 17  2020 V999625-01_3of11.zip
+-rw-r--r--. 1 oracle dba  479M Aug 17  2020 V999625-01_2of11.zip
+-rw-r--r--. 1 oracle dba  600M Aug 17  2020 V999625-01_10of11.zip
+-rw-r--r--. 1 oracle dba  501M Aug 17  2020 V999625-01_5of11.zip
+-rw-r--r--. 1 oracle dba  3.7G Aug 17  2020 V998895-01_2of2.zip
+-rw-r--r--. 1 oracle dba  3.5G Aug 17  2020 V998895-01_1of2.zip
+-rw-r--r--. 1 oracle dba  366M Aug 19  2020 V1002339-01.zip
+-rw-r--r--. 1 oracle dba  8.8M Aug 26  2020 V998894-01.zip
+-rw-r--r--. 1 oracle dba  2.1G Sep  1  2020 V1002361-01.zip
+-rw-r--r--. 1 oracle dba  2.8G Sep  1  2020 V1002362-01.zip
+-rw-r--r--. 1 oracle dba  147M Sep  1  2020 V1002808-01.zip
+-rw-r--r--. 1 oracle dba  263K Sep  1  2020 V1002354-01.zip
+-rw-r--r--. 1 oracle dba  648M Sep  8  2020 V1002910-01.zip
 
 #PREPARE STAGE TO INSTALL EBS
-cd /u01/StageR122/
-unzip V100052-01_1of*.zip
-cd startCD/Disk1/rapidwiz/bin/
-./buildStage.sh
+[oracle@ol7apps1 ~]$ cd /u01/StageR122/
+[oracle@ol7apps1 StageR122]$ unzip V100052-01_1of*.zip
+drwxr-xr-x. 3 oracle oinstall       4096 Jan 20  2016 startCD
+
+[oracle@ol7apps1 StageR122]$ cd startCD/Disk1/rapidwiz/bin/
+[oracle@ol7apps1 bin]$ ./buildStage.sh
+
 
                      Copyright (c) 2002, 2013 Oracle Corporation
                         Redwood Shores, California, USA
@@ -259,7 +360,8 @@ Press Enter to continue...
 
 
    Enter your choice [4]: 1
-   
+
+
             Rapid Install Platform Menu
 
    ------------------------------------------------------
@@ -276,70 +378,58 @@ Press Enter to continue...
 
 
    Enter your choice [5]: 2
+
 
 Running command:
 
 /u01/StageR122/startCD/Disk1/rapidwiz/bin/../jre/Linux_x64/1.6.0/bin/java -classpath /u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/emocmutl.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/ewt-3_4_22.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/share-1_1_18.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/jnls.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/ACC.JAR:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/netcfg.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/ojdbc14.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/OraInstaller.jar:/u01/StageR122/startCD/Disk1/rapidwiz/bin/../jlib/java oracle.apps.ad.rapidwiz.util.StageBuilder /u01/StageR122/startCD/Disk1/rapidwiz/bin Linux_x64 Linux_x64
 
+
 Specify the directory containing the zipped installation media:
 /u01/StageR122/
 File list:
 /u01/StageR122/startCD/Disk1/rapidwiz/bin/stageData/zipFiles.dat
+The set of zip files is complete.
+Unzip command is: /u01/StageR122/startCD/Disk1/rapidwiz/unzip/Linux_x64/unzip -o
+Unzipping V35802-01.zip
+Unzipping V35803-01_1of3.zip
+Unzipping V35803-01_2of3.zip
+Unzipping V35803-01_3of3.zip
+Unzipping V35804-01_1of2.zip
+Unzipping V35804-01_2of2.zip
+Unzipping V46095-01_1of2.zip
+Unzipping V46095-01_2of2.zip
+Unzipping V100059-01_1of2.zip
+Unzipping V100059-01_2of2.zip
+Unzipping V100060-01_1of3.zip
+Unzipping V100060-01_2of3.zip
+Unzipping V100060-01_3of3.zip
+Unzipping V100053-01_1of2.zip
+Unzipping V100053-01_2of2.zip
+Unzipping V100054-01.zip
+Unzipping V100055-01.zip
+Unzipping V100056-01.zip
+Unzipping V100057-01.zip
+Unzipping V100058-01.zip
+Unzipping V100061-01.zip
+Unzipping V100102-01.zip
+Unzipping V75792-01.zip
+Unzipping V29856-01.zip
+Unzip command is: /u01/StageR122/startCD/Disk1/rapidwiz/unzip/Linux_x64/unzip -o
+All files have been unzipped successfully.
+Stage area is confirmed to be complete.
+Command = cp /u01/StageR122/V100061-01.zip /u01/StageR122/startCD/Disk1/rapidwiz/bin/stageData/epdFiles/epdLinux_x64.zip
 
-Press Enter to continue...
-
-                      Build Stage Menu
-
-   ------------------------------------------------------
-
-   1.     Create new stage area
-
-   2.     Copy patches to existing stage area
-
-   3.     List files in TechPatches directory
-
-   4.     Exit menu
-
-
-   Enter your choice [4]: 2
-
-            Rapid Install Platform Menu
-
-   ------------------------------------------------------
-
-   1.    Oracle Solaris SPARC (64-bit)
-
-   2.    Linux x86 (64-bit)
-
-   3.    IBM AIX on Power Systems (64-bit)
-
-   4.    HP-UX Itanium
-
-   5.    Exit Menu
-
-
-   Enter your choice [5]: 2
+Finished unzipping shiphome.
 
 
-Directory /home/setup/TechPatches
-
-Stage Builder will now stage the one-off patches for Linux_x64...
-
-Press Enter to continue...
-
-Copying latest one-off patches to stage area...
-
-Running command:
-
-/u01/StageR122/startCD/Disk1/rapidwiz/bin/../unzip/Linux_x64/unzip -o /u01/StageR122/startCD/Disk1/rapidwiz/bin/../Xpatches/Linux_x64.zip -d /u01/StageR122/startCD/Disk1/rapidwiz/bin/../../../../TechPatches
+Directory /u01/StageR122/TechPatches
 
 
-Press Enter to continue...
-Archive: /u01/StageR122/startCD/Disk1/rapidwiz/bin/../Xpatches/Linux_x64.zip
+Error: Missing /u01/StageR122/startCD/Disk1/rapidwiz/bin/stageData/epdFiles/epdLinux_x64.zip for Linux_x64
 
-Finished copying additional patches.
-
-Press Enter to continue...
+Returning to Main Menu.
+Choose option 1 to rebuild the stage area for this platform.
 
                       Build Stage Menu
 
@@ -356,14 +446,17 @@ Press Enter to continue...
 
    Enter your choice [4]: 4
 
-Stage Builder exiting... 
+Stage Builder exiting...
 
 #RAPIDWIZ MUST BE PERFORMED WITH USER ROOT
 #AS WE WILL INSTALL THE APPLICATION AND THE DATABASE ON SEPARATE MACHINES IT IS NOT NECESSARY TO DOWNLOAD THE DATABASE 12C FILES
 #NEXT COMMAND NEEDS GRAPHICAL INTERFACE
 
-cd /u01/StageR122/startCD/Disk1/rapidwiz
-./rapidwiz
+[root@ol7apps1 ~]# su –
+[root@ol7apps1 ~]# xhost +
+[root@ol7apps1 ~]# export DISPLAY=:0.0
+[root@ol7apps1 bin]$ cd /u01/StageR122/startCD/Disk1/rapidwiz
+[root@ol7apps1 rapidwiz]$ ./rapidwiz
 
 # screen 1
 
@@ -490,7 +583,7 @@ Database Node COnfiguration
 Database Type			Vision Demo Database
 Database SID			PROD
 Database Host Name		ol7apps1
-DNS Domain Name			localdomain
+DNS Domain Name			appsdba.info
 Database Operating System	Linux x86-64(64-bit)
 Database OS User 		oracle
 Database OS Group		dba
@@ -529,11 +622,11 @@ NEXT >
 Application User Information
 
 WLS Admin User 				weblogic
-WLS Admin Password			**************
-Confirm WLS Admin Password		**************
+WLS Admin Password			Or@8642mar
+Confirm WLS Admin Password		Or@8642mar
 Apps OS User				applmgr
-Apps OS User Password			**************
-Confirm Apps OS User Password		**************
+Apps OS User Password			Or@8642mar
+Confirm Apps OS User Password		Or@8642mar
 [ ] Change Default Password	
 Apps DB User Password		
 Confirm Apps DB User Password	
@@ -605,52 +698,6 @@ The Rapid install Wizard is ready to install Oracle E-Business Suite on this mac
 
 YES
 
-#POST INSTALL PROBLEMS ON ORACLE LINUX 7
-#ENVIRONMENT WITHOUT DEFINED DOMAIN
-
-Virtual Directory
-   checking URL = http://ol7apps1.appsdba.info:8000/OA_MEDIA/FNDLOGOL.gif
-   RW-50016: Error: - {0} was not created:
-      File = {1}   checking URL = http://ol7apps1.appsdba.info:8000/OA_JAVA/oracle/apps/fnd/admin/server/server.xml
-   RW-50016: Error: - {0} was not created:
-      File = {1}   checking URL = http://ol7apps1.appsdba.info:8000/OA_CGI/FNDWRR.exe
-   RW-50016: Error: - {0} was not created:
-      File = {1}
-
-JSP
-   checking URL = http://ol7apps1.appsdba.info:8000/OA_HTML/jtfTestCookie.jsp 
-   JSP is not responding, waiting 15 seconds and retesting.
-   JSP is not responding, waiting 15 seconds and retesting.
-
-#SOLUTION 
-
-Then follow below steps to resolve this problem. Don't click on cancel button, 
-
-Step 1:
-Modify Below file:
-su - applmgr
-cd /u01/oracle/PROD/fs1/FMW_Home/webtier/ohs/bin
-ls -lrt apachectl*
--rwxr-x---. 1 applmgr dba 12105 Oct 19 23:42 apachectl.orig
--rwxrwxrwx. 1 applmgr dba 12190 Oct 20 11:14 apachectl
-diff apachectl apachectl.orig
-
-Step 2: Apply patch  12415211
-su - applmgr
-cd /u01/oracle/PROD/fs1/EBSapps/10.1.2/lib
-cp -p -R stubs stubs_ORIG
-cd stubs
-cp /tmp/12415211/files/lib/stubs .
-cd stubs
-rm libgcc_s.so
-rm libgcc_s.so.1
-ln -s libgcc_s-2.3.2-stub.so libgcc_s.so.1
-ln -s libgcc_s.so.1 libgcc_s.so
-ls -lrt libgcc_s-2.3.2-stub.so
--rwxr-xr-x. 1 applmgr dba 12246 Oct 19 23:48 libgcc_s-2.3.2-stub.so
-
-RETRY POST INSTALL CHECKS
-
 END INSTALL
 
 #PASSWORDS
@@ -681,8 +728,3 @@ Y
 #ACCESS ON BROWSER
 ol7apps1.localdomain:8000/OA_HTML/AppsLogin
 user = SYSADMIN \ password = sysadmin
-
-
-
-
-    
