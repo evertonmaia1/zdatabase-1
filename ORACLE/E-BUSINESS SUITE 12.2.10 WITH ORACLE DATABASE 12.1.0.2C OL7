@@ -622,11 +622,11 @@ NEXT >
 Application User Information
 
 WLS Admin User 				weblogic
-WLS Admin Password			Or@8642mar
-Confirm WLS Admin Password		Or@8642mar
+WLS Admin Password			**********
+Confirm WLS Admin Password		**********
 Apps OS User				applmgr
-Apps OS User Password			Or@8642mar
-Confirm Apps OS User Password		Or@8642mar
+Apps OS User Password			**********
+Confirm Apps OS User Password		**********
 [ ] Change Default Password	
 Apps DB User Password		
 Confirm Apps DB User Password	
