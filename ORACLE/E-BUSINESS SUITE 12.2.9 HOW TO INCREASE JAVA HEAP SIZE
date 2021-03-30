@@ -1,5 +1,5 @@
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-+  E-BUSINESS SUITE 12.2.9 HOW TO INCREASE JAVA HEAP SIZE +
++  E-BUSINESS SUITE 12.2.10 HOW TO INCREASE JAVA HEAP SIZE +
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 THE DEFAULT SIZE OF THE OACORE JVM HEAP IS 512 MB, SUPPORTS 50 TO 100 USERS. 
