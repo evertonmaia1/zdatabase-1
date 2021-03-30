@@ -11,8 +11,8 @@
 ## STARTUP PROCESS ##
 
 #START LISTENER 
-su - oracle
-/u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addlnctl.sh start PROD
+[root@ol7apps1 ~]# su - oracle
+[oracle@ol7apps1 ~]$ /u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addlnctl.sh start PROD
 Logfile: /u01/oracle/PROD/12.1.0/appsutil/log/PROD_ol7apps1/addlnctl.txt
 You are running addlnctl.sh version 120.4
 
@@ -20,15 +20,18 @@ addlnctl.sh: exiting with status 0
 addlnctl.sh: check the logfile /u01/oracle/PROD/12.1.0/appsutil/log/PROD_ol7apps1/addlnctl.txt for more information ...  
 
 #START DATABASE TIER
-su - oracle
-/u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addbctl.sh start
+[root@ol7apps1 ~]# su - oracle
+[oracle@ol7apps1 ~]$ /u01/oracle/PROD/12.1.0/appsutil/scripts/PROD_ol7apps1/addbctl.sh start
 You are running addbctl.sh version 120.1
 
 addbctl.sh: exiting with status 0
 
 #START APPLICATION/MIDDLE TIER SERVICES
-su - applmgr
-/u01/oracle/PROD/fs1/inst/apps/PROD_ol7apps1/admin/scripts/adstrtal.sh apps/apps 
+[root@ol7apps1 ~]# su - applmgr
+[applmgr@ol7apps1 ~]$ /u01/oracle/PROD/fs1/inst/apps/PROD_ol7apps1/admin/scripts/adstrtal.sh apps/apps 
+Enter the WebLogic Server password:
+
+adstpall.sh:Exiting with status 0
 
 ## STOP PROCESS ##
 
