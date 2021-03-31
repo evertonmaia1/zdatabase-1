@@ -1,0 +1,204 @@
+#################################################################
+#	TERRAFORM SETUP ORACLE CLOUD OCI ENVIRONMENT		#
+#################################################################
+
+#NOTE
+This step is very important. If you want to connect on one cloud environment or in an on premise environment. 
+You need to made this setup.
+
+#SET UP AN ORACLE CLOUD INFRASTRUCTURE API SIGNING KEY FOR USE WITH ORACLE FUNCTIONS
+https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionssetupapikey.htm
+
+root@raspberrypi:~# mkdir ~/.oci
+root@raspberrypi:~# openssl genrsa -out ~/.oci/oci_api_key.pem 2048
+root@raspberrypi:~# chmod go-rwx ~/.oci/oci_api_key.pem
+root@raspberrypi:~# openssl rsa-pubout -in ~/.oci/oci_api_key.pem -out ~/.oci/oci_api_key_public.pem
+root@raspberrypi:~# ssh-keygen -t rsa -N "" -b 2048
+
+#CONFIGURE ACCESS ON ORACLE CLOUD
+
+#ACCESS ORACLE CLOUD OCI
+https://cloud.oracle.com/
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ FINGERPRINT @
+@@@@@@@@@@@@@@@
+
+#IN DASHBOARD OF CLOUD, NAVIGATE TO GOVERNANCE AND ADMINISTRATION > SELECT IDENTITY 
+
+Users
+
+Create or manage federated users instead?
+This tenancy has a federation with one or more identity providers (IdP), which means users typically sign in as federated users. 
+This page creates local users, manages their local capabilities, and lets them sign in to Oracle Cloud Infrastructure if the federated IdP is unavailable. 
+To create and manage federated users, go to the Federation page to find the appropriate IdP Details page.
+
+[Create user]		[Delete]
+
++------------------------------------------------------ +---------------+-----------------------+---------------+--------------------------------+-------------------------------+-----------------------------------------------------------------------------
+| Name							| Status	| Email			| Federated	| Created			 | Last Sign In			 | Row Header								      |
++------------------------------------------------------ +---------------+-----------------------+---------------+--------------------------------+-------------------------------+-----------------------------------------------------------------------------
+oracleidentitycloudservice/****.*****@gmail.com	 	 Active		 -			 Yes		 Fri, Mar 19, 2021, 18:34:05 UTC  -				  ocid1.user.oc1..aaaaaaaacq7exbpx3vza7zqih4bqvly2myco7vbumgtblniw7qmojvfr2gwq
+****.*****@gmail.com					 Active		 ****.*****@gmail.com 	 No		 Fri, Mar 19, 2021, 18:28:36 UTC  Fri, Mar 19, 2021, 18:29:11 UTC ocid1.user.oc1..aaaaaaaaowzy2wjytlpgijbb4ep4tqu43vzmkquixgwpctn7ymbjnu2sac4q
++------------------------------------------------------ +---------------+-----------------------+---------------+--------------------------------+-------------------------------+-----------------------------------------------------------------------------
+
+#SELECT THE SECOND EMAIL 
+YOU WILL REDIRECTED TO Identity > Users > User Details
+
+#SELECT API KEYS OPTION AND CLICK ON ADD API KEYS
+
+Note: An API key is an RSA key pair in PEM format used for signing API requests. 
+You can generate the key pair here and download the private key. 
+If you already have a key pair, you can choose to upload or paste your public key file instead. Learn more
+
+( ) Generate API Key Pair	( ) Choose Public Key File	(#) Paste Public Key
+
+#YOU WILL PAST THE CONTENT OF FILE ~/.oci/oci_api_key_public.pem HERE
+
+#SAVE AND RETURN TO Identity > Users > User Details
+#THE PAGE WILL SHOW YOUR FINGERPRINT
+
+API Keys
+
+[Add API Key]
+
++-----------------------------------------------+--------------------------------------------
+| Fingerprint					| Created				    |	
+**:**:**:**:**:**:**:**:**:**:**:**:**:**:**:**	 Sun, Mar 21, 2021, 01:11:20 UTC
++-----------------------------------------------+-------------------------------------------+
+									Displaying 1 API Key
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ USER OCI @
+@@@@@@@@@@@@
+
+#IN DASHBOARD OF CLOUD, NAVIGATE TO GOVERNANCE AND ADMINISTRATION > SELECT IDENTITY 
+
+Users
+
+Create or manage federated users instead?
+This tenancy has a federation with one or more identity providers (IdP), which means users typically sign in as federated users. 
+This page creates local users, manages their local capabilities, and lets them sign in to Oracle Cloud Infrastructure if the federated IdP is unavailable. 
+To create and manage federated users, go to the Federation page to find the appropriate IdP Details page.
+
+[Create user]		[Delete]
+
++------------------------------------------------------ +---------------+-----------------------+---------------+--------------------------------+-------------------------------+-----------------------------------------------------------------------------
+| Name							| Status	| Email			| Federated	| Created			 | Last Sign In			 | Row Header								      |
++------------------------------------------------------ +---------------+-----------------------+---------------+--------------------------------+-------------------------------+-----------------------------------------------------------------------------
+oracleidentitycloudservice/****.*****@gmail.com	 	 Active		 -			 Yes		 Fri, Mar 19, 2021, 18:34:05 UTC  -				  ocid1.user.oc1..aaaaaaaacq7exbpx3vza7zqih4bqvly2myco7vbumgtblniw7qmojvfr2gwq
+****.*****@gmail.com					 Active		 ****.*****@gmail.com 	 No		 Fri, Mar 19, 2021, 18:28:36 UTC  Fri, Mar 19, 2021, 18:29:11 UTC ocid1.user.oc1..aaaaaaaaowzy2wjytlpgijbb4ep4tqu43vzmkquixgwpctn7ymbjnu2sac4q
++------------------------------------------------------ +---------------+-----------------------+---------------+--------------------------------+-------------------------------+-----------------------------------------------------------------------------
+
+#SELECT THE SECOND EMAIL 
+YOU WILL REDIRECTED TO Identity > Users > User Details
+
+****.*****@gmail.com
+<FULL NAME>
+
+Edit UserCreate/Reset PasswordEnable Multi-Factor AuthenticationEdit User CapabilitiesMore Actions
+
+User Information
+OCID: ocid1.user.oc1..************************************************************	[Show]	[Copy] 
+Created: Fri, Mar 19, 2021, 18:28:36 UTC
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TENANCY OCID @
+@@@@@@@@@@@@@@@@
+
+#IN DASHBOARD OF CLOUD, NAVIGATE TO GOVERNANCE > TENANCY EXPLORER 
+#CLICK ON <NAME OF YOUR TENANCY>
+
+Tenancy Explorer
+
+Name: <NAME OF YOUR TENANCY> (root)
+
+Don't see what you're looking for? These results include only resources supported by Search. 
+Updates made to resources might not immediately appear in your results. Learn More
+
+[View Work Requests]	[Actions]
+
++-----------------------+-----------------------+-----------------------+---------------+---------------+	
+| Name			| Compartment		| Resource Type		| Status	| Region	|
++-----------------------+-----------------------+-----------------------+---------------+---------------+
+****.*****@gmail.com	| ********* (root)	| Users			| Active	| sa-saopaulo-1 
++-----------------------+-----------------------+-----------------------+---------------+---------------+
+
+Identity > Compartments > Compartment details
+
+The root Compartment of the tenancy
+
+[Add TagsOpen] 		[Support Request]
+Compartment Information
+OCID: ocid1.tenancy.oc1..************************************************************	[Show]	[Copy]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ COMPARTMENT OCID @
+@@@@@@@@@@@@@@@@@@@@
+
+#IN DASHBOARD OF CLOUD, NAVIGATE TO IDENTITY > COMPARTMENT
+#CLICK ON <NAME OF YOUR TENANCY>
+
+Compartments
+
+[Create Compartment]
+
++-------------------------------+--------------+---------------+---------------+---------------+-----------------------+----------------+
+| Name				| Status	OCID		Authorized	Security Zone 	Subcompartments		Created		|
++-------------------------------+--------------+---------------+---------------+---------------+-----------------------+----------------+
+<NAME OF YOUR TENANCY> (root)	 Active		 ...******	 Yes		 Not Enabled	 2			 -
++-------------------------------+--------------+---------------+---------------+---------------+-----------------------+----------------+
+
+Identity > Compartments > Compartment details
+
+The root Compartment of the tenancy
+
+[Add TagsOpen] 		[Support Request]
+Compartment Information
+OCID: ocid1.tenancy.oc1..************************************************************	[Show]	[Copy]
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+#CREATE ENVIRONMENT SETUP FILE
+root@raspberrypi:~# vim setup_oci_tf_var.sh
+#HERE PAST YOU USER OCID
+export TF_VAR_user_ocid="ocid1.user.oc1..************************************************************"
+
+#HERE PAST YOUR TENANCY_OCID
+export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..************************************************************"
+
+#HERE PAST YOUR COMPARTMENT_OCID
+export TF_VAR_compartment_ocid="ocid1.tenancy.oc1..************************************************************"
+
+#HERE PAST YOUR FINGERPRINT
+export TF_VAR_fingerprint="**:**:**:**:**:**:**:**:**:**:**:**:**:**:**:**"
+
+#HERE PAST YOUR PRIVATE KEY PATH
+export TF_VAR_private_key_path="/root/.oci/oci_api_key.pem"
+
+#HERE PAST YOUR TENANCY REGION 
+export TF_VAR_region="sa-saopaulo-1"
+
+#IF YOU WANT, YOU CAN PUT MORE REGIONS ON YOUR SETUP FILE, FOR EXAMPLE
+#export TF_VAR_region1="sa-saopaulo-2"
+#export TF_VAR_region2="sa-saopaulo-3"
+
+#HERE PAST YOUR PRIVATE KEY OCI
+export TF_VAR_private_key_oci="/root/.ssh/id_rsa"
+
+#HERE PAST YOUR PUBLIC KEY OCI
+export TF_VAR_public_key_oci="/root/.ssh/id_rsa.pub"
+
+
+#SETUP FINISHED
+
+
+
+
+
+
+
+
+
+
+
