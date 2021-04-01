@@ -1,13 +1,26 @@
 #################################################################################
-#	TERRAFORM WITH OCI LESSON 2 DEPLOY SECOND WEBSERVER IN ANOTHER AD	#
+#	TERRAFORM WITH OCI LESSON 2 DEPLOY SECOND WEBSERVER IN ANOTHER AVAILABLE DOMAIN	#
 #################################################################################
 
 #PLAN, APPLY AND DESTROY TWO SIMPLE WEBSERVICE ON ORACLE CLOUD OCI USING TERRAFORM WITH SECOND WEBSERVER IN ANOTHER AD
 
 #IF YOU ACCESS: COMPUTE> INSTANCE, IN ORACLE CLOUD OCI YOU WILL IDENTIFY THE FOLLOWING TABLE
+
 #IN THE TABLE BELOW THERE ARE TWO MACHINES, BECAUSE I HAVE FINISHED THIS EXAMPLE 
+
 #NOTE THAT Availability Domain AND Fault Domain ARE THE SAME ON BOTH MACHINES
-#UNTIL THE MOMENT I DO NOT KNOW IF IT IS A LIMITATION OF THE CODE OR IF IT IS A LIMITATION OF THE AREA WHERE TENANCY WAS CREATED
+
+#AVAILABILITY REGIONS AND DOMAINS, IF YOU HAVE YOUR TENANCY IN THE sa-saopaulo-1 REGION UNFORTUNATELY YOU WILL NOT BE ABLE TO USE ANOTHER AVAILABLE DOMAIN. 
+THIS IS A LIMITATION OF THE REGION, THERE IS THE OPTION TO SUBSCRIBE IN A REGION THAT HAS MORE AVAILABLE DOMAINS LIKE eu-frankfurt-1 OR uk-london-1
+
+#TO HAVE A COMPLETE LIST OF TENANCY AVAILABILITY DOMAIN NAMES USE THE FOLLOWING LINK
+https://docs.oracle.com/pt-br/iaas/Content/General/Concepts/regions.htm
+
++---------------------------------------+-----------------------+-----------------------+-----------+--------+----------------------+
+| Region Name				| Region Identifier 	| Local Region Key      | Realm Key | Region | Availability Domains |
++---------------------------------------+-----------------------+-----------------------+-----------+--------+----------------------+
+| Brazil East (Sao Paulo)	        | sa-saopaulo-1	        | Sao Paulo, Brazil	| GRU	    | OC1    | 1                    |
++---------------------------------------+-----------------------+-----------------------+-----------+--------+----------------------+
 
 Instances in RitaCompartment Compartment
 
