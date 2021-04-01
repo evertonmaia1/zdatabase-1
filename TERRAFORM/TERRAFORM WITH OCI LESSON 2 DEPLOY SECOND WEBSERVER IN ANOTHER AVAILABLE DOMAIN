@@ -1,6 +1,6 @@
-#################################################################################
-#	TERRAFORM WITH OCI LESSON 2 DEPLOY SECOND WEBSERVER IN ANOTHER AVAILABLE DOMAIN	#
-#################################################################################
+#################################################################################################
+#	TERRAFORM WITH OCI LESSON 2 DEPLOY SECOND WEBSERVER IN ANOTHER AVAILABLE DOMAIN		#
+#################################################################################################
 
 #PLAN, APPLY AND DESTROY TWO SIMPLE WEBSERVICE ON ORACLE CLOUD OCI USING TERRAFORM WITH SECOND WEBSERVER IN ANOTHER AD
 
