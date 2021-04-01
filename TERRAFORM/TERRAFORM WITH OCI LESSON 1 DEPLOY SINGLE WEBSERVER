@@ -1433,5 +1433,3 @@ oci_identity_compartment.RitaCompartment: Destroying... [id=ocid1.compartment.oc
 oci_identity_compartment.RitaCompartment: Destruction complete after 0s
 
 Destroy complete! Resources: 9 destroyed.
-
-
