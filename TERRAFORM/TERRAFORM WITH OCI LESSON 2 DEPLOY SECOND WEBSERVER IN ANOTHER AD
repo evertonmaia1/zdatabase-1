@@ -1,0 +1,2018 @@
+#################################################################################
+#	TERRAFORM WITH OCI LESSON 2 DEPLOY SECOND WEBSERVER IN ANOTHER AD	#
+#################################################################################
+
+#PLAN, APPLY AND DESTROY TWO SIMPLE WEBSERVICE ON ORACLE CLOUD OCI USING TERRAFORM WITH SECOND WEBSERVER IN ANOTHER AD
+
+#IF YOU ACCESS: COMPUTE> INSTANCE, IN ORACLE CLOUD OCI YOU WILL IDENTIFY THE FOLLOWING TABLE
+#IN THE TABLE BELOW THERE ARE TWO MACHINES, BECAUSE I HAVE FINISHED THIS EXAMPLE 
+#NOTE THAT Availability Domain AND Fault Domain ARE THE SAME ON BOTH MACHINES
+#UNTIL THE MOMENT I DO NOT KNOW IF IT IS A LIMITATION OF THE CODE OR IF IT IS A LIMITATION OF THE AREA WHERE TENANCY WAS CREATED
+
+Instances in RitaCompartment Compartment
+
+The Compute service helps you provision VMs and bare metal instances to meet your compute and application requirements. 
+An instance is a compute host. Choose between virtual machines (VMs) and bare metal instances. 
+The image that you use to launch an instance determines its operating system and other software.
+
+[Create instance]
+
++---------------+---------------+---------------+-----------------------+---------------+---------------+-----------------------+---------------+-------------------------------+
+| Name		| State		| Public IP	| Shape			| OCPU Count	| Memory (GB)	| Availability Domain	| Fault Domain	| Created			|
++---------------+---------------+---------------+-----------------------+---------------+---------------+-----------------------+---------------+-------------------------------+
+RitaWebServer2	 Terminated	 -		 VM.Standard.E2.1	 1		 8		 AD-1			 FD-1		 Thu, Apr 1, 2021, 20:29:21 UTC	
+RitaWebServer1	 Terminated	 -		 VM.Standard.E2.1	 1		 8		 AD-1			 FD-1		 Thu, Apr 1, 2021, 20:29:21 UTC
++---------------+---------------+---------------+-----------------------+---------------+---------------+-----------------------+---------------+-------------------------------+
+
+#DUE TO THIS LIMITATION, SOME ADJUSTMENTS TO THE CODE WERE APPLIED
+IN THE FOLLOWING FILES:
+webserver1.tf
+LINE 2:
+& ORIGINAL &
+   availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [1], "name")
+
+& ADJUSTED &
+   availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [0], "name")
+
+LINE 21:
+& ORIGINAL &
+   availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [1], "name")
+
+& ADJUSTED &
+    availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [0], "name")
+
+webserver2_NEW.tf
+LINE 2:
+& ORIGINAL &
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[2], "name")
+
+& ADJUSTED &
+   availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [0], "name")
+
+LINE 21:
+& ORIGINAL &
+   availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [1], "name")
+
+& ADJUSTED &
+    availability_domain = lookup (data.oci_identity_availability_domains.ADs.availability_domains [0], "name")
+
+###################################### METADATA #####################################
+
+mkdir -p /root/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita
+cd /root/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita
+
+vim route.tf
+resource "oci_core_route_table" "RitaRouteTableViaIGW" {
+    compartment_id = oci_identity_compartment.RitaCompartment.id
+    vcn_id = oci_core_virtual_network.RitaVCN.id
+    display_name = "RitaRouteTableViaIGW"
+    route_rules {
+        destination = "0.0.0.0/0"
+        destination_type  = "CIDR_BLOCK"
+        network_entity_id = oci_core_internet_gateway.RitaInternetGateway.id
+    }
+}
+
+vim internet_gateway.tf
+resource "oci_core_internet_gateway" "RitaInternetGateway" {
+    compartment_id = oci_identity_compartment.RitaCompartment.id
+    display_name = "RitaInternetGateway"
+    vcn_id = oci_core_virtual_network.RitaVCN.id
+}
+
+vim webserver1.tf
+resource "oci_core_instance" "RitaWebserver1" {
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name")
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  display_name = "RitaWebServer1"
+  shape = var.Shapes[0]
+  subnet_id = oci_core_subnet.RitaWebSubnet.id
+  source_details {
+    source_type = "image"
+    source_id   = lookup(data.oci_core_images.OSImageLocal.images[0], "id")
+  }
+  metadata = {
+      ssh_authorized_keys = file(var.public_key_oci)
+  }
+  create_vnic_details {
+     subnet_id = oci_core_subnet.RitaWebSubnet.id
+     assign_public_ip = true 
+  }
+}
+
+data "oci_core_vnic_attachments" "RitaWebserver1_VNIC1_attach" {
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name")
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  instance_id = oci_core_instance.RitaWebserver1.id
+}
+
+data "oci_core_vnic" "RitaWebserver1_VNIC1" {
+  vnic_id = data.oci_core_vnic_attachments.RitaWebserver1_VNIC1_attach.vnic_attachments.0.vnic_id
+}
+
+output "RitaWebserver1PublicIP" {
+   value = [data.oci_core_vnic.RitaWebserver1_VNIC1.public_ip_address]
+}
+
+vim webserver2_NEW.tf
+resource "oci_core_instance" "RitaWebserver2" {
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name")
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  display_name = "RitaWebServer2"
+  shape = var.Shapes[0]
+  subnet_id = oci_core_subnet.RitaWebSubnet.id
+  source_details {
+    source_type = "image"
+    source_id   = lookup(data.oci_core_images.OSImageLocal.images[0], "id")
+  }
+  metadata = {
+      ssh_authorized_keys = file(var.public_key_oci)
+  }
+  create_vnic_details {
+     subnet_id = oci_core_subnet.RitaWebSubnet.id
+     assign_public_ip = true 
+  }
+}
+
+data "oci_core_vnic_attachments" "RitaWebserver2_VNIC1_attach" {
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name")
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  instance_id = oci_core_instance.RitaWebserver2.id
+}
+
+data "oci_core_vnic" "RitaWebserver2_VNIC1" {
+  vnic_id = data.oci_core_vnic_attachments.RitaWebserver2_VNIC1_attach.vnic_attachments.0.vnic_id
+}
+
+output "RitaWebserver2PublicIP" {
+value = [data.oci_core_vnic.RitaWebserver2_VNIC1.public_ip_address]
+}
+
+vim httpd_on_webserver1.tf
+	resource "null_resource" "RitaWebserver1HTTPD" {
+	 depends_on = [oci_core_instance.RitaWebserver1]
+	 provisioner "remote-exec" {
+		connection {
+			type     = "ssh"
+			user     = "opc"
+				host     = data.oci_core_vnic.RitaWebserver1_VNIC1.public_ip_address
+			private_key = file(var.private_key_oci)
+			script_path = "/home/opc/myssh.sh"
+			agent = false
+			timeout = "10m"
+		}
+	  inline = ["echo '== 1. Installing HTTPD package with yum'",
+		    "sudo -u root yum -y -q install httpd",
+
+		    "echo '== 2. Creating /var/www/html/index.html'",
+		    "sudo -u root touch /var/www/html/index.html", 
+		    "sudo /bin/su -c \"echo 'Welcome to ritawebserver.com! This is WEBSERVER1...' > /var/www/html/index.html\"",
+
+            "echo '== 3. Disabling firewall and starting HTTPD service'",
+            "sudo -u root service firewalld stop",
+            "sudo -u root service httpd start"]
+  }
+}
+
+vim httpd_on_webserver2_NEW.tf
+resource "null_resource" "RitaWebserver2HTTPD" {
+ depends_on = [oci_core_instance.RitaWebserver2]
+ provisioner "remote-exec" {
+        connection {
+                type     = "ssh"
+                user     = "opc"
+		        host     = data.oci_core_vnic.RitaWebserver2_VNIC1.public_ip_address
+                private_key = file(var.private_key_oci)
+                script_path = "/home/opc/myssh.sh"
+                agent = false
+                timeout = "10m"
+        }
+  inline = ["echo '== 1. Installing HTTPD package with yum'",
+            "sudo -u root yum -y -q install httpd",
+
+            "echo '== 2. Creating /var/www/html/index.html'",
+            "sudo -u root touch /var/www/html/index.html", 
+            "sudo /bin/su -c \"echo 'Welcome to ritawebserver.com! This is WEBSERVER2...' > /var/www/html/index.html\"",
+
+            "echo '== 3. Disabling firewall and starting HTTPD service'",
+            "sudo -u root service firewalld stop",
+            "sudo -u root service httpd start"]
+  }
+}
+
+vim dhcp_options.tf
+resource "oci_core_dhcp_options" "RitaDhcpOptions1" {
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  vcn_id = oci_core_virtual_network.RitaVCN.id
+  display_name = "RitaDHCPOptions1"
+
+  // required
+  options {
+    type = "DomainNameServer"
+    server_type = "VcnLocalPlusInternet"
+  }
+
+  // optional
+  options {
+    type = "SearchDomain"
+    search_domain_names = [ "ritawebserver.com" ]
+  }
+}
+
+vim compartment.tf
+resource "oci_identity_compartment" "RitaCompartment" {
+  name = "RitaCompartment"
+  description = "Rita Compartment"
+  compartment_id = var.compartment_ocid
+}
+
+vim vcn.tf
+resource "oci_core_virtual_network" "RitaVCN" {
+  cidr_block = var.VCN-CIDR
+  dns_label = "RitaVCN"
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  display_name = "RitaVCN"
+}
+
+# Gets a list of Availability Domains
+data "oci_identity_availability_domains" "ADs" {
+  compartment_id = var.tenancy_ocid
+}
+
+# Gets the Id of a specific OS Images
+data "oci_core_images" "OSImageLocal" {
+  #Required
+  compartment_id = var.compartment_ocid
+  display_name   = var.OsImage
+}
+
+vim variables.tf 
+variable "tenancy_ocid" {}
+variable "user_ocid" {}
+variable "fingerprint" {}
+variable "private_key_path" {}
+variable "compartment_ocid" {}
+variable "region" {}
+variable "private_key_oci" {}
+variable "public_key_oci" {}
+
+variable "VCN-CIDR" {
+  default = "10.0.0.0/16"
+}
+
+variable "VCNname" {
+  default = "RitaVCN"
+}
+
+variable "Shapes" {
+ default = ["VM.Standard.E2.1","VM.Standard.E2.1.Micro","VM.Standard2.1","VM.Standard.E2.1","VM.Standard.E2.2"]
+}
+
+variable "OsImage" {
+  default = "Oracle-Linux-7.8-2020.05.26-0"
+}
+
+variable "service_ports" {
+  default = [80,443,22]
+}
+
+vim subnet1.tf 
+resource "oci_core_subnet" "RitaWebSubnet" {
+  cidr_block = "10.0.1.0/24"
+  display_name = "RitaWebSubnet"
+  dns_label = "RitaN1"
+  compartment_id = oci_identity_compartment.RitaCompartment.id
+  vcn_id = oci_core_virtual_network.RitaVCN.id
+  route_table_id = oci_core_route_table.RitaRouteTableViaIGW.id
+  dhcp_options_id = oci_core_dhcp_options.RitaDhcpOptions1.id
+  security_list_ids = [oci_core_security_list.RitaSecurityList.id]
+}
+
+vim security_list.tf 
+resource "oci_core_security_list" "RitaSecurityList" {
+    compartment_id = oci_identity_compartment.RitaCompartment.id
+    display_name = "RitaSecurityList"
+    vcn_id = oci_core_virtual_network.RitaVCN.id
+    
+    egress_security_rules {
+        protocol = "6"
+        destination = "0.0.0.0/0"
+    }
+    
+    dynamic "ingress_security_rules" {
+    for_each = var.service_ports
+    content {
+        protocol = "6"
+        source = "0.0.0.0/0"
+        tcp_options {
+            max = ingress_security_rules.value
+            min = ingress_security_rules.value
+            }
+        }
+    }
+
+    ingress_security_rules {
+        protocol = "6"
+        source = var.VCN-CIDR
+    }
+}
+
+vim provider.tf 
+provider "oci" {
+  version          = ">= 4.19.0" 
+  tenancy_ocid     = var.tenancy_ocid
+  user_ocid        = var.user_ocid
+  fingerprint      = var.fingerprint
+  private_key_path = var.private_key_path
+  region           = var.region
+}
+
+#TO EXECUTE TERRRAFORM YOU NEED ANOTHER FILE ASKED setup_oci_tf_var.sh
+#CHECK THE DOCUMENT https://github.com/danilo19ee/zdatabase/blob/master/TERRAFORM/TERRAFORM%20SETUP%20ORACLE%20CLOUD%20OCI%20ENVIRONMENT
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita# cp /root/setup_oci_tf_var.sh .
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita# source setup_oci_tf_var.sh
+
+#RUN TERRAFORM
+
+###################################### INIT #####################################
+
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita# terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding hashicorp/oci versions matching ">= 4.19.0"...
+- Finding latest version of hashicorp/null...
+- Installing hashicorp/oci v4.20.0...
+- Installed hashicorp/oci v4.20.0 (signed by HashiCorp)
+- Installing hashicorp/null v3.1.0...
+- Installed hashicorp/null v3.1.0 (signed by HashiCorp)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+
+Warning: Version constraints inside provider configuration blocks are deprecated
+
+  on provider.tf line 2, in provider "oci":
+   2:   version          = ">= 4.19.0" 
+
+Terraform 0.13 and earlier allowed provider version constraints inside the
+provider configuration block, but that is now deprecated and will be removed
+in a future version of Terraform. To silence this warning, move the provider
+version constraint into the required_providers block.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+
+###################################### PLAN #####################################
+
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita# terraform plan
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # data.oci_core_vnic.RitaWebserver1_VNIC1 will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic" "RitaWebserver1_VNIC1"  {
+      + availability_domain    = (known after apply)
+      + compartment_id         = (known after apply)
+      + defined_tags           = (known after apply)
+      + display_name           = (known after apply)
+      + freeform_tags          = (known after apply)
+      + hostname_label         = (known after apply)
+      + id                     = (known after apply)
+      + is_primary             = (known after apply)
+      + mac_address            = (known after apply)
+      + nsg_ids                = (known after apply)
+      + private_ip_address     = (known after apply)
+      + public_ip_address      = (known after apply)
+      + skip_source_dest_check = (known after apply)
+      + state                  = (known after apply)
+      + subnet_id              = (known after apply)
+      + time_created           = (known after apply)
+      + vlan_id                = (known after apply)
+      + vnic_id                = (known after apply)
+    }
+
+  # data.oci_core_vnic.RitaWebserver2_VNIC1 will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic" "RitaWebserver2_VNIC1"  {
+      + availability_domain    = (known after apply)
+      + compartment_id         = (known after apply)
+      + defined_tags           = (known after apply)
+      + display_name           = (known after apply)
+      + freeform_tags          = (known after apply)
+      + hostname_label         = (known after apply)
+      + id                     = (known after apply)
+      + is_primary             = (known after apply)
+      + mac_address            = (known after apply)
+      + nsg_ids                = (known after apply)
+      + private_ip_address     = (known after apply)
+      + public_ip_address      = (known after apply)
+      + skip_source_dest_check = (known after apply)
+      + state                  = (known after apply)
+      + subnet_id              = (known after apply)
+      + time_created           = (known after apply)
+      + vlan_id                = (known after apply)
+      + vnic_id                = (known after apply)
+    }
+
+  # data.oci_core_vnic_attachments.RitaWebserver1_VNIC1_attach will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic_attachments" "RitaWebserver1_VNIC1_attach"  {
+      + availability_domain = "qrVs:SA-SAOPAULO-1-AD-1"
+      + compartment_id      = (known after apply)
+      + id                  = (known after apply)
+      + instance_id         = (known after apply)
+      + vnic_attachments    = (known after apply)
+    }
+
+  # data.oci_core_vnic_attachments.RitaWebserver2_VNIC1_attach will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic_attachments" "RitaWebserver2_VNIC1_attach"  {
+      + availability_domain = "qrVs:SA-SAOPAULO-1-AD-1"
+      + compartment_id      = (known after apply)
+      + id                  = (known after apply)
+      + instance_id         = (known after apply)
+      + vnic_attachments    = (known after apply)
+    }
+
+  # null_resource.RitaWebserver1HTTPD will be created
+  + resource "null_resource" "RitaWebserver1HTTPD" {
+      + id = (known after apply)
+    }
+
+  # null_resource.RitaWebserver2HTTPD will be created
+  + resource "null_resource" "RitaWebserver2HTTPD" {
+      + id = (known after apply)
+    }
+
+  # oci_core_dhcp_options.RitaDhcpOptions1 will be created
+  + resource "oci_core_dhcp_options" "RitaDhcpOptions1" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaDHCPOptions1"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+
+      + options {
+          + custom_dns_servers  = []
+          + search_domain_names = (known after apply)
+          + server_type         = "VcnLocalPlusInternet"
+          + type                = "DomainNameServer"
+        }
+      + options {
+          + custom_dns_servers  = []
+          + search_domain_names = [
+              + "ritawebserver.com",
+            ]
+          + server_type         = (known after apply)
+          + type                = "SearchDomain"
+        }
+    }
+
+  # oci_core_instance.RitaWebserver1 will be created
+  + resource "oci_core_instance" "RitaWebserver1" {
+      + availability_domain                 = "qrVs:SA-SAOPAULO-1-AD-1"
+      + boot_volume_id                      = (known after apply)
+      + capacity_reservation_id             = (known after apply)
+      + compartment_id                      = (known after apply)
+      + dedicated_vm_host_id                = (known after apply)
+      + defined_tags                        = (known after apply)
+      + display_name                        = "RitaWebServer1"
+      + fault_domain                        = (known after apply)
+      + freeform_tags                       = (known after apply)
+      + hostname_label                      = (known after apply)
+      + id                                  = (known after apply)
+      + image                               = (known after apply)
+      + ipxe_script                         = (known after apply)
+      + is_pv_encryption_in_transit_enabled = (known after apply)
+      + launch_mode                         = (known after apply)
+      + metadata                            = {
+          + "ssh_authorized_keys" = <<-EOT
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeD0lmPztOebhcqz2/5CCGOyLp2ObgeDCDx1edfyWauj1IqHNXCZtFt7QbKSmmDWYJIBHq60/+z1XD2MMwxFkPHtIfeWaBVjTBAmQzLQFVZQj36yFXIiuBYcid35GZQr0TYlMLjg48KkZjWMAaQPPYwueSEnTdsTKIA0DaCDDir1pL5LczIGoqf+LDAqkwDnj1wGyjW0CHa/P2Qr26dX1PuEvNSnTI6zstAxE0xJdGh+z1COXKrTVZWFtSPumhhZbyjUax42vTiB0KEsTQdtPbDJoQ75vSdfiaM78R07W8ndoC+6m3ZWEtKN/wNPaMsU3YUDPRe7iI+uRgQANBIRY7 tfkeys
+            EOT
+        }
+      + private_ip                          = (known after apply)
+      + public_ip                           = (known after apply)
+      + region                              = (known after apply)
+      + shape                               = "VM.Standard.E2.1"
+      + state                               = (known after apply)
+      + subnet_id                           = (known after apply)
+      + system_tags                         = (known after apply)
+      + time_created                        = (known after apply)
+      + time_maintenance_reboot_due         = (known after apply)
+
+      + agent_config {
+          + are_all_plugins_disabled = (known after apply)
+          + is_management_disabled   = (known after apply)
+          + is_monitoring_disabled   = (known after apply)
+
+          + plugins_config {
+              + desired_state = (known after apply)
+              + name          = (known after apply)
+            }
+        }
+
+      + availability_config {
+          + recovery_action = (known after apply)
+        }
+
+      + create_vnic_details {
+          + assign_public_ip       = "true"
+          + defined_tags           = (known after apply)
+          + display_name           = (known after apply)
+          + freeform_tags          = (known after apply)
+          + hostname_label         = (known after apply)
+          + private_ip             = (known after apply)
+          + skip_source_dest_check = (known after apply)
+          + subnet_id              = (known after apply)
+          + vlan_id                = (known after apply)
+        }
+
+      + instance_options {
+          + are_legacy_imds_endpoints_disabled = (known after apply)
+        }
+
+      + launch_options {
+          + boot_volume_type                    = (known after apply)
+          + firmware                            = (known after apply)
+          + is_consistent_volume_naming_enabled = (known after apply)
+          + is_pv_encryption_in_transit_enabled = (known after apply)
+          + network_type                        = (known after apply)
+          + remote_data_volume_type             = (known after apply)
+        }
+
+      + platform_config {
+          + numa_nodes_per_socket = (known after apply)
+          + type                  = (known after apply)
+        }
+
+      + shape_config {
+          + gpu_description               = (known after apply)
+          + gpus                          = (known after apply)
+          + local_disk_description        = (known after apply)
+          + local_disks                   = (known after apply)
+          + local_disks_total_size_in_gbs = (known after apply)
+          + max_vnic_attachments          = (known after apply)
+          + memory_in_gbs                 = (known after apply)
+          + networking_bandwidth_in_gbps  = (known after apply)
+          + ocpus                         = (known after apply)
+          + processor_description         = (known after apply)
+        }
+
+      + source_details {
+          + boot_volume_size_in_gbs = (known after apply)
+          + kms_key_id              = (known after apply)
+          + source_id               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q"
+          + source_type             = "image"
+        }
+    }
+
+  # oci_core_instance.RitaWebserver2 will be created
+  + resource "oci_core_instance" "RitaWebserver2" {
+      + availability_domain                 = "qrVs:SA-SAOPAULO-1-AD-1"
+      + boot_volume_id                      = (known after apply)
+      + capacity_reservation_id             = (known after apply)
+      + compartment_id                      = (known after apply)
+      + dedicated_vm_host_id                = (known after apply)
+      + defined_tags                        = (known after apply)
+      + display_name                        = "RitaWebServer2"
+      + fault_domain                        = (known after apply)
+      + freeform_tags                       = (known after apply)
+      + hostname_label                      = (known after apply)
+      + id                                  = (known after apply)
+      + image                               = (known after apply)
+      + ipxe_script                         = (known after apply)
+      + is_pv_encryption_in_transit_enabled = (known after apply)
+      + launch_mode                         = (known after apply)
+      + metadata                            = {
+          + "ssh_authorized_keys" = <<-EOT
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeD0lmPztOebhcqz2/5CCGOyLp2ObgeDCDx1edfyWauj1IqHNXCZtFt7QbKSmmDWYJIBHq60/+z1XD2MMwxFkPHtIfeWaBVjTBAmQzLQFVZQj36yFXIiuBYcid35GZQr0TYlMLjg48KkZjWMAaQPPYwueSEnTdsTKIA0DaCDDir1pL5LczIGoqf+LDAqkwDnj1wGyjW0CHa/P2Qr26dX1PuEvNSnTI6zstAxE0xJdGh+z1COXKrTVZWFtSPumhhZbyjUax42vTiB0KEsTQdtPbDJoQ75vSdfiaM78R07W8ndoC+6m3ZWEtKN/wNPaMsU3YUDPRe7iI+uRgQANBIRY7 tfkeys
+            EOT
+        }
+      + private_ip                          = (known after apply)
+      + public_ip                           = (known after apply)
+      + region                              = (known after apply)
+      + shape                               = "VM.Standard.E2.1"
+      + state                               = (known after apply)
+      + subnet_id                           = (known after apply)
+      + system_tags                         = (known after apply)
+      + time_created                        = (known after apply)
+      + time_maintenance_reboot_due         = (known after apply)
+
+      + agent_config {
+          + are_all_plugins_disabled = (known after apply)
+          + is_management_disabled   = (known after apply)
+          + is_monitoring_disabled   = (known after apply)
+
+          + plugins_config {
+              + desired_state = (known after apply)
+              + name          = (known after apply)
+            }
+        }
+
+      + availability_config {
+          + recovery_action = (known after apply)
+        }
+
+      + create_vnic_details {
+          + assign_public_ip       = "true"
+          + defined_tags           = (known after apply)
+          + display_name           = (known after apply)
+          + freeform_tags          = (known after apply)
+          + hostname_label         = (known after apply)
+          + private_ip             = (known after apply)
+          + skip_source_dest_check = (known after apply)
+          + subnet_id              = (known after apply)
+          + vlan_id                = (known after apply)
+        }
+
+      + instance_options {
+          + are_legacy_imds_endpoints_disabled = (known after apply)
+        }
+
+      + launch_options {
+          + boot_volume_type                    = (known after apply)
+          + firmware                            = (known after apply)
+          + is_consistent_volume_naming_enabled = (known after apply)
+          + is_pv_encryption_in_transit_enabled = (known after apply)
+          + network_type                        = (known after apply)
+          + remote_data_volume_type             = (known after apply)
+        }
+
+      + platform_config {
+          + numa_nodes_per_socket = (known after apply)
+          + type                  = (known after apply)
+        }
+
+      + shape_config {
+          + gpu_description               = (known after apply)
+          + gpus                          = (known after apply)
+          + local_disk_description        = (known after apply)
+          + local_disks                   = (known after apply)
+          + local_disks_total_size_in_gbs = (known after apply)
+          + max_vnic_attachments          = (known after apply)
+          + memory_in_gbs                 = (known after apply)
+          + networking_bandwidth_in_gbps  = (known after apply)
+          + ocpus                         = (known after apply)
+          + processor_description         = (known after apply)
+        }
+
+      + source_details {
+          + boot_volume_size_in_gbs = (known after apply)
+          + kms_key_id              = (known after apply)
+          + source_id               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q"
+          + source_type             = "image"
+        }
+    }
+
+  # oci_core_internet_gateway.RitaInternetGateway will be created
+  + resource "oci_core_internet_gateway" "RitaInternetGateway" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaInternetGateway"
+      + enabled        = true
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+    }
+
+  # oci_core_route_table.RitaRouteTableViaIGW will be created
+  + resource "oci_core_route_table" "RitaRouteTableViaIGW" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaRouteTableViaIGW"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+
+      + route_rules {
+          + cidr_block        = (known after apply)
+          + description       = (known after apply)
+          + destination       = "0.0.0.0/0"
+          + destination_type  = "CIDR_BLOCK"
+          + network_entity_id = (known after apply)
+        }
+    }
+
+  # oci_core_security_list.RitaSecurityList will be created
+  + resource "oci_core_security_list" "RitaSecurityList" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaSecurityList"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+
+      + egress_security_rules {
+          + description      = (known after apply)
+          + destination      = "0.0.0.0/0"
+          + destination_type = (known after apply)
+          + protocol         = "6"
+          + stateless        = (known after apply)
+        }
+
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "0.0.0.0/0"
+          + source_type = (known after apply)
+          + stateless   = false
+
+          + tcp_options {
+              + max = 22
+              + min = 22
+            }
+        }
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "0.0.0.0/0"
+          + source_type = (known after apply)
+          + stateless   = false
+
+          + tcp_options {
+              + max = 443
+              + min = 443
+            }
+        }
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "0.0.0.0/0"
+          + source_type = (known after apply)
+          + stateless   = false
+
+          + tcp_options {
+              + max = 80
+              + min = 80
+            }
+        }
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "10.0.0.0/16"
+          + source_type = (known after apply)
+          + stateless   = false
+        }
+    }
+
+  # oci_core_subnet.RitaWebSubnet will be created
+  + resource "oci_core_subnet" "RitaWebSubnet" {
+      + availability_domain        = (known after apply)
+      + cidr_block                 = "10.0.1.0/24"
+      + compartment_id             = (known after apply)
+      + defined_tags               = (known after apply)
+      + dhcp_options_id            = (known after apply)
+      + display_name               = "RitaWebSubnet"
+      + dns_label                  = "RitaN1"
+      + freeform_tags              = (known after apply)
+      + id                         = (known after apply)
+      + ipv6cidr_block             = (known after apply)
+      + ipv6public_cidr_block      = (known after apply)
+      + ipv6virtual_router_ip      = (known after apply)
+      + prohibit_public_ip_on_vnic = (known after apply)
+      + route_table_id             = (known after apply)
+      + security_list_ids          = (known after apply)
+      + state                      = (known after apply)
+      + subnet_domain_name         = (known after apply)
+      + time_created               = (known after apply)
+      + vcn_id                     = (known after apply)
+      + virtual_router_ip          = (known after apply)
+      + virtual_router_mac         = (known after apply)
+    }
+
+  # oci_core_virtual_network.RitaVCN will be created
+  + resource "oci_core_virtual_network" "RitaVCN" {
+      + cidr_block               = "10.0.0.0/16"
+      + cidr_blocks              = (known after apply)
+      + compartment_id           = (known after apply)
+      + default_dhcp_options_id  = (known after apply)
+      + default_route_table_id   = (known after apply)
+      + default_security_list_id = (known after apply)
+      + defined_tags             = (known after apply)
+      + display_name             = "RitaVCN"
+      + dns_label                = "RitaVCN"
+      + freeform_tags            = (known after apply)
+      + id                       = (known after apply)
+      + ipv6cidr_block           = (known after apply)
+      + ipv6public_cidr_block    = (known after apply)
+      + is_ipv6enabled           = (known after apply)
+      + state                    = (known after apply)
+      + time_created             = (known after apply)
+      + vcn_domain_name          = (known after apply)
+    }
+
+  # oci_identity_compartment.RitaCompartment will be created
+  + resource "oci_identity_compartment" "RitaCompartment" {
+      + compartment_id = "ocid1.tenancy.oc1..aaaaaaaairaylvs2otgfkgojvrfgeatgqlxqknbroq55apxhdtooguclwfna"
+      + defined_tags   = (known after apply)
+      + description    = "Rita Compartment"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + inactive_state = (known after apply)
+      + is_accessible  = (known after apply)
+      + name           = "RitaCompartment"
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+    }
+
+Plan: 11 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + RitaWebserver1PublicIP = [
+      + (known after apply),
+    ]
+  + RitaWebserver2PublicIP = [
+      + (known after apply),
+    ]
+
+Warning: Version constraints inside provider configuration blocks are deprecated
+
+  on provider.tf line 2, in provider "oci":
+   2:   version          = ">= 4.19.0" 
+
+Terraform 0.13 and earlier allowed provider version constraints inside the
+provider configuration block, but that is now deprecated and will be removed
+in a future version of Terraform. To silence this warning, move the provider
+version constraint into the required_providers block.
+
+
+Warning: "subnet_id": [DEPRECATED] The 'subnet_id' field has been deprecated. Please use 'subnet_id under create_vnic_details' instead.
+
+  on webserver1.tf line 1, in resource "oci_core_instance" "RitaWebserver1":
+   1: resource "oci_core_instance" "RitaWebserver1" {
+
+(and one more similar warning elsewhere)
+
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+
+###################################### APPLY #####################################
+
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita# terraform apply
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # data.oci_core_vnic.RitaWebserver1_VNIC1 will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic" "RitaWebserver1_VNIC1"  {
+      + availability_domain    = (known after apply)
+      + compartment_id         = (known after apply)
+      + defined_tags           = (known after apply)
+      + display_name           = (known after apply)
+      + freeform_tags          = (known after apply)
+      + hostname_label         = (known after apply)
+      + id                     = (known after apply)
+      + is_primary             = (known after apply)
+      + mac_address            = (known after apply)
+      + nsg_ids                = (known after apply)
+      + private_ip_address     = (known after apply)
+      + public_ip_address      = (known after apply)
+      + skip_source_dest_check = (known after apply)
+      + state                  = (known after apply)
+      + subnet_id              = (known after apply)
+      + time_created           = (known after apply)
+      + vlan_id                = (known after apply)
+      + vnic_id                = (known after apply)
+    }
+
+  # data.oci_core_vnic.RitaWebserver2_VNIC1 will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic" "RitaWebserver2_VNIC1"  {
+      + availability_domain    = (known after apply)
+      + compartment_id         = (known after apply)
+      + defined_tags           = (known after apply)
+      + display_name           = (known after apply)
+      + freeform_tags          = (known after apply)
+      + hostname_label         = (known after apply)
+      + id                     = (known after apply)
+      + is_primary             = (known after apply)
+      + mac_address            = (known after apply)
+      + nsg_ids                = (known after apply)
+      + private_ip_address     = (known after apply)
+      + public_ip_address      = (known after apply)
+      + skip_source_dest_check = (known after apply)
+      + state                  = (known after apply)
+      + subnet_id              = (known after apply)
+      + time_created           = (known after apply)
+      + vlan_id                = (known after apply)
+      + vnic_id                = (known after apply)
+    }
+
+  # data.oci_core_vnic_attachments.RitaWebserver1_VNIC1_attach will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic_attachments" "RitaWebserver1_VNIC1_attach"  {
+      + availability_domain = "qrVs:SA-SAOPAULO-1-AD-1"
+      + compartment_id      = (known after apply)
+      + id                  = (known after apply)
+      + instance_id         = (known after apply)
+      + vnic_attachments    = (known after apply)
+    }
+
+  # data.oci_core_vnic_attachments.RitaWebserver2_VNIC1_attach will be read during apply
+  # (config refers to values not yet known)
+ <= data "oci_core_vnic_attachments" "RitaWebserver2_VNIC1_attach"  {
+      + availability_domain = "qrVs:SA-SAOPAULO-1-AD-1"
+      + compartment_id      = (known after apply)
+      + id                  = (known after apply)
+      + instance_id         = (known after apply)
+      + vnic_attachments    = (known after apply)
+    }
+
+  # null_resource.RitaWebserver1HTTPD will be created
+  + resource "null_resource" "RitaWebserver1HTTPD" {
+      + id = (known after apply)
+    }
+
+  # null_resource.RitaWebserver2HTTPD will be created
+  + resource "null_resource" "RitaWebserver2HTTPD" {
+      + id = (known after apply)
+    }
+
+  # oci_core_dhcp_options.RitaDhcpOptions1 will be created
+  + resource "oci_core_dhcp_options" "RitaDhcpOptions1" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaDHCPOptions1"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+
+      + options {
+          + custom_dns_servers  = []
+          + search_domain_names = (known after apply)
+          + server_type         = "VcnLocalPlusInternet"
+          + type                = "DomainNameServer"
+        }
+      + options {
+          + custom_dns_servers  = []
+          + search_domain_names = [
+              + "ritawebserver.com",
+            ]
+          + server_type         = (known after apply)
+          + type                = "SearchDomain"
+        }
+    }
+
+  # oci_core_instance.RitaWebserver1 will be created
+  + resource "oci_core_instance" "RitaWebserver1" {
+      + availability_domain                 = "qrVs:SA-SAOPAULO-1-AD-1"
+      + boot_volume_id                      = (known after apply)
+      + capacity_reservation_id             = (known after apply)
+      + compartment_id                      = (known after apply)
+      + dedicated_vm_host_id                = (known after apply)
+      + defined_tags                        = (known after apply)
+      + display_name                        = "RitaWebServer1"
+      + fault_domain                        = (known after apply)
+      + freeform_tags                       = (known after apply)
+      + hostname_label                      = (known after apply)
+      + id                                  = (known after apply)
+      + image                               = (known after apply)
+      + ipxe_script                         = (known after apply)
+      + is_pv_encryption_in_transit_enabled = (known after apply)
+      + launch_mode                         = (known after apply)
+      + metadata                            = {
+          + "ssh_authorized_keys" = <<-EOT
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeD0lmPztOebhcqz2/5CCGOyLp2ObgeDCDx1edfyWauj1IqHNXCZtFt7QbKSmmDWYJIBHq60/+z1XD2MMwxFkPHtIfeWaBVjTBAmQzLQFVZQj36yFXIiuBYcid35GZQr0TYlMLjg48KkZjWMAaQPPYwueSEnTdsTKIA0DaCDDir1pL5LczIGoqf+LDAqkwDnj1wGyjW0CHa/P2Qr26dX1PuEvNSnTI6zstAxE0xJdGh+z1COXKrTVZWFtSPumhhZbyjUax42vTiB0KEsTQdtPbDJoQ75vSdfiaM78R07W8ndoC+6m3ZWEtKN/wNPaMsU3YUDPRe7iI+uRgQANBIRY7 tfkeys
+            EOT
+        }
+      + private_ip                          = (known after apply)
+      + public_ip                           = (known after apply)
+      + region                              = (known after apply)
+      + shape                               = "VM.Standard.E2.1"
+      + state                               = (known after apply)
+      + subnet_id                           = (known after apply)
+      + system_tags                         = (known after apply)
+      + time_created                        = (known after apply)
+      + time_maintenance_reboot_due         = (known after apply)
+
+      + agent_config {
+          + are_all_plugins_disabled = (known after apply)
+          + is_management_disabled   = (known after apply)
+          + is_monitoring_disabled   = (known after apply)
+
+          + plugins_config {
+              + desired_state = (known after apply)
+              + name          = (known after apply)
+            }
+        }
+
+      + availability_config {
+          + recovery_action = (known after apply)
+        }
+
+      + create_vnic_details {
+          + assign_public_ip       = "true"
+          + defined_tags           = (known after apply)
+          + display_name           = (known after apply)
+          + freeform_tags          = (known after apply)
+          + hostname_label         = (known after apply)
+          + private_ip             = (known after apply)
+          + skip_source_dest_check = (known after apply)
+          + subnet_id              = (known after apply)
+          + vlan_id                = (known after apply)
+        }
+
+      + instance_options {
+          + are_legacy_imds_endpoints_disabled = (known after apply)
+        }
+
+      + launch_options {
+          + boot_volume_type                    = (known after apply)
+          + firmware                            = (known after apply)
+          + is_consistent_volume_naming_enabled = (known after apply)
+          + is_pv_encryption_in_transit_enabled = (known after apply)
+          + network_type                        = (known after apply)
+          + remote_data_volume_type             = (known after apply)
+        }
+
+      + platform_config {
+          + numa_nodes_per_socket = (known after apply)
+          + type                  = (known after apply)
+        }
+
+      + shape_config {
+          + gpu_description               = (known after apply)
+          + gpus                          = (known after apply)
+          + local_disk_description        = (known after apply)
+          + local_disks                   = (known after apply)
+          + local_disks_total_size_in_gbs = (known after apply)
+          + max_vnic_attachments          = (known after apply)
+          + memory_in_gbs                 = (known after apply)
+          + networking_bandwidth_in_gbps  = (known after apply)
+          + ocpus                         = (known after apply)
+          + processor_description         = (known after apply)
+        }
+
+      + source_details {
+          + boot_volume_size_in_gbs = (known after apply)
+          + kms_key_id              = (known after apply)
+          + source_id               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q"
+          + source_type             = "image"
+        }
+    }
+
+  # oci_core_instance.RitaWebserver2 will be created
+  + resource "oci_core_instance" "RitaWebserver2" {
+      + availability_domain                 = "qrVs:SA-SAOPAULO-1-AD-1"
+      + boot_volume_id                      = (known after apply)
+      + capacity_reservation_id             = (known after apply)
+      + compartment_id                      = (known after apply)
+      + dedicated_vm_host_id                = (known after apply)
+      + defined_tags                        = (known after apply)
+      + display_name                        = "RitaWebServer2"
+      + fault_domain                        = (known after apply)
+      + freeform_tags                       = (known after apply)
+      + hostname_label                      = (known after apply)
+      + id                                  = (known after apply)
+      + image                               = (known after apply)
+      + ipxe_script                         = (known after apply)
+      + is_pv_encryption_in_transit_enabled = (known after apply)
+      + launch_mode                         = (known after apply)
+      + metadata                            = {
+          + "ssh_authorized_keys" = <<-EOT
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeD0lmPztOebhcqz2/5CCGOyLp2ObgeDCDx1edfyWauj1IqHNXCZtFt7QbKSmmDWYJIBHq60/+z1XD2MMwxFkPHtIfeWaBVjTBAmQzLQFVZQj36yFXIiuBYcid35GZQr0TYlMLjg48KkZjWMAaQPPYwueSEnTdsTKIA0DaCDDir1pL5LczIGoqf+LDAqkwDnj1wGyjW0CHa/P2Qr26dX1PuEvNSnTI6zstAxE0xJdGh+z1COXKrTVZWFtSPumhhZbyjUax42vTiB0KEsTQdtPbDJoQ75vSdfiaM78R07W8ndoC+6m3ZWEtKN/wNPaMsU3YUDPRe7iI+uRgQANBIRY7 tfkeys
+            EOT
+        }
+      + private_ip                          = (known after apply)
+      + public_ip                           = (known after apply)
+      + region                              = (known after apply)
+      + shape                               = "VM.Standard.E2.1"
+      + state                               = (known after apply)
+      + subnet_id                           = (known after apply)
+      + system_tags                         = (known after apply)
+      + time_created                        = (known after apply)
+      + time_maintenance_reboot_due         = (known after apply)
+
+      + agent_config {
+          + are_all_plugins_disabled = (known after apply)
+          + is_management_disabled   = (known after apply)
+          + is_monitoring_disabled   = (known after apply)
+
+          + plugins_config {
+              + desired_state = (known after apply)
+              + name          = (known after apply)
+            }
+        }
+
+      + availability_config {
+          + recovery_action = (known after apply)
+        }
+
+      + create_vnic_details {
+          + assign_public_ip       = "true"
+          + defined_tags           = (known after apply)
+          + display_name           = (known after apply)
+          + freeform_tags          = (known after apply)
+          + hostname_label         = (known after apply)
+          + private_ip             = (known after apply)
+          + skip_source_dest_check = (known after apply)
+          + subnet_id              = (known after apply)
+          + vlan_id                = (known after apply)
+        }
+
+      + instance_options {
+          + are_legacy_imds_endpoints_disabled = (known after apply)
+        }
+
+      + launch_options {
+          + boot_volume_type                    = (known after apply)
+          + firmware                            = (known after apply)
+          + is_consistent_volume_naming_enabled = (known after apply)
+          + is_pv_encryption_in_transit_enabled = (known after apply)
+          + network_type                        = (known after apply)
+          + remote_data_volume_type             = (known after apply)
+        }
+
+      + platform_config {
+          + numa_nodes_per_socket = (known after apply)
+          + type                  = (known after apply)
+        }
+
+      + shape_config {
+          + gpu_description               = (known after apply)
+          + gpus                          = (known after apply)
+          + local_disk_description        = (known after apply)
+          + local_disks                   = (known after apply)
+          + local_disks_total_size_in_gbs = (known after apply)
+          + max_vnic_attachments          = (known after apply)
+          + memory_in_gbs                 = (known after apply)
+          + networking_bandwidth_in_gbps  = (known after apply)
+          + ocpus                         = (known after apply)
+          + processor_description         = (known after apply)
+        }
+
+      + source_details {
+          + boot_volume_size_in_gbs = (known after apply)
+          + kms_key_id              = (known after apply)
+          + source_id               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q"
+          + source_type             = "image"
+        }
+    }
+
+  # oci_core_internet_gateway.RitaInternetGateway will be created
+  + resource "oci_core_internet_gateway" "RitaInternetGateway" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaInternetGateway"
+      + enabled        = true
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+    }
+
+  # oci_core_route_table.RitaRouteTableViaIGW will be created
+  + resource "oci_core_route_table" "RitaRouteTableViaIGW" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaRouteTableViaIGW"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+
+      + route_rules {
+          + cidr_block        = (known after apply)
+          + description       = (known after apply)
+          + destination       = "0.0.0.0/0"
+          + destination_type  = "CIDR_BLOCK"
+          + network_entity_id = (known after apply)
+        }
+    }
+
+  # oci_core_security_list.RitaSecurityList will be created
+  + resource "oci_core_security_list" "RitaSecurityList" {
+      + compartment_id = (known after apply)
+      + defined_tags   = (known after apply)
+      + display_name   = "RitaSecurityList"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+      + vcn_id         = (known after apply)
+
+      + egress_security_rules {
+          + description      = (known after apply)
+          + destination      = "0.0.0.0/0"
+          + destination_type = (known after apply)
+          + protocol         = "6"
+          + stateless        = (known after apply)
+        }
+
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "0.0.0.0/0"
+          + source_type = (known after apply)
+          + stateless   = false
+
+          + tcp_options {
+              + max = 22
+              + min = 22
+            }
+        }
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "0.0.0.0/0"
+          + source_type = (known after apply)
+          + stateless   = false
+
+          + tcp_options {
+              + max = 443
+              + min = 443
+            }
+        }
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "0.0.0.0/0"
+          + source_type = (known after apply)
+          + stateless   = false
+
+          + tcp_options {
+              + max = 80
+              + min = 80
+            }
+        }
+      + ingress_security_rules {
+          + description = (known after apply)
+          + protocol    = "6"
+          + source      = "10.0.0.0/16"
+          + source_type = (known after apply)
+          + stateless   = false
+        }
+    }
+
+  # oci_core_subnet.RitaWebSubnet will be created
+  + resource "oci_core_subnet" "RitaWebSubnet" {
+      + availability_domain        = (known after apply)
+      + cidr_block                 = "10.0.1.0/24"
+      + compartment_id             = (known after apply)
+      + defined_tags               = (known after apply)
+      + dhcp_options_id            = (known after apply)
+      + display_name               = "RitaWebSubnet"
+      + dns_label                  = "RitaN1"
+      + freeform_tags              = (known after apply)
+      + id                         = (known after apply)
+      + ipv6cidr_block             = (known after apply)
+      + ipv6public_cidr_block      = (known after apply)
+      + ipv6virtual_router_ip      = (known after apply)
+      + prohibit_public_ip_on_vnic = (known after apply)
+      + route_table_id             = (known after apply)
+      + security_list_ids          = (known after apply)
+      + state                      = (known after apply)
+      + subnet_domain_name         = (known after apply)
+      + time_created               = (known after apply)
+      + vcn_id                     = (known after apply)
+      + virtual_router_ip          = (known after apply)
+      + virtual_router_mac         = (known after apply)
+    }
+
+  # oci_core_virtual_network.RitaVCN will be created
+  + resource "oci_core_virtual_network" "RitaVCN" {
+      + cidr_block               = "10.0.0.0/16"
+      + cidr_blocks              = (known after apply)
+      + compartment_id           = (known after apply)
+      + default_dhcp_options_id  = (known after apply)
+      + default_route_table_id   = (known after apply)
+      + default_security_list_id = (known after apply)
+      + defined_tags             = (known after apply)
+      + display_name             = "RitaVCN"
+      + dns_label                = "RitaVCN"
+      + freeform_tags            = (known after apply)
+      + id                       = (known after apply)
+      + ipv6cidr_block           = (known after apply)
+      + ipv6public_cidr_block    = (known after apply)
+      + is_ipv6enabled           = (known after apply)
+      + state                    = (known after apply)
+      + time_created             = (known after apply)
+      + vcn_domain_name          = (known after apply)
+    }
+
+  # oci_identity_compartment.RitaCompartment will be created
+  + resource "oci_identity_compartment" "RitaCompartment" {
+      + compartment_id = "ocid1.tenancy.oc1..aaaaaaaairaylvs2otgfkgojvrfgeatgqlxqknbroq55apxhdtooguclwfna"
+      + defined_tags   = (known after apply)
+      + description    = "Rita Compartment"
+      + freeform_tags  = (known after apply)
+      + id             = (known after apply)
+      + inactive_state = (known after apply)
+      + is_accessible  = (known after apply)
+      + name           = "RitaCompartment"
+      + state          = (known after apply)
+      + time_created   = (known after apply)
+    }
+
+Plan: 11 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + RitaWebserver1PublicIP = [
+      + (known after apply),
+    ]
+  + RitaWebserver2PublicIP = [
+      + (known after apply),
+    ]
+
+
+Warning: Version constraints inside provider configuration blocks are deprecated
+
+  on provider.tf line 2, in provider "oci":
+   2:   version          = ">= 4.19.0" 
+
+Terraform 0.13 and earlier allowed provider version constraints inside the
+provider configuration block, but that is now deprecated and will be removed
+in a future version of Terraform. To silence this warning, move the provider
+version constraint into the required_providers block.
+
+
+Warning: "subnet_id": [DEPRECATED] The 'subnet_id' field has been deprecated. Please use 'subnet_id under create_vnic_details' instead.
+
+  on webserver1.tf line 1, in resource "oci_core_instance" "RitaWebserver1":
+   1: resource "oci_core_instance" "RitaWebserver1" {
+
+(and one more similar warning elsewhere)
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+oci_identity_compartment.RitaCompartment: Creating...
+oci_identity_compartment.RitaCompartment: Creation complete after 2s [id=ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja]
+oci_core_virtual_network.RitaVCN: Creating...
+oci_core_virtual_network.RitaVCN: Creation complete after 1s [id=ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a]
+oci_core_internet_gateway.RitaInternetGateway: Creating...
+oci_core_dhcp_options.RitaDhcpOptions1: Creating...
+oci_core_security_list.RitaSecurityList: Creating...
+oci_core_internet_gateway.RitaInternetGateway: Creation complete after 1s [id=ocid1.internetgateway.oc1.sa-saopaulo-1.aaaaaaaagtlxztdzg6jk5bbt7gco4gnee2dv7xqzgnveztazsph6xh3ks4iq]
+oci_core_route_table.RitaRouteTableViaIGW: Creating...
+oci_core_security_list.RitaSecurityList: Creation complete after 1s [id=ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaa5p3t5v45kybrn26rl2hsrf5rutdkvhycu2vl5u7gqwv7n7utptbq]
+oci_core_dhcp_options.RitaDhcpOptions1: Creation complete after 2s [id=ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaawqe6t3gegxcb4hefk7kuml2ty47ppf7rwz4go6hn5pvzkxoq4goa]
+oci_core_route_table.RitaRouteTableViaIGW: Creation complete after 1s [id=ocid1.routetable.oc1.sa-saopaulo-1.aaaaaaaab4b67ywa6b25irveycfgvj3d2z4sanl33tixpthtih453zcx6uea]
+oci_core_subnet.RitaWebSubnet: Creating...
+oci_core_subnet.RitaWebSubnet: Creation complete after 6s [id=ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq]
+oci_core_instance.RitaWebserver1: Creating...
+oci_core_instance.RitaWebserver2: Creating...
+oci_core_instance.RitaWebserver1: Still creating... [10s elapsed]
+oci_core_instance.RitaWebserver2: Still creating... [10s elapsed]
+oci_core_instance.RitaWebserver1: Still creating... [20s elapsed]
+oci_core_instance.RitaWebserver2: Still creating... [20s elapsed]
+oci_core_instance.RitaWebserver1: Still creating... [30s elapsed]
+oci_core_instance.RitaWebserver2: Still creating... [30s elapsed]
+oci_core_instance.RitaWebserver1: Still creating... [40s elapsed]
+oci_core_instance.RitaWebserver2: Still creating... [40s elapsed]
+oci_core_instance.RitaWebserver1: Creation complete after 44s [id=ocid1.instance.oc1.sa-saopaulo-1.antxeljr2uds7uacsiq2bq7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq]
+data.oci_core_vnic_attachments.RitaWebserver1_VNIC1_attach: Reading...
+data.oci_core_vnic_attachments.RitaWebserver1_VNIC1_attach: Read complete after 0s [id=CoreVnicAttachmentsDataSource-1366177347]
+data.oci_core_vnic.RitaWebserver1_VNIC1: Reading...
+data.oci_core_vnic.RitaWebserver1_VNIC1: Read complete after 1s [id=ocid1.vnic.oc1.sa-saopaulo-1.abtxeljreyjbefhiikpyqgryraoslzdshnqt4iamxwuw3rq6turboiyqgelq]
+null_resource.RitaWebserver1HTTPD: Creating...
+null_resource.RitaWebserver1HTTPD: Provisioning with 'remote-exec'...
+null_resource.RitaWebserver1HTTPD (remote-exec): Connecting to remote host via SSH...
+null_resource.RitaWebserver1HTTPD (remote-exec):   Host: 140.238.185.81
+null_resource.RitaWebserver1HTTPD (remote-exec):   User: opc
+null_resource.RitaWebserver1HTTPD (remote-exec):   Password: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Private key: true
+null_resource.RitaWebserver1HTTPD (remote-exec):   Certificate: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   SSH Agent: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Checking Host Key: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Target Platform: unix
+oci_core_instance.RitaWebserver2: Still creating... [50s elapsed]
+null_resource.RitaWebserver1HTTPD (remote-exec): Connecting to remote host via SSH...
+null_resource.RitaWebserver1HTTPD (remote-exec):   Host: 140.238.185.81
+null_resource.RitaWebserver1HTTPD (remote-exec):   User: opc
+null_resource.RitaWebserver1HTTPD (remote-exec):   Password: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Private key: true
+null_resource.RitaWebserver1HTTPD (remote-exec):   Certificate: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   SSH Agent: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Checking Host Key: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Target Platform: unix
+null_resource.RitaWebserver1HTTPD: Still creating... [10s elapsed]
+null_resource.RitaWebserver1HTTPD (remote-exec): Connecting to remote host via SSH...
+null_resource.RitaWebserver1HTTPD (remote-exec):   Host: 140.238.185.81
+null_resource.RitaWebserver1HTTPD (remote-exec):   User: opc
+null_resource.RitaWebserver1HTTPD (remote-exec):   Password: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Private key: true
+null_resource.RitaWebserver1HTTPD (remote-exec):   Certificate: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   SSH Agent: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Checking Host Key: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Target Platform: unix
+null_resource.RitaWebserver1HTTPD (remote-exec): Connecting to remote host via SSH...
+null_resource.RitaWebserver1HTTPD (remote-exec):   Host: 140.238.185.81
+null_resource.RitaWebserver1HTTPD (remote-exec):   User: opc
+null_resource.RitaWebserver1HTTPD (remote-exec):   Password: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Private key: true
+null_resource.RitaWebserver1HTTPD (remote-exec):   Certificate: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   SSH Agent: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Checking Host Key: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Target Platform: unix
+oci_core_instance.RitaWebserver2: Still creating... [1m0s elapsed]
+null_resource.RitaWebserver1HTTPD: Still creating... [20s elapsed]
+null_resource.RitaWebserver1HTTPD (remote-exec): Connecting to remote host via SSH...
+null_resource.RitaWebserver1HTTPD (remote-exec):   Host: 140.238.185.81
+null_resource.RitaWebserver1HTTPD (remote-exec):   User: opc
+null_resource.RitaWebserver1HTTPD (remote-exec):   Password: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Private key: true
+null_resource.RitaWebserver1HTTPD (remote-exec):   Certificate: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   SSH Agent: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Checking Host Key: false
+null_resource.RitaWebserver1HTTPD (remote-exec):   Target Platform: unix
+null_resource.RitaWebserver1HTTPD (remote-exec): Connected!
+null_resource.RitaWebserver1HTTPD (remote-exec): == 1. Installing HTTPD package with yum
+null_resource.RitaWebserver1HTTPD (remote-exec): Existing lock /var/run/yum.pid: another copy is running as pid 2988.
+null_resource.RitaWebserver1HTTPD (remote-exec): Another app is currently holding the yum lock; waiting for it to exit...
+null_resource.RitaWebserver1HTTPD (remote-exec):   The other application is: yum
+null_resource.RitaWebserver1HTTPD (remote-exec):     Memory :  80 M RSS (404 MB VSZ)
+null_resource.RitaWebserver1HTTPD (remote-exec):     Started: Thu Apr  1 20:30:24 2021 - 00:05 ago
+null_resource.RitaWebserver1HTTPD (remote-exec):     State  : Running, pid: 2988
+oci_core_instance.RitaWebserver2: Still creating... [1m10s elapsed]
+null_resource.RitaWebserver1HTTPD (remote-exec): Another app is currently holding the yum lock; waiting for it to exit...
+null_resource.RitaWebserver1HTTPD (remote-exec):   The other application is: yum
+null_resource.RitaWebserver1HTTPD (remote-exec):     Memory :  80 M RSS (404 MB VSZ)
+null_resource.RitaWebserver1HTTPD (remote-exec):     Started: Thu Apr  1 20:30:24 2021 - 00:07 ago
+null_resource.RitaWebserver1HTTPD (remote-exec):     State  : Running, pid: 2988
+null_resource.RitaWebserver1HTTPD (remote-exec): Another app is currently holding the yum lock; waiting for it to exit...
+null_resource.RitaWebserver1HTTPD (remote-exec):   The other application is: yum
+null_resource.RitaWebserver1HTTPD (remote-exec):     Memory :  80 M RSS (404 MB VSZ)
+null_resource.RitaWebserver1HTTPD (remote-exec):     Started: Thu Apr  1 20:30:24 2021 - 00:09 ago
+null_resource.RitaWebserver1HTTPD (remote-exec):     State  : Running, pid: 2988
+oci_core_instance.RitaWebserver2: Creation complete after 1m15s [id=ocid1.instance.oc1.sa-saopaulo-1.antxeljr2uds7uac3yoqfl6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq]
+null_resource.RitaWebserver1HTTPD: Still creating... [30s elapsed]
+data.oci_core_vnic_attachments.RitaWebserver2_VNIC1_attach: Reading...
+data.oci_core_vnic_attachments.RitaWebserver2_VNIC1_attach: Read complete after 0s [id=CoreVnicAttachmentsDataSource-1690193732]
+data.oci_core_vnic.RitaWebserver2_VNIC1: Reading...
+data.oci_core_vnic.RitaWebserver2_VNIC1: Read complete after 1s [id=ocid1.vnic.oc1.sa-saopaulo-1.abtxeljru3pok5mlvtn56l33sqvupovantzslyxkgavu5qhjakacnbbrdk5a]
+null_resource.RitaWebserver2HTTPD: Creating...
+null_resource.RitaWebserver2HTTPD: Provisioning with 'remote-exec'...
+null_resource.RitaWebserver2HTTPD (remote-exec): Connecting to remote host via SSH...
+null_resource.RitaWebserver2HTTPD (remote-exec):   Host: 168.138.132.144
+null_resource.RitaWebserver2HTTPD (remote-exec):   User: opc
+null_resource.RitaWebserver2HTTPD (remote-exec):   Password: false
+null_resource.RitaWebserver2HTTPD (remote-exec):   Private key: true
+null_resource.RitaWebserver2HTTPD (remote-exec):   Certificate: false
+null_resource.RitaWebserver2HTTPD (remote-exec):   SSH Agent: false
+null_resource.RitaWebserver2HTTPD (remote-exec):   Checking Host Key: false
+null_resource.RitaWebserver2HTTPD (remote-exec):   Target Platform: unix
+null_resource.RitaWebserver1HTTPD (remote-exec): Another app is currently holding the yum lock; waiting for it to exit...
+null_resource.RitaWebserver1HTTPD (remote-exec):   The other application is: yum
+null_resource.RitaWebserver1HTTPD (remote-exec):     Memory :  80 M RSS (404 MB VSZ)
+null_resource.RitaWebserver1HTTPD (remote-exec):     Started: Thu Apr  1 20:30:24 2021 - 00:11 ago
+null_resource.RitaWebserver1HTTPD (remote-exec):     State  : Sleeping, pid: 2988
+null_resource.RitaWebserver2HTTPD (remote-exec): Connected!
+null_resource.RitaWebserver2HTTPD (remote-exec): == 1. Installing HTTPD package with yum
+null_resource.RitaWebserver1HTTPD: Still creating... [40s elapsed]
+null_resource.RitaWebserver2HTTPD: Still creating... [10s elapsed]
+null_resource.RitaWebserver1HTTPD: Still creating... [50s elapsed]
+null_resource.RitaWebserver2HTTPD: Still creating... [20s elapsed]
+null_resource.RitaWebserver2HTTPD (remote-exec): There are unfinished transactions remaining. You might consider running yum-complete-transaction, or "yum-complete-transaction --cleanup-only" and "yum history redo last", first to finish them. If those don't work you'll have to try removing/installing packages by hand (maybe package-cleanup can help).
+null_resource.RitaWebserver1HTTPD (remote-exec): There are unfinished transactions remaining. You might consider running yum-complete-transaction, or "yum-complete-transaction --cleanup-only" and "yum history redo last", first to finish them. If those don't work you'll have to try removing/installing packages by hand (maybe package-cleanup can help).
+null_resource.RitaWebserver1HTTPD: Still creating... [1m0s elapsed]
+null_resource.RitaWebserver2HTTPD: Still creating... [30s elapsed]
+null_resource.RitaWebserver1HTTPD (remote-exec): Warning: RPMDB altered outside of yum.
+null_resource.RitaWebserver2HTTPD (remote-exec): Warning: RPMDB altered outside of yum.
+null_resource.RitaWebserver1HTTPD: Still creating... [1m10s elapsed]
+null_resource.RitaWebserver2HTTPD: Still creating... [40s elapsed]
+null_resource.RitaWebserver1HTTPD (remote-exec): ** Found 1 pre-existing rpmdb problem(s), 'yum check' output follows:
+null_resource.RitaWebserver1HTTPD (remote-exec): oracle-cloud-agent-1.9.0-4425.el7.x86_64 is a duplicate with oracle-cloud-agent-0.0.18-18.el7.x86_64
+null_resource.RitaWebserver2HTTPD (remote-exec): ** Found 1 pre-existing rpmdb problem(s), 'yum check' output follows:
+null_resource.RitaWebserver2HTTPD (remote-exec): oracle-cloud-agent-1.9.0-4425.el7.x86_64 is a duplicate with oracle-cloud-agent-0.0.18-18.el7.x86_64
+null_resource.RitaWebserver1HTTPD (remote-exec): == 2. Creating /var/www/html/index.html
+null_resource.RitaWebserver1HTTPD (remote-exec): == 3. Disabling firewall and starting HTTPD service
+null_resource.RitaWebserver1HTTPD (remote-exec): Redirecting to /bin/systemctl stop firewalld.service
+null_resource.RitaWebserver2HTTPD (remote-exec): == 2. Creating /var/www/html/index.html
+null_resource.RitaWebserver2HTTPD (remote-exec): == 3. Disabling firewall and starting HTTPD service
+null_resource.RitaWebserver2HTTPD (remote-exec): Redirecting to /bin/systemctl stop firewalld.service
+null_resource.RitaWebserver1HTTPD (remote-exec): Redirecting to /bin/systemctl start httpd.service
+null_resource.RitaWebserver1HTTPD: Creation complete after 1m18s [id=1940488965]
+null_resource.RitaWebserver2HTTPD (remote-exec): Redirecting to /bin/systemctl start httpd.service
+null_resource.RitaWebserver2HTTPD: Creation complete after 47s [id=1639965557]
+
+Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+RitaWebserver1PublicIP = [
+  "140.238.185.81",
+]
+RitaWebserver2PublicIP = [
+  "168.138.132.144",
+]
+
+###################################### ACCESS BROWSER #####################################
+
+http://140.238.185.81:80
+
+Welcome to ritawebserver.com! This is WEBSERVER1...
+
+http://168.138.132.144:80
+
+Welcome to ritawebserver.com! This is WEBSERVER2...
+
+###################################### DESTROY #####################################
+
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON2_second_webserver_in_other_AD-rita# terraform destroy
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # null_resource.RitaWebserver1HTTPD will be destroyed
+  - resource "null_resource" "RitaWebserver1HTTPD" {
+      - id = "1940488965" -> null
+    }
+
+  # null_resource.RitaWebserver2HTTPD will be destroyed
+  - resource "null_resource" "RitaWebserver2HTTPD" {
+      - id = "1639965557" -> null
+    }
+
+  # oci_core_dhcp_options.RitaDhcpOptions1 will be destroyed
+  - resource "oci_core_dhcp_options" "RitaDhcpOptions1" {
+      - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags   = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:12.755Z"
+        } -> null
+      - display_name   = "RitaDHCPOptions1" -> null
+      - freeform_tags  = {} -> null
+      - id             = "ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaawqe6t3gegxcb4hefk7kuml2ty47ppf7rwz4go6hn5pvzkxoq4goa" -> null
+      - state          = "AVAILABLE" -> null
+      - time_created   = "2021-04-01 20:29:12.77 +0000 UTC" -> null
+      - vcn_id         = "ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a" -> null
+
+      - options {
+          - custom_dns_servers  = [] -> null
+          - search_domain_names = [
+              - "ritawebserver.com",
+            ] -> null
+          - type                = "SearchDomain" -> null
+        }
+      - options {
+          - custom_dns_servers  = [] -> null
+          - search_domain_names = [] -> null
+          - server_type         = "VcnLocalPlusInternet" -> null
+          - type                = "DomainNameServer" -> null
+        }
+    }
+
+  # oci_core_instance.RitaWebserver1 will be destroyed
+  - resource "oci_core_instance" "RitaWebserver1" {
+      - availability_domain = "qrVs:SA-SAOPAULO-1-AD-1" -> null
+      - boot_volume_id      = "ocid1.bootvolume.oc1.sa-saopaulo-1.abtxeljr6cdrqbyxynxmb4imih6g62xd6ws7awmtvds2lwihfj7pzgt2wckq" -> null
+      - compartment_id      = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags        = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:21.052Z"
+        } -> null
+      - display_name        = "RitaWebServer1" -> null
+      - fault_domain        = "FAULT-DOMAIN-1" -> null
+      - freeform_tags       = {} -> null
+      - hostname_label      = "ritawebserver1" -> null
+      - id                  = "ocid1.instance.oc1.sa-saopaulo-1.antxeljr2uds7uacsiq2bq7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq" -> null
+      - image               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q" -> null
+      - launch_mode         = "PARAVIRTUALIZED" -> null
+      - metadata            = {
+          - "ssh_authorized_keys" = <<-EOT
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeD0lmPztOebhcqz2/5CCGOyLp2ObgeDCDx1edfyWauj1IqHNXCZtFt7QbKSmmDWYJIBHq60/+z1XD2MMwxFkPHtIfeWaBVjTBAmQzLQFVZQj36yFXIiuBYcid35GZQr0TYlMLjg48KkZjWMAaQPPYwueSEnTdsTKIA0DaCDDir1pL5LczIGoqf+LDAqkwDnj1wGyjW0CHa/P2Qr26dX1PuEvNSnTI6zstAxE0xJdGh+z1COXKrTVZWFtSPumhhZbyjUax42vTiB0KEsTQdtPbDJoQ75vSdfiaM78R07W8ndoC+6m3ZWEtKN/wNPaMsU3YUDPRe7iI+uRgQANBIRY7 tfkeys
+            EOT
+        } -> null
+      - private_ip          = "10.0.1.138" -> null
+      - public_ip           = "140.238.185.81" -> null
+      - region              = "sa-saopaulo-1" -> null
+      - shape               = "VM.Standard.E2.1" -> null
+      - state               = "RUNNING" -> null
+      - subnet_id           = "ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq" -> null
+      - system_tags         = {} -> null
+      - time_created        = "2021-04-01 20:29:21.614 +0000 UTC" -> null
+
+      - agent_config {
+          - are_all_plugins_disabled = false -> null
+          - is_management_disabled   = false -> null
+          - is_monitoring_disabled   = false -> null
+        }
+
+      - availability_config {
+          - recovery_action = "RESTORE_INSTANCE" -> null
+        }
+
+      - create_vnic_details {
+          - assign_public_ip       = "true" -> null
+          - defined_tags           = {
+              - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+              - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:21.349Z"
+            } -> null
+          - display_name           = "RitaWebServer1" -> null
+          - freeform_tags          = {} -> null
+          - hostname_label         = "ritawebserver1" -> null
+          - private_ip             = "10.0.1.138" -> null
+          - skip_source_dest_check = false -> null
+          - subnet_id              = "ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq" -> null
+        }
+
+      - instance_options {
+          - are_legacy_imds_endpoints_disabled = false -> null
+        }
+
+      - launch_options {
+          - boot_volume_type                    = "PARAVIRTUALIZED" -> null
+          - firmware                            = "UEFI_64" -> null
+          - is_consistent_volume_naming_enabled = true -> null
+          - is_pv_encryption_in_transit_enabled = false -> null
+          - network_type                        = "PARAVIRTUALIZED" -> null
+          - remote_data_volume_type             = "PARAVIRTUALIZED" -> null
+        }
+
+      - shape_config {
+          - gpus                          = 0 -> null
+          - local_disks                   = 0 -> null
+          - local_disks_total_size_in_gbs = 0 -> null
+          - max_vnic_attachments          = 2 -> null
+          - memory_in_gbs                 = 8 -> null
+          - networking_bandwidth_in_gbps  = 0.699999988079071 -> null
+          - ocpus                         = 1 -> null
+          - processor_description         = "2.0 GHz AMD EPYC™ 7551 (Naples)" -> null
+        }
+
+      - source_details {
+          - boot_volume_size_in_gbs = "47" -> null
+          - source_id               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q" -> null
+          - source_type             = "image" -> null
+        }
+    }
+
+  # oci_core_instance.RitaWebserver2 will be destroyed
+  - resource "oci_core_instance" "RitaWebserver2" {
+      - availability_domain = "qrVs:SA-SAOPAULO-1-AD-1" -> null
+      - boot_volume_id      = "ocid1.bootvolume.oc1.sa-saopaulo-1.abtxeljr36rdwv6hrm2afytt327wuqggu5ufylfnb3owoqe7tzitaifoy52a" -> null
+      - compartment_id      = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags        = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:21.106Z"
+        } -> null
+      - display_name        = "RitaWebServer2" -> null
+      - fault_domain        = "FAULT-DOMAIN-1" -> null
+      - freeform_tags       = {} -> null
+      - hostname_label      = "ritawebserver2" -> null
+      - id                  = "ocid1.instance.oc1.sa-saopaulo-1.antxeljr2uds7uac3yoqfl6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq" -> null
+      - image               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q" -> null
+      - launch_mode         = "PARAVIRTUALIZED" -> null
+      - metadata            = {
+          - "ssh_authorized_keys" = <<-EOT
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeD0lmPztOebhcqz2/5CCGOyLp2ObgeDCDx1edfyWauj1IqHNXCZtFt7QbKSmmDWYJIBHq60/+z1XD2MMwxFkPHtIfeWaBVjTBAmQzLQFVZQj36yFXIiuBYcid35GZQr0TYlMLjg48KkZjWMAaQPPYwueSEnTdsTKIA0DaCDDir1pL5LczIGoqf+LDAqkwDnj1wGyjW0CHa/P2Qr26dX1PuEvNSnTI6zstAxE0xJdGh+z1COXKrTVZWFtSPumhhZbyjUax42vTiB0KEsTQdtPbDJoQ75vSdfiaM78R07W8ndoC+6m3ZWEtKN/wNPaMsU3YUDPRe7iI+uRgQANBIRY7 tfkeys
+            EOT
+        } -> null
+      - private_ip          = "10.0.1.151" -> null
+      - public_ip           = "168.138.132.144" -> null
+      - region              = "sa-saopaulo-1" -> null
+      - shape               = "VM.Standard.E2.1" -> null
+      - state               = "RUNNING" -> null
+      - subnet_id           = "ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq" -> null
+      - system_tags         = {} -> null
+      - time_created        = "2021-04-01 20:29:21.871 +0000 UTC" -> null
+
+      - agent_config {
+          - are_all_plugins_disabled = false -> null
+          - is_management_disabled   = false -> null
+          - is_monitoring_disabled   = false -> null
+        }
+
+      - availability_config {
+          - recovery_action = "RESTORE_INSTANCE" -> null
+        }
+
+      - create_vnic_details {
+          - assign_public_ip       = "true" -> null
+          - defined_tags           = {
+              - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+              - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:21.546Z"
+            } -> null
+          - display_name           = "RitaWebServer2" -> null
+          - freeform_tags          = {} -> null
+          - hostname_label         = "ritawebserver2" -> null
+          - private_ip             = "10.0.1.151" -> null
+          - skip_source_dest_check = false -> null
+          - subnet_id              = "ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq" -> null
+        }
+
+      - instance_options {
+          - are_legacy_imds_endpoints_disabled = false -> null
+        }
+
+      - launch_options {
+          - boot_volume_type                    = "PARAVIRTUALIZED" -> null
+          - firmware                            = "UEFI_64" -> null
+          - is_consistent_volume_naming_enabled = true -> null
+          - is_pv_encryption_in_transit_enabled = false -> null
+          - network_type                        = "PARAVIRTUALIZED" -> null
+          - remote_data_volume_type             = "PARAVIRTUALIZED" -> null
+        }
+
+      - shape_config {
+          - gpus                          = 0 -> null
+          - local_disks                   = 0 -> null
+          - local_disks_total_size_in_gbs = 0 -> null
+          - max_vnic_attachments          = 2 -> null
+          - memory_in_gbs                 = 8 -> null
+          - networking_bandwidth_in_gbps  = 0.699999988079071 -> null
+          - ocpus                         = 1 -> null
+          - processor_description         = "2.0 GHz AMD EPYC™ 7551 (Naples)" -> null
+        }
+
+      - source_details {
+          - boot_volume_size_in_gbs = "47" -> null
+          - source_id               = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaazka4sywunfwvasckl6ylrypvntss3adfsqoc3ry6pygkkbikif3q" -> null
+          - source_type             = "image" -> null
+        }
+    }
+
+  # oci_core_internet_gateway.RitaInternetGateway will be destroyed
+  - resource "oci_core_internet_gateway" "RitaInternetGateway" {
+      - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags   = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:12.512Z"
+        } -> null
+      - display_name   = "RitaInternetGateway" -> null
+      - enabled        = true -> null
+      - freeform_tags  = {} -> null
+      - id             = "ocid1.internetgateway.oc1.sa-saopaulo-1.aaaaaaaagtlxztdzg6jk5bbt7gco4gnee2dv7xqzgnveztazsph6xh3ks4iq" -> null
+      - state          = "AVAILABLE" -> null
+      - time_created   = "2021-04-01 20:29:12.552 +0000 UTC" -> null
+      - vcn_id         = "ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a" -> null
+    }
+
+  # oci_core_route_table.RitaRouteTableViaIGW will be destroyed
+  - resource "oci_core_route_table" "RitaRouteTableViaIGW" {
+      - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags   = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:13.471Z"
+        } -> null
+      - display_name   = "RitaRouteTableViaIGW" -> null
+      - freeform_tags  = {} -> null
+      - id             = "ocid1.routetable.oc1.sa-saopaulo-1.aaaaaaaab4b67ywa6b25irveycfgvj3d2z4sanl33tixpthtih453zcx6uea" -> null
+      - state          = "AVAILABLE" -> null
+      - time_created   = "2021-04-01 20:29:13.492 +0000 UTC" -> null
+      - vcn_id         = "ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a" -> null
+
+      - route_rules {
+          - destination       = "0.0.0.0/0" -> null
+          - destination_type  = "CIDR_BLOCK" -> null
+          - network_entity_id = "ocid1.internetgateway.oc1.sa-saopaulo-1.aaaaaaaagtlxztdzg6jk5bbt7gco4gnee2dv7xqzgnveztazsph6xh3ks4iq" -> null
+        }
+    }
+
+  # oci_core_security_list.RitaSecurityList will be destroyed
+  - resource "oci_core_security_list" "RitaSecurityList" {
+      - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags   = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:12.757Z"
+        } -> null
+      - display_name   = "RitaSecurityList" -> null
+      - freeform_tags  = {} -> null
+      - id             = "ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaa5p3t5v45kybrn26rl2hsrf5rutdkvhycu2vl5u7gqwv7n7utptbq" -> null
+      - state          = "AVAILABLE" -> null
+      - time_created   = "2021-04-01 20:29:12.768 +0000 UTC" -> null
+      - vcn_id         = "ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a" -> null
+
+      - egress_security_rules {
+          - destination      = "0.0.0.0/0" -> null
+          - destination_type = "CIDR_BLOCK" -> null
+          - protocol         = "6" -> null
+          - stateless        = false -> null
+        }
+
+      - ingress_security_rules {
+          - protocol    = "6" -> null
+          - source      = "0.0.0.0/0" -> null
+          - source_type = "CIDR_BLOCK" -> null
+          - stateless   = false -> null
+
+          - tcp_options {
+              - max = 22 -> null
+              - min = 22 -> null
+            }
+        }
+      - ingress_security_rules {
+          - protocol    = "6" -> null
+          - source      = "0.0.0.0/0" -> null
+          - source_type = "CIDR_BLOCK" -> null
+          - stateless   = false -> null
+
+          - tcp_options {
+              - max = 443 -> null
+              - min = 443 -> null
+            }
+        }
+      - ingress_security_rules {
+          - protocol    = "6" -> null
+          - source      = "0.0.0.0/0" -> null
+          - source_type = "CIDR_BLOCK" -> null
+          - stateless   = false -> null
+
+          - tcp_options {
+              - max = 80 -> null
+              - min = 80 -> null
+            }
+        }
+      - ingress_security_rules {
+          - protocol    = "6" -> null
+          - source      = "10.0.0.0/16" -> null
+          - source_type = "CIDR_BLOCK" -> null
+          - stateless   = false -> null
+        }
+    }
+
+  # oci_core_subnet.RitaWebSubnet will be destroyed
+  - resource "oci_core_subnet" "RitaWebSubnet" {
+      - cidr_block                 = "10.0.1.0/24" -> null
+      - compartment_id             = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - defined_tags               = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:14.470Z"
+        } -> null
+      - dhcp_options_id            = "ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaawqe6t3gegxcb4hefk7kuml2ty47ppf7rwz4go6hn5pvzkxoq4goa" -> null
+      - display_name               = "RitaWebSubnet" -> null
+      - dns_label                  = "ritan1" -> null
+      - freeform_tags              = {} -> null
+      - id                         = "ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq" -> null
+      - prohibit_public_ip_on_vnic = false -> null
+      - route_table_id             = "ocid1.routetable.oc1.sa-saopaulo-1.aaaaaaaab4b67ywa6b25irveycfgvj3d2z4sanl33tixpthtih453zcx6uea" -> null
+      - security_list_ids          = [
+          - "ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaa5p3t5v45kybrn26rl2hsrf5rutdkvhycu2vl5u7gqwv7n7utptbq",
+        ] -> null
+      - state                      = "AVAILABLE" -> null
+      - subnet_domain_name         = "ritan1.ritavcn.oraclevcn.com" -> null
+      - time_created               = "2021-04-01 20:29:14.605 +0000 UTC" -> null
+      - vcn_id                     = "ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a" -> null
+      - virtual_router_ip          = "10.0.1.1" -> null
+      - virtual_router_mac         = "00:00:17:FC:78:39" -> null
+    }
+
+  # oci_core_virtual_network.RitaVCN will be destroyed
+  - resource "oci_core_virtual_network" "RitaVCN" {
+      - cidr_block               = "10.0.0.0/16" -> null
+      - cidr_blocks              = [
+          - "10.0.0.0/16",
+        ] -> null
+      - compartment_id           = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - default_dhcp_options_id  = "ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaamhzoarnairh47zxwdfky3bek2ihnbs4icqpfyvqumc7ds5753v2q" -> null
+      - default_route_table_id   = "ocid1.routetable.oc1.sa-saopaulo-1.aaaaaaaalskkim6gv5jov4i335pdth2giga3mguzoezxvxn2qz5p47ohq7uq" -> null
+      - default_security_list_id = "ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaas3rzqmv2h4h6usqowvtwfy2sp7sqrwww7kwnkngho6txskwl33xq" -> null
+      - defined_tags             = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-04-01T20:29:11.543Z"
+        } -> null
+      - display_name             = "RitaVCN" -> null
+      - dns_label                = "ritavcn" -> null
+      - freeform_tags            = {} -> null
+      - id                       = "ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a" -> null
+      - state                    = "AVAILABLE" -> null
+      - time_created             = "2021-04-01 20:29:11.548 +0000 UTC" -> null
+      - vcn_domain_name          = "ritavcn.oraclevcn.com" -> null
+    }
+
+  # oci_identity_compartment.RitaCompartment will be destroyed
+  - resource "oci_identity_compartment" "RitaCompartment" {
+      - compartment_id = "ocid1.tenancy.oc1..aaaaaaaairaylvs2otgfkgojvrfgeatgqlxqknbroq55apxhdtooguclwfna" -> null
+      - defined_tags   = {
+          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedOn" = "2021-03-31T19:46:56.545Z"
+        } -> null
+      - description    = "Rita Compartment" -> null
+      - freeform_tags  = {} -> null
+      - id             = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
+      - is_accessible  = true -> null
+      - name           = "RitaCompartment" -> null
+      - state          = "ACTIVE" -> null
+      - time_created   = "2021-03-31 19:46:56.885 +0000 UTC" -> null
+    }
+
+Plan: 0 to add, 0 to change, 11 to destroy.
+
+Changes to Outputs:
+  - RitaWebserver1PublicIP = [
+      - "140.238.185.81",
+    ] -> null
+  - RitaWebserver2PublicIP = [
+      - "168.138.132.144",
+    ] -> null
+
+
+Warning: Version constraints inside provider configuration blocks are deprecated
+
+  on provider.tf line 2, in provider "oci":
+   2:   version          = ">= 4.19.0" 
+
+Terraform 0.13 and earlier allowed provider version constraints inside the
+provider configuration block, but that is now deprecated and will be removed
+in a future version of Terraform. To silence this warning, move the provider
+version constraint into the required_providers block.
+
+
+Warning: "subnet_id": [DEPRECATED] The 'subnet_id' field has been deprecated. Please use 'subnet_id under create_vnic_details' instead.
+
+  on webserver1.tf line 1, in resource "oci_core_instance" "RitaWebserver1":
+   1: resource "oci_core_instance" "RitaWebserver1" {
+
+(and one more similar warning elsewhere)
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+null_resource.RitaWebserver2HTTPD: Destroying... [id=1639965557]
+null_resource.RitaWebserver1HTTPD: Destroying... [id=1940488965]
+null_resource.RitaWebserver2HTTPD: Destruction complete after 0s
+null_resource.RitaWebserver1HTTPD: Destruction complete after 0s
+oci_core_instance.RitaWebserver1: Destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxeljr2uds7uacsiq2bq7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq]
+oci_core_instance.RitaWebserver2: Destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxeljr2uds7uac3yoqfl6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 10s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 10s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 20s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 20s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 30s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 30s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 40s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 40s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 50s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 50s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 1m0s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 1m0s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 1m10s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 1m10s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 1m20s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 1m20s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 1m30s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 1m30s elapsed]
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 1m40s elapsed]
+oci_core_instance.RitaWebserver2: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...6laqtovb6m4gst2efqkentg6bl5nbuxrqviloq, 1m40s elapsed]
+oci_core_instance.RitaWebserver2: Destruction complete after 1m41s
+oci_core_instance.RitaWebserver1: Still destroying... [id=ocid1.instance.oc1.sa-saopaulo-1.antxel...7p7l2d5lksezmemfk5ec3hff6utcu7bv5mxwkq, 1m50s elapsed]
+oci_core_instance.RitaWebserver1: Destruction complete after 1m51s
+oci_core_subnet.RitaWebSubnet: Destroying... [id=ocid1.subnet.oc1.sa-saopaulo-1.aaaaaaaajqxqhe6lk7xyir524gyeotjsjoqzjgnjqguf5xaegiimb6e2i5jq]
+oci_core_subnet.RitaWebSubnet: Destruction complete after 1s
+oci_core_dhcp_options.RitaDhcpOptions1: Destroying... [id=ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaawqe6t3gegxcb4hefk7kuml2ty47ppf7rwz4go6hn5pvzkxoq4goa]
+oci_core_route_table.RitaRouteTableViaIGW: Destroying... [id=ocid1.routetable.oc1.sa-saopaulo-1.aaaaaaaab4b67ywa6b25irveycfgvj3d2z4sanl33tixpthtih453zcx6uea]
+oci_core_security_list.RitaSecurityList: Destroying... [id=ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaa5p3t5v45kybrn26rl2hsrf5rutdkvhycu2vl5u7gqwv7n7utptbq]
+oci_core_dhcp_options.RitaDhcpOptions1: Destruction complete after 0s
+oci_core_security_list.RitaSecurityList: Destruction complete after 1s
+oci_core_route_table.RitaRouteTableViaIGW: Destruction complete after 1s
+oci_core_internet_gateway.RitaInternetGateway: Destroying... [id=ocid1.internetgateway.oc1.sa-saopaulo-1.aaaaaaaagtlxztdzg6jk5bbt7gco4gnee2dv7xqzgnveztazsph6xh3ks4iq]
+oci_core_internet_gateway.RitaInternetGateway: Destruction complete after 0s
+oci_core_virtual_network.RitaVCN: Destroying... [id=ocid1.vcn.oc1.sa-saopaulo-1.amaaaaaa2uds7uaap35hvmvmdsbze25can3wpoke5656cnymo5rbv6z7qd4a]
+oci_core_virtual_network.RitaVCN: Destruction complete after 0s
+oci_identity_compartment.RitaCompartment: Destroying... [id=ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja]
+oci_identity_compartment.RitaCompartment: Destruction complete after 0s
+
+Destroy complete! Resources: 11 destroyed.
+
+
+
+
