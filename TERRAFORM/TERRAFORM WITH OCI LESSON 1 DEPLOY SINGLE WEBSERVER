@@ -224,6 +224,7 @@ provider "oci" {
 #TO EXECUTE TERRRAFORM YOU NEED ANOTHER FILE ASKED setup_oci_tf_var.sh
 #CHECK THE DOCUMENT https://github.com/danilo19ee/zdatabase/blob/master/TERRAFORM/TERRAFORM%20SETUP%20ORACLE%20CLOUD%20OCI%20ENVIRONMENT
 root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON1_single_webserver-rita# cp /root/setup_oci_tf_var.sh .
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON1_single_webserver-rita# source setup_oci_tf_var.sh
 
 #RUN TERRAFORM
 
