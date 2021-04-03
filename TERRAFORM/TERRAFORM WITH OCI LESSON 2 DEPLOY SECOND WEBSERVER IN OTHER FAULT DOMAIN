@@ -25,10 +25,10 @@ The image that you use to launch an instance determines its operating system and
 [Create instance]
 
 +---------------+---------------+---------------+-----------------------+---------------+---------------+-----------------------+---------------+-------------------------------+
-| Name          | State         | Public IP     | Shape                 | OCPU Count    | Memory (GB)   | Availability Domain   | Fault Domain	| Created                       |
+| Name		| State		| Public IP	| Shape			| OCPU Count	| Memory (GB)	| Availability Domain	| Fault Domain	| Created			|
 +---------------+---------------+---------------+-----------------------+---------------+---------------+-----------------------+---------------+-------------------------------+
- RitaWebServer2	 Terminated      -		           VM.Standard.E2.1	       1		           8		           AD-1			               FD-2		         Sat, Apr 3, 2021, 01:46:03 UTC	
- RitaWebServer1	 Terminated      -		           VM.Standard.E2.1	       1		           8		           AD-1			               FD-1		         Sat, Apr 3, 2021, 01:46:03 UTC
+RitaWebServer2	 Terminated	 -		 VM.Standard.E2.1	 1		 8		 AD-1			 FD-2		 Sat, Apr 3, 2021, 01:46:03 UTC	
+RitaWebServer1	 Terminated	 -		 VM.Standard.E2.1	 1		 8		 AD-1			 FD-1		 Sat, Apr 3, 2021, 01:46:03 UTC
 +---------------+---------------+---------------+-----------------------+---------------+---------------+-----------------------+---------------+-------------------------------+
 
 ###################################### METADATA #####################################
