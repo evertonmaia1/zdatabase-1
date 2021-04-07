@@ -1,5 +1,5 @@
 #####################################################################################################################
-#     TERRAFORM WITH OCI LESSON 4 DEPLOY TWO WEBSERVER WITH LOAD BALANCER AND NAT BASTION AND SHARED FILESYSTEM     #
+#     TERRAFORM WITH OCI LESSON 5 DEPLOY TWO WEBSERVER WITH LOAD BALANCER AND NAT BASTION AND SHARED FILESYSTEM     #
 #####################################################################################################################
 
 #PLAN, APPLY AND DESTROY TWO SIMPLE WEBSERVICE ON ORACLE CLOUD OCI USING TERRAFORM WITH LOAD BALANCER AND NAT BASTION USING SHARED FILESYSTEM
