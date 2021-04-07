@@ -2723,12 +2723,9 @@ Welcome to ritawebserver.com! This is WEBSERVER2...
 
 root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON4_load_balancer_NAT_bastion-rita# ssh opc@152.67.41.85
 Last login: Sat Apr  3 23:47:07 2021 from 143-255-183-231.isplinkdigital.com.br
-[opc@ritabastionserver ~]$ 
-
 #WEBSERVER1 AND WEBSERVER2
-
-10.0.1.100
-10.0.1.7
+[opc@ritabastionserver ~]$ ssh -i id_rsa opc@10.0.1.100
+[opc@ritabastionserver ~]$ ssh -i id_rsa opc@10.0.1.7
 
 ###################################### DESTROY #####################################
 
