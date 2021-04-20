@@ -1,0 +1,134 @@
++++++++++++++++++++++++++++++++++++++++++++++++++
++     OL7 INSTALL AND CONFIGURE DNS SERVER		+
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+##SERVER
+
+1core
+1GB RAM
+
+#REMOVE DNSMASQ AND AVAHI-DAEMON
+systemctl stop dnsmasq
+systemctl stop avahi-daemon
+systemctl disable dnsmasq
+systemctl disable avahi-daemon
+yum remove dnsmasq
+
+#DISABLE SELINUX AND FIREWALLD
+[root@localhost ~]# sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config && setenforce 0
+[root@localhost ~]# systemctl stop firewalld && systemctl disable firewalld
+
+#CONFIGURE STATIC NETWORK
+[root@localhost ~]# vim /etc/sysconfig/network-scripts/ifcfg-enp0s3
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=enp0s3
+UUID=49c279da-7065-40f5-b914-176973db2a0a
+DEVICE=enp0s3
+ONBOOT=yes
+IPADDR=192.168.18.20
+PREFIX=24
+GATEWAY=192.168.1.1
+DNS1=8.8.8.8
+DNS1=8.8.4.4
+
+#CONFIGURE HOSTNAME
+[root@localhost ~]# hostnamectl 
+[root@localhost ~]# hostnamectl set-hostname ol7dns
+[root@localhost ~]# hostnamectl --static 
+
+#CONFIGURE /ETC/HOSTS FILE
+[root@ol7dns ~]# vim /etc/hosts
+192.168.18.20   ol7dns
+
+#INSTALL PACKAGE DNS BIND
+[root@ol7dns ~]# yum install bind bind-utils -y
+
+#CREATE NAMED FILE
+[root@ol7dns ~]# mv /etc/named.conf /etc/named.conf.bkp
+options {
+        directory "/var/named";
+};
+
+zone "appsdba.info" IN {
+        type master;
+        file "data/appsdba.info.zone";
+};
+
+zone "18.168.192.in-addr.arpa" IN {
+        type master;
+        file "data/192.168.18.zone";
+};
+
+#CREATE APPSDBA.INFO.ZONE FOR RESOLUTION UNDER /VAR/NAMED/DATA/
+[root@ol7dns ~]# vim /var/named/data/appsdba.info.zone 
+$ttl 38400
+@       IN      SOA     ol7dns.appsdba.info.    root.appsdba.info. (
+        2020032701      ;
+        3600    ;
+        3600    ;
+        604800  ;
+        86400 ) ;
+
+@       IN      NS      ol7dns.appsdba.info.
+ol7dns          IN      A       192.168.18.20
+ol7apps1        IN      A       192.168.18.19
+
+#CREATE 192.168.18.ZONE FOR REVERSE RESOLUTION UNDER /VAR/NAMED/DATA/
+[root@ol7dns ~]# vim /var/named/data/192.168.18.zone
+$ttl 38400
+@       IN      SOA     ol7dns.appsdba.info.     root.appsdba.info. (
+        2020032701      ;
+        3600    ;
+        3600    ;
+        604800  ;
+        86400 ) ;
+
+@       IN      NS      ol7dns.appsdba.info.
+20      IN      PTR     ol7dns.appsdba.info.
+19      IN      PTR     ol7apps1.appsdba.info.
+
+#START AND ENABLE NAMED SERVICE 
+[root@ol7dns ~]# systemctl start named
+
+[root@ol7dns ~]# systemctl status -l named
+● named.service - Berkeley Internet Name Domain (DNS)
+   Loaded: loaded (/usr/lib/systemd/system/named.service; disabled; vendor preset: disabled)
+   Active: active (running) since Tue 2021-04-20 16:41:21 -03; 29s ago
+  Process: 2544 ExecStart=/usr/sbin/named -u named -c ${NAMEDCONF} $OPTIONS (code=exited, status=0/SUCCESS)
+  Process: 2541 ExecStartPre=/bin/bash -c if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$NAMEDCONF"; else echo "Checking of zone files is disabled"; fi (code=exited, status=0/SUCCESS)
+ Main PID: 2547 (named)
+    Tasks: 4
+   CGroup: /system.slice/named.service
+           └─2547 /usr/sbin/named -u named -c /etc/named.conf
+
+Apr 20 16:41:21 ol7dns named[2547]: none:104: 'max-cache-size 90%' - setting to 877MB (out of 974MB)
+Apr 20 16:41:21 ol7dns named[2547]: configuring command channel from '/etc/rndc.key'
+Apr 20 16:41:21 ol7dns named[2547]: command channel listening on 127.0.0.1#953
+Apr 20 16:41:21 ol7dns named[2547]: configuring command channel from '/etc/rndc.key'
+Apr 20 16:41:21 ol7dns named[2547]: command channel listening on ::1#953
+Apr 20 16:41:21 ol7dns named[2547]: managed-keys-zone: loaded serial 0
+Apr 20 16:41:21 ol7dns named[2547]: zone 18.168.192.in-addr.arpa/IN: loaded serial 2020032701
+Apr 20 16:41:21 ol7dns named[2547]: zone appsdba.info/IN: loaded serial 2020032701
+Apr 20 16:41:21 ol7dns named[2547]: all zones loaded
+Apr 20 16:41:21 ol7dns named[2547]: running
+
+[root@ol7dns ~]# systemctl enable named
+Created symlink from /etc/systemd/system/multi-user.target.wants/named.service to /usr/lib/systemd/system/named.service.
+
+#CHECK SERVICE
+[root@ol7dns ~]# netstat -tulpn | grep ":53"
+tcp        0      0 192.168.18.20:53        0.0.0.0:*               LISTEN      970/named
+tcp        0      0 127.0.0.1:53            0.0.0.0:*               LISTEN      970/named
+udp        0      0 192.168.18.20:53        0.0.0.0:*                           970/named
+udp        0      0 127.0.0.1:53            0.0.0.0:*                           970/named
+
