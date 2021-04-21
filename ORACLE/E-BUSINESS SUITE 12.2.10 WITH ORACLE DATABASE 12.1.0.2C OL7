@@ -72,7 +72,11 @@ DNS1=8.8.8.8
 [root@ol7apps1 ~]# hostnamectl set-hostname ol7apps1
 [root@ol7apps1 ~]# hostnamectl --static 
 
-#CREATE A LOCAL USE DOMAIN
+#IF YOU HAVE A DNS SERVER 
+[root@ol7apps1 ~]# vi /etc/resolv.conf
+nameserver 192.168.18.20
+
+#IF YOU DIDN'T HAVE A DNS SERVER, CREATE A LOCAL USE DOMAIN
 [root@ol7apps1 ~]# vi /etc/appsdns
 192.168.18.19   ol7apps1.appsdba.info    ol7apps1
 
@@ -98,7 +102,6 @@ options timeout:15
 192.168.18.19   ol7apps1.appsdba.info    ol7apps1
 
 #CHECK RESOLVE NAME
-
 [root@ol7apps1 ~]# nslookup ol7apps1.appsdba.info
 Server:         127.0.0.1
 Address:        127.0.0.1#53
