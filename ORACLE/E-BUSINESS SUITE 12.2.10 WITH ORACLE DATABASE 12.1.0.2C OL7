@@ -72,7 +72,7 @@ DNS1=8.8.8.8
 [root@ol7apps1 ~]# hostnamectl set-hostname ol7apps1
 [root@ol7apps1 ~]# hostnamectl --static 
 
-#IF YOU HAVE A DNS SERVER 
+#IF YOU HAVE A DNS SERVER (https://github.com/danilo19ee/zdatabase/blob/master/ORACLE/OL7%20INSTALL%20AND%20CONFIGURE%20DNS%20SERVER)
 [root@ol7apps1 ~]# vi /etc/resolv.conf
 nameserver 192.168.18.20
 
