@@ -140,7 +140,7 @@ Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-MariaDB [(none)]> create database zabbix;
+MariaDB [(none)]> create database zabbix character set utf8 collate utf8_bin;
 Query OK, 1 row affected (0.000 sec)
 
 MariaDB [(none)]> create user 'zabbix'@'localhost' identified BY '######';
