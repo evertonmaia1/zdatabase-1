@@ -1,0 +1,461 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++   	ORACLE DATABASE 19C CHANGE PARAMETER MAX_STRING_SIZE   	+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+Before 12c, the maximum length of data types varchar2 and nvarchar2 in the database was 4000, and the maximum length of data type RAW was 2000. 
+After 12c, their length can be extended, mainly controlled by the initialization parameter MAX_STRING_SIZE. 
+We call VARCHAR2 and NVARCHAR2 columns with a column length greater than 4000 and RAW columns with a column length greater than 2000 as extended character data type columns. By default, the value of MAX_STRING_SIZE is STANDARD.
+  
+  STANDARD: VARCHAR2, the maximum length of NVARCHAR2 is 4000, the maximum length of RAW is 2000
+  EXTENDED: VARCHAR2, NVARCHAR2, the length of RAW can be extended to 32727
+
+=================================================================================================================================================================
+
+#MODIFIED IN THE NON-CONTAINER DATABASE (NON-CDB)
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Apr 26 17:04:52 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> show parameter MAX_STRING_SIZE;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+max_string_size 		     string	 STANDARD
+
+SQL> purge dba_recyclebin;
+
+DBA Recyclebin purged.
+
+SQL> shu immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup upgrade
+ORACLE instance started.
+
+Total System Global Area 2147482944 bytes
+Fixed Size		    9137472 bytes
+Variable Size		  486539264 bytes
+Database Buffers	 1644167168 bytes
+Redo Buffers		    7639040 bytes
+Database mounted.
+Database opened.
+
+SQL> alter system set max_string_size=extended scope=both sid='*';
+
+System altered.
+
+SQL> alter system set max_string_size=extended scope=spfile sid='*';
+
+System altered.
+
+SQL> @?/rdbms/admin/utl32k.sql
+
+Session altered.
+
+
+Session altered.
+
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>   The following statement will cause an "ORA-01722: invalid number"
+DOC>   error if the database has not been opened for UPGRADE.
+DOC>
+DOC>   Perform a "SHUTDOWN ABORT"  and
+DOC>   restart using UPGRADE.
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>#
+
+no rows selected
+
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>   The following statement will cause an "ORA-01722: invalid number"
+DOC>   error if the database does not have compatible >= 12.0.0
+DOC>
+DOC>   Set compatible >= 12.0.0 and retry.
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>#
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+0 rows updated.
+
+
+Commit complete.
+
+
+System altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+System altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table truncated.
+
+
+0 rows created.
+
+
+PL/SQL procedure successfully completed.
+
+
+STARTTIME
+--------------------------------------------------------------------------------
+04/26/2021 17:08:50.110149000
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+0 rows created.
+
+
+no rows selected
+
+
+no rows selected
+
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>   The following statement will cause an "ORA-01722: invalid number"
+DOC>   error if we encountered an error while modifying a column to
+DOC>   account for data type length change as a result of enabling or
+DOC>   disabling 32k types.
+DOC>
+DOC>   Contact Oracle support for assistance.
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>#
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Package altered.
+
+
+Package altered.
+
+
+Session altered.
+
+SQL> shu immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup upgrade
+ORACLE instance started.
+
+Total System Global Area 2147482944 bytes
+Fixed Size		    9137472 bytes
+Variable Size		  486539264 bytes
+Database Buffers	 1644167168 bytes
+Redo Buffers		    7639040 bytes
+Database mounted.
+Database opened.
+
+SQL> show parameter MAX_STRING_SIZE;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+max_string_size 		     string	 EXTENDED
+SQL>
+
+=================================================================================================================================================================
+
+#MODIFIED IN THE CONTAINER DATABASE (CDB)
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Apr 26 17:04:52 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> show parameter MAX_STRING_SIZE;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+max_string_size 		     string	 STANDARD
+SQL> show pdbs
+
+    CON_ID CON_NAME			  OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+	 2 PDB$SEED			  READ ONLY  NO
+	 3 APPSPDB			  READ WRITE NO
+SQL> alter pluggable database APPSPDB close immediate;
+
+Pluggable database altered.
+
+SQL> alter pluggable database APPSPDB open upgrade;
+
+Pluggable database altered.
+
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
+SQL> alter system set max_string_size=extended scope=both sid='*';
+
+System altered.
+
+SQL> alter system set max_string_size=extended scope=spfile sid='*';
+
+System altered.
+
+SQL> show parameter MAX_STRING_SIZE;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+max_string_size 		     string	 EXTENDED
+SQL> @?/rdbms/admin/utl32k.sql
+
+Session altered.
+
+
+Session altered.
+
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>   The following statement will cause an "ORA-01722: invalid number"
+DOC>   error if the database has not been opened for UPGRADE.
+DOC>
+DOC>   Perform a "SHUTDOWN ABORT"  and
+DOC>   restart using UPGRADE.
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>#
+
+no rows selected
+
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>   The following statement will cause an "ORA-01722: invalid number"
+DOC>   error if the database does not have compatible >= 12.0.0
+DOC>
+DOC>   Set compatible >= 12.0.0 and retry.
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>#
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+0 rows updated.
+
+
+Commit complete.
+
+
+System altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+System altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Table created.
+
+
+Table created.
+
+
+Table created.
+
+
+Table truncated.
+
+
+0 rows created.
+
+
+PL/SQL procedure successfully completed.
+
+
+STARTTIME
+--------------------------------------------------------------------------------
+04/26/2021 17:08:50.110149000
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+0 rows created.
+
+
+no rows selected
+
+
+no rows selected
+
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>   The following statement will cause an "ORA-01722: invalid number"
+DOC>   error if we encountered an error while modifying a column to
+DOC>   account for data type length change as a result of enabling or
+DOC>   disabling 32k types.
+DOC>
+DOC>   Contact Oracle support for assistance.
+DOC>#######################################################################
+DOC>#######################################################################
+DOC>#
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Package altered.
+
+
+Package altered.
+
+
+Session altered.
+
+SQL> show pdbs;
+
+    CON_ID CON_NAME			  OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+	 3 APPSPDB			  MIGRATE    YES
+SQL> shu immediate;
+Pluggable Database closed.
+SQL> startup;
+Pluggable Database opened.
+SQL> show parameter MAX_STRING_SIZE;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+max_string_size 		     string	 EXTENDED
+SQL>
+
+=================================================================================================================================================================
+
+#CREATE A TABLE WITH EXTENDED CHARACTER DATA TYPES
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Apr 26 17:37:58 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
+SQL> create table test_extend(id number, data varchar2(32767));
+SQL> column object_name for a40
+SQL> column object_type for a40
+SQL> SET LINES 300 PAGES 100
+SQL> select object_name, object_type from user_objects where object_name ='TEST_EXTEND'
+
+OBJECT_NAME				 OBJECT_TYPE
+---------------------------------------- ----------------------------------------
+TEST_EXTEND				 TABLE
+
+#CREATE A TABLE AND THEM USE ALTER TABLE TO MODIFY THE ATTRIBUTES 
+
+SQL> alter table test_extend modify data varchar2(4000);
+
+Table altered.
+
+SQL> desc test_extend;
+ Name				 Null?	Type
+ ----------- ----- -----------------------------------------
+ ID								 NUMBER
+ DATA              VARCHAR2(4000)
+
