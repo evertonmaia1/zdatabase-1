@@ -1,0 +1,7586 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++  ORACLE DATABASE 19C REINSTALL ORACLE LOCATOR WITH EXISTING TABLES HAVING SDO_GEOMETRY  +
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+This document explains how to reload locator without moving your spatial data and without having to recreate spatial indexes 
+if the geometry data is not corrupt and only the Locator installation is corrupt.
+This will not fix the spatial data in case there is corruption in the data, it will only reload the Locator installation.
+
+============================================================================================================================================
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Tue Apr 27 12:03:55 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> show pdbs;
+
+    CON_ID CON_NAME			  OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+	 2 PDB$SEED			  READ ONLY  NO
+	 3 APPSPDB			  READ WRITE NO
+	 
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
+SQL> select username from dba_users where username='MDSYS';
+
+USERNAME
+--------------------------------------------------------------------------------
+MDSYS
+
+SQL> spool reload_locator.log
+SQL> alter session set current_schema=MDSYS;
+
+Session altered.
+
+SQL> start ?/md/admin/catmdloc.sql
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Grant succeeded.
+
+
+User altered.
+
+
+User altered.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+System altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+No errors.
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Session altered.
+
+No errors.
+
+Session altered.
+
+
+Library created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Package created.
+
+No errors.
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+
+Type body created.
+
+
+Type created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+
+Type created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Library created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+Trigger created.
+
+No errors.
+
+Trigger altered.
+
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Library created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+
+Type created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Package created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table altered.
+
+
+Trigger created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Trigger created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Synonym created.
+
+
+Library created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type body created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+'COMMIT49
+---------
+commit 49
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Trigger created.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Trigger created.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Trigger created.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Trigger altered.
+
+
+Commit complete.
+
+
+Session altered.
+
+qwerty
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+'EPSGEXTERNALTABLES'
+--------------------
+EPSG External Tables
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table created.
+
+
+SYS_CONTEXT('USERENV','CON_ID')
+--------------------------------------------------------------------------------
+3
+
+
+SYS_CONTEXT('USERENV','CON_NAME')
+--------------------------------------------------------------------------------
+APPSPDB
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_ELLIPSOIDS
+---------------
+sdo_ellipsoids:
+
+
+  COUNT(*)
+----------
+       106
+
+
+106 rows merged.
+
+
+  COUNT(*)
+----------
+       106
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_DATUMS
+-----------
+sdo_datums:
+
+
+  COUNT(*)
+----------
+       726
+
+
+726 rows merged.
+
+
+  COUNT(*)
+----------
+       726
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_UNITS_OF_MEASURE
+---------------------
+sdo_units_of_measure:
+
+
+  COUNT(*)
+----------
+       143
+
+
+143 rows merged.
+
+
+  COUNT(*)
+----------
+       143
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+  COUNT(*)
+----------
+      6016
+
+
+PL/SQL procedure successfully completed.
+
+
+  COUNT(*)
+----------
+      6016
+
+
+'SDO_COORD_REF_SYS
+------------------
+sdo_coord_ref_sys:
+
+
+  COUNT(*)
+----------
+      6016
+
+
+Table created.
+
+
+6016 rows merged.
+
+
+  COUNT(*)
+----------
+      6016
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_SYS
+--------------
+sdo_coord_sys:
+
+
+  COUNT(*)
+----------
+       141
+
+
+141 rows merged.
+
+
+  COUNT(*)
+----------
+       141
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_AXES
+---------------
+sdo_coord_axes:
+
+
+  COUNT(*)
+----------
+       297
+
+
+297 rows merged.
+
+
+  COUNT(*)
+----------
+       297
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_AXIS_NAMES
+---------------------
+sdo_coord_axis_names:
+
+
+  COUNT(*)
+----------
+	31
+
+
+31 rows merged.
+
+
+  COUNT(*)
+----------
+	31
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+  COUNT(*)
+----------
+      3661
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_OPS
+--------------
+sdo_coord_ops:
+
+
+  COUNT(*)
+----------
+      3661
+
+
+3661 rows merged.
+
+
+  COUNT(*)
+----------
+      3661
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_OP_PATHS
+-------------------
+sdo_coord_op_paths:
+
+
+  COUNT(*)
+----------
+       393
+
+
+393 rows merged.
+
+
+  COUNT(*)
+----------
+       393
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_PREFERRED_OPS_SYSTEM
+-------------------------
+sdo_preferred_ops_system:
+
+
+  COUNT(*)
+----------
+	 2
+
+
+2 rows merged.
+
+
+  COUNT(*)
+----------
+	 2
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_OP_METHODS
+---------------------
+sdo_coord_op_methods:
+
+
+  COUNT(*)
+----------
+       129
+
+
+Trigger altered.
+
+
+129 rows merged.
+
+
+Trigger altered.
+
+
+  COUNT(*)
+----------
+       129
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_OP_PARAMS
+--------------------
+sdo_coord_op_params:
+
+
+  COUNT(*)
+----------
+       179
+
+
+179 rows merged.
+
+
+  COUNT(*)
+----------
+       179
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_OP_PARAM_VALS
+------------------------
+sdo_coord_op_param_vals:
+
+
+  COUNT(*)
+----------
+     15105
+
+
+  COUNT(*)
+----------
+     15105
+
+
+Table created.
+
+
+15105 rows merged.
+
+
+  COUNT(*)
+----------
+     15105
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_COORD_OP_PARAM_USE
+-----------------------
+sdo_coord_op_param_use:
+
+
+  COUNT(*)
+----------
+       876
+
+
+876 rows merged.
+
+
+  COUNT(*)
+----------
+       876
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'CS_SRS
+-------
+cs_srs:
+
+
+  COUNT(*)
+----------
+	 0
+
+
+6016 rows merged.
+
+
+  COUNT(*)
+----------
+      6016
+
+
+Table dropped.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+'SDO_PRIME_MERIDIANS
+--------------------
+sdo_prime_meridians:
+
+
+  COUNT(*)
+----------
+	18
+
+
+18 rows merged.
+
+
+  COUNT(*)
+----------
+	18
+
+
+Table dropped.
+
+
+Commit complete.
+
+
+SOURCE_SRID COORD_OP_ID TARGET_SRID
+----------- ----------- -----------
+     102067    -1000002        2065
+       2065	1000002      102067
+
+
+no rows selected
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+      SRID
+----------
+      4326
+
+
+6016 rows updated.
+
+
+2 rows updated.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+
+
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Commit complete.
+
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Package body created.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Session altered.
+
+No errors.
+
+Commit complete.
+
+
+Session altered.
+
+
+Library created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Index created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Sequence created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Function created.
+
+No errors.
+
+Function created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+Package created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Trigger created.
+
+No errors.
+
+Session altered.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Library created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Package created.
+
+
+Package created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Package body created.
+
+No errors.
+
+Commit complete.
+
+
+Type body created.
+
+No errors.
+
+Commit complete.
+
+
+Trigger created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Commit complete.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+
+
+
+
+Session altered.
+
+
+Package created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Synonym created.
+
+
+Library created.
+
+
+Library created.
+
+
+Library created.
+
+
+Library created.
+
+
+Library created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Package body created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+Package created.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Package created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+Package created.
+
+No errors.
+
+Commit complete.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Commit complete.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+create indextype spatial_index
+
+PL/SQL procedure successfully completed.
+
+No errors.
+create indextype spatial_index_v2
+
+PL/SQL procedure successfully completed.
+
+No errors.
+alter indextype spatial_index #1
+
+PL/SQL procedure successfully completed.
+
+alter indextype spatial_index_v2 #1
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+alter indextype spatial_index_v2 #2
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+alter indextype spatial_index_v2 #3
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Trigger created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+Synonym created.
+
+
+Synonym created.
+
+
+Library created.
+
+
+Type body created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Library created.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Package created.
+
+No errors.
+
+Grant succeeded.
+
+
+Package created.
+
+No errors.
+
+Synonym created.
+
+
+Library created.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Type created.
+
+No errors.
+
+Grant succeeded.
+
+
+Type created.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Package created.
+
+No errors.
+
+Type created.
+
+No errors.
+
+Library created.
+
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+
+Package body created.
+
+
+Commit complete.
+
+
+Synonym created.
+
+
+Package created.
+
+No errors.
+
+Package created.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Commit complete.
+
+
+Type created.
+
+No errors.
+
+Type altered.
+
+
+Type altered.
+
+
+Type altered.
+
+
+Type altered.
+
+
+Type body created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+No errors.
+
+Procedure created.
+
+No errors.
+
+Commit complete.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Sequence created.
+
+
+Grant succeeded.
+
+
+Package body created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+View created.
+
+
+View created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Synonym created.
+
+
+Library created.
+
+
+Package body created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Synonym created.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Type created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Library created.
+
+
+Package created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Type body created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Commit complete.
+
+
+Session altered.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+View created.
+
+
+View created.
+
+
+Trigger created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Table created.
+
+
+Grant succeeded.
+
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Trigger created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+
+
+
+
+Session altered.
+
+
+Session altered.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Call completed.
+
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Synonym created.
+
+
+Package body created.
+
+No errors.
+
+Package body created.
+
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Package body created.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Type created.
+
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Procedure created.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Function created.
+
+No errors.
+
+Grant succeeded.
+
+
+Synonym created.
+
+
+Session altered.
+
+
+Session altered.
+
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Type body created.
+
+No errors.
+
+Commit complete.
+
+
+PL/SQL procedure successfully completed.
+
+
+Type body created.
+
+No errors.
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+catmdtrig(1)
+
+Session altered.
+
+old   2:   enable_trigger number := &1;
+new   2:   enable_trigger number := :enable_trigger;
+Spatial triggers enabled
+
+PL/SQL procedure successfully completed.
+
+No errors.
+
+Session altered.
+
+
+Session altered.
+
+
+Session altered.
+
+SQL> spool off
+
+SQL> col comp_name format a25
+SQL> col version format a25
+SQL> col status format a15
+
+SQL> select comp_name, version, status from dba_registry where comp_name='Spatial';
+
+COMP_NAME		  VERSION		    STATUS
+------------------------- ------------------------- ---------------
+Spatial 		  19.0.0.0.0		    VALID
+
+SQL> set lines 300 pages 100
+SQL> col owner for a35
+SQL> col object_name for a75
+SQL> col object_type for a65
+
+SQL> select owner, object_name, object_type from dba_objects where status='INVALID' and owner='MDSYS';
+
+OWNER				    OBJECT_NAME 								OBJECT_TYPE
+----------------------------------- --------------------------------------------------------------------------- -----------------------------------------------------------------
+MDSYS				    MDERR									PACKAGE BODY
+MDSYS				    oracle/spatial/router/partitioning/TurnRestriction			JAVA CLASS
+MDSYS				    oracle/spatial/router/partitioning/TurnRestriction$outEdge		JAVA CLASS
+MDSYS				    oracle/spatial/router/partitioning/ElocationPartition			JAVA CLASS
+MDSYS				    oracle/spatial/router/partitioning/ElocationPartition$partitionWriter	JAVA CLASS
+MDSYS				    oracle/spatial/router/util/RouterUtility					JAVA CLASS
+MDSYS				    oracle/spatial/router/util/RouterVersion					JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/NDMTrafficWrapper			JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/TrafficDataValidator			JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/TrafficDataVersion			JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/TrafficTimezoneUserDataGenerator	JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/TrafficUserDataGenerator		JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/TrafficUserDataGeneratorVersion1	JAVA CLASS
+MDSYS				    oracle/spatial/network/apps/traffic/TrafficUserDataGeneratorVersion2	JAVA CLASS
+MDSYS				    SDO_GEOR									PACKAGE
+MDSYS				    SAMCLUST_IMP_T								TYPE BODY
+MDSYS				    PRVT_SAM									PACKAGE BODY
+MDSYS				    SDO_SAM									PACKAGE BODY
+MDSYS				    SDO_GCDR									PACKAGE BODY
+MDSYS				    SDO_OLS_LOCUTL								PACKAGE BODY
+MDSYS				    SDO_OLS_PRESENTATION							PACKAGE BODY
+MDSYS				    SDO_OLS_ROUTE								PACKAGE BODY
+MDSYS				    SDO_OLS_DIRECTORY								PACKAGE BODY
+MDSYS				    SDO_WFS_PROCESS								PACKAGE BODY
+MDSYS				    SDO_WFS_LOCK								PACKAGE BODY
+MDSYS				    SDO_WFS_LOCK_UTIL								PACKAGE BODY
+MDSYS				    SDO_WFS_LOCK_GEN								PACKAGE BODY
+MDSYS				    SDO_CSW_INT 								PACKAGE BODY
+MDSYS				    SDO_CSW									PACKAGE BODY
+MDSYS				    SDO_TOPO_GEOMETRY								TYPE BODY
+MDSYS				    SDO_TOPO									PACKAGE BODY
+MDSYS				    oracle/spatial/georaster/BandReferenceInfo$BandReferenceType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/BandReferenceInfo				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/CellCoordinateType 				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/ExtentType 					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/GCPGeoreference					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/GeorSpatialReference				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/JGeoRaster 					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/JGeoRasterMeta					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/JGeoRasterVM					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/JRaster						JAVA CLASS
+MDSYS				    oracle/spatial/georaster/LayerInfo					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/ObjectInfo 					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/RasterInfo$BlockingDescriptionType 		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/RasterInfo 					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/RasterInfo$CompressionDescriptionType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/RasterInfo$DimensionSizeType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/RasterInfo$PyramidDescriptionType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/ResolutionType					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SegmentationDataType				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SpatialReferenceInfo				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SpatialReferenceInfo$GCPGeoreferenceType	JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SpatialReferenceInfo$GCPType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SpatialReferenceInfo$PolynomialType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SpatialReferenceInfo$RationalPolynomialType	JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$BinFunctionType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$CellCountType 			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$CellGrayType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$CellPseudoColorType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$ColormapType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$GrayscaleType 			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$HistogramType 			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$NODATAType				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$RasterCountType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$RasterGrayType			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$RasterPseudoColorType 		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$RectangularWindowType 		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$ScalingFunctionType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/SubLayerInfo$StatisticDatasetType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/TemporalReferenceInfo				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$10				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$11				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$12				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$13				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$14				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$1				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$2				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$3				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$4				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$5				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$6				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$7				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$8				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor$9				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/Compressor				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/codec/BlobCodec			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/codec/BlobImage			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/codec/BlobImageDecoder			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/geotiff/GeorGtfParser				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/geotiff/GeoTIFFWriter				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/image/GeoRasterImage				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/image/GeoRasterImage$NodataMapping 		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterAdapter$1			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterAdapter$2			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterAdapter$3			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterAdapter$4			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterAdapter$5			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterAdapter			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterGeoTIFFInterface 		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/GeoRasterSRSAdapter			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/JGeoRasterAdapter 			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/JP2Writer 				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/rasterio/JRasterAdapter				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorAggrPKG 				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeoRaster					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorIpPKG					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorPKG					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorPKG$SdoGeorGCP			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorPKG$SdoGeorGCPRefType		JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorRaPKG					JAVA CLASS
+MDSYS				    oracle/spatial/georaster/sql/SdoGeorUtlPKG				JAVA CLASS
+MDSYS				    oracle/spatial/georaster/compress/jp2/JP2Compressor 			JAVA CLASS
+MDSYS				    oracle/spatial/georaster/util/MosaicParameters				JAVA CLASS
+MDSYS				    SDO_GEOR_INT								PACKAGE
+MDSYS				    SDO_GEOR_DEF								PACKAGE
+MDSYS				    SDO_GEOR_AUX								PACKAGE
+MDSYS				    SDO_GEORX									PACKAGE
+MDSYS				    SDO_GEOR_ADMIN								PACKAGE
+MDSYS				    SDO_GEOR_UTL								PACKAGE
+MDSYS				    SDO_GEOR_RA 								PACKAGE
+MDSYS				    SDO_GEOR_TRIG_DEL2								TRIGGER
+MDSYS				    SDO_GEOR_TRIG_INS1								TRIGGER
+MDSYS				    SDO_GEOR_TRIG_DEL1								TRIGGER
+MDSYS				    SDO_GEOR_TRIG_UPD1								TRIGGER
+MDSYS				    GEORENABLEDISABLE								PROCEDURE
+MDSYS				    SDO_GEOR									PACKAGE BODY
+MDSYS				    SDO_GEORX									PACKAGE BODY
+MDSYS				    SDO_GEOR_DEF								PACKAGE BODY
+MDSYS				    SDO_GEOR_INT								PACKAGE BODY
+MDSYS				    SDO_GEOR_AUX								PACKAGE BODY
+MDSYS				    SDO_GEOR_ADMIN								PACKAGE BODY
+MDSYS				    SDO_GEOR_UTL								PACKAGE BODY
+MDSYS				    SDO_GEOR_RA 								PACKAGE BODY
+MDSYS				    SDO_GEOR_AGGR								PACKAGE BODY
+MDSYS				    SDO_GEOR_IP 								PACKAGE BODY
+MDSYS				    SDO_GEOR_GDAL								PACKAGE BODY
+MDSYS				    SDOTNPC									PACKAGE BODY
+MDSYS				    PRVT_PC									PACKAGE BODY
+MDSYS				    SDO_PC_PKG									PACKAGE BODY
+MDSYS				    PRVT_TIN									PACKAGE BODY
+MDSYS				    SDO_TIN_PKG 								PACKAGE BODY
+MDSYS				    SDO_WCS_COVERAGERECORD							TYPE
+MDSYS				    SDO_WCS_COVERAGEINFO							TYPE
+MDSYS				    SDO_WCS									PACKAGE
+MDSYS				    SDO_WCS									PACKAGE BODY
+MDSYS				    SDO_NETWORK_TRIG_INS							TRIGGER
+MDSYS				    SDO_NETWORK_TRIG_DEL							TRIGGER
+MDSYS				    SDO_NETWORK_TRIG_UPD							TRIGGER
+MDSYS				    SDO_NETWORK_CONS_INS_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_CONS_UPD_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_JAVA_INS_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_JAVA_DEL_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_JAVA_UPD_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_LOCKS_INS_TRIG						TRIGGER
+MDSYS				    SDO_NETWORK_LOCKS_DEL_TRIG						TRIGGER
+MDSYS				    SDO_NETWORK_LOCKS_UPD_TRIG						TRIGGER
+MDSYS				    SDO_NETWORK_UD_INS_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_UD_DEL_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_UD_UPD_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_HIS_INS_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_HIS_UPD_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_HIS_DEL_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_TIME_INS_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_TIME_UPD_TRIG							TRIGGER
+MDSYS				    SDO_NETWORK_TIME_DEL_TRIG							TRIGGER
+MDSYS				    MD_NET									PACKAGE BODY
+MDSYS				    SDO_NET_PARTITION								PACKAGE BODY
+MDSYS				    SDO_NET									PACKAGE BODY
+MDSYS				    SDO_NETWORK_MANAGER_I							TYPE BODY
+MDSYS				    SDO_ROUTER_PARTITION							PACKAGE BODY
+MDSYS				    SDO_ROUTER_TIMEZONE 							PACKAGE BODY
+MDSYS				    SDO_NDM_TRAFFIC								PACKAGE BODY
+MDSYS				    SDO_NFE_MODEL_TRIG_DEL							TRIGGER
+MDSYS				    SDO_NFE_MODEL_TRIG_UPD							TRIGGER
+MDSYS				    SDO_MODEL_FTLAYER_TRIG_DEL						TRIGGER
+MDSYS				    SDO_MODEL_FTLAYER_TRIG_UPD						TRIGGER
+MDSYS				    SDO_NFE_WORKSPACE_TRIG_INS						TRIGGER
+MDSYS				    SDO_NFE_WORKSPACE_TRIG_DEL						TRIGGER
+MDSYS				    SDO_NFE_WORKSPACE_TRIG_UPD						TRIGGER
+MDSYS				    SDO_NFE									PACKAGE
+MDSYS				    MD_NFE									PACKAGE
+MDSYS				    SDO_NFE									PACKAGE BODY
+MDSYS				    MD_NFE									PACKAGE BODY
+MDSYS				    RDF_APIS_INTERNAL								PACKAGE BODY
+MDSYS				    SDO_RDF									PACKAGE BODY
+MDSYS				    SDO_SEM_LOG 								PACKAGE BODY
+MDSYS				    SDO_SEM_UTL 								PACKAGE BODY
+MDSYS				    SDO_SEM_INF_INTERNAL							PACKAGE BODY
+MDSYS				    SDO_SEM_INFERENCE								PACKAGE BODY
+MDSYS				    SDO_SEM_INFI								PACKAGE BODY
+MDSYS				    RDF_APIS_OPER_INTERNAL							PACKAGE BODY
+MDSYS				    SEM_INDEXTYPE_IM								TYPE BODY
+MDSYS				    SDO_SEM_OPERATOR								PACKAGE BODY
+MDSYS				    oracle/spatial/rdf/server/BNConstructRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleStatsHintProvider$SQLHintVisitor		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngineAdapter$CaseInsensitiveComparator	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleBGP 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UnDefVarFilterOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/QueryOptionHintProvider			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/Rule						JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityEstimator				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectExpression				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TermConstructFilterHandler			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/QueryOptionHintProvider$RegexTokenComparator	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ConstructSPARQLTreeNode$QuadBGP		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPNegatedNode					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleStatsHintProvider			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/URIset						JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SPARQLEngine					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RDFModelStatistics				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RDFModelStatistics$PredStats			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/QueryUtils					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ServiceSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/sparqlPredicate					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/QueryOptionHintProvider$1 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UnionSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Op$Join			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPSQLTransVisitor 				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BindVarRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/CntDistStarRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UpdateEngine$1					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ClauseTreeNode					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$TmapInfo				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RDFModelStatistics$TermStats			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPNode						JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleStatsHintProvider$TableCountVisitor 	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPSeqNode 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Op$Join$Type 		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintProvider$HintToken				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$CSRinfo				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$MCSR				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UnionRewriteOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimplePPSQLTransVisitor			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintProvider$HintBuilder			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SpatialFilterHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintGenerator					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TextFilterHandler 				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ConstructSPARQLTreeNode$Quad			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TriplesBlock$1					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TranslateEngine					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/CollectionExpandOptimizer 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/OrderByExprRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GGPReduceOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ValuesSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Op			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UserDefinedAggHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Op$Data			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PropertyPathAlternateRewriteOptimizer		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/AbstractSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RRTabRowInfo					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/EncryptFilterHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Op$Access			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$OpVisitor			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/LeadingHintProvider				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TriplesBlock$Element				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ValuesRewriteOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/InferenceEngine					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GenerateQuery$CoveringTreeNode			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ConstructSPARQLTreeNode			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SPARQLTreeOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GeneralSQLHintProvider$1			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UpdateEngine					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityEstimator$Stats			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/XSDConstructFilterHandler 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TriplesBlock$Type 				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/NumericFilterHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/Filter						JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/UpdateEngine$GraphsInfo			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPModNode 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintProvider$HintTokenComparator		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Op$Access$Type		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ConstructExpandOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngineAdapter$1				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TriplesBlock					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PropertyPathAlternateRewriteOptimizer$NodeInfo	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/sparqlIdent					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngine$1					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPIRINode 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleStatsHintProvider$1 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/AntiJoinHintProvider				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ModifyRewriteOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SPARQLBGP 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GeneralSQLHintProvider				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SpatialFilterHandler$SpatialArgException	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleSelectivityOptimizer$SimpleComparator	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GeoSparqlDistanceFilterOptimizer		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintProvider$HintToken$Type			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/DistGroupConcatRewriteOptimizer		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PGFilterHandler					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$NatVarOpt_Structure 		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PropertyPathZeroRewriteOptimizer		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/DescribeRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/StringFilterHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$SpatialArgTypeException		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PropertyPathSequenceRewriteOptimizer		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/StgTabInsertTTLHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$ElapsedTimeInfoHandler		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngineAdapter$State			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/InsertTTLHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/PPAltNode 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BindingsRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintProvider					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BNPropListExpandOptimizer 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$RelExpr				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BindRewriteOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GGPCollapseOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintProvider$HintContext			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleSelectivityOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$UArowNatSelectInfo		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BasicGraphPattern 				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/EFilterRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngine$SessionContext 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/CalendarFilterHandler				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BlankNodesRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/LiteralSet					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleStatsHintProvider$Type			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/LeadingHintProvider$Type			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SPARQLTriplesBlock				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/EmptySPARQLTreeOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngineAdapter 				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TurtleExpandOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$String2				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/TemplateSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ConstBindRewriteOptimizer 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/BGPJoinHintProvider				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$NatVarOpt_Info			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/CurlyBraceSPARQLTreeNode			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$Pair_IntString			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GroupByAliasRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleSPARQLTriplesBlock			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintEngine					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/ConstObjPPRewriteOptimizer			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleSelectivityEstimator			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GeneralSQLHintProvider$Type			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$LtcTabRowInfo$ColDimInfoMetadata	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/InmemoryVMBGP					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$ElapsedTimeInfo			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$R2R2MatSPARQLFilterMap		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/GenerateQuery					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleFilterEstimator				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/OptimizerUtils					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$String3				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SPARQLTreeNode					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SQLEntryPoints					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/OrderCond 					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$TFTinfo				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/AbstractPPNode					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityOptimizer$Plan 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$Pair_IntInt 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleSelectivityEstimator$1			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/HintZeroHintGenerator				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SimpleStatsHintProvider$HashLargeResultsVisitorJAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectivityEstimator$Model			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$LtcTabRowInfo			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/FilterScopeOptimizer				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/DistinctOrderByRewriteOptimizer		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$UnionRow				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/ttl/TtlParser				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDefault			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTSelectClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTComplexPathMod		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGraphGraphPattern		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTInverseIRIref			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGraphRef 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTFilter			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDescribeQuery			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTSelectExpression 		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTConstructTemplate		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTHavingCondition		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTObjectList			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGraphOrDefault		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUnaryExpression		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTBind				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/sparqlParse 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTPathNegatedPropertySet	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTLimitClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTQuadData 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDrop				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTPropertyListNotEmptyPath 	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTTripleAtom			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTSelectQuery			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTMultiplicativeExpression 	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTInput				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTVerbEFilter			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTEFilter			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTInsertData			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTTopLevelQueryNode		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGroupClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTPathSequence			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTConstructQuery		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTComparisonOperator		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTCopy				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTCollection			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTAdditiveExpression		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTCurlyBraceQuery		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDeleteClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTObjectListPath		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTOptionalGraphPattern		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTModify			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTConditionalAndExpression 	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/SimpleNode			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTTriplesBlock			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTBindingsClause		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTInlineData			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTArgList			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTCollectionPath		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTBlankNodePropertyList		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTHavingClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTIRIrefOrFunction 		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTClear				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGraphRefAll			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTTriplePattern			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGroupGraphPattern		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTAdditiveOperator 		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTPathAlternative		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTQuads				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTLoad				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTOrderClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTAggregate			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTFunctionCall			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUnaryOperator			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTAdd				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/SparqlSolnModDesc		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUndef				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDeleteWhere			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTCreate			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDataBlock			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTAskQuery 			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTQuadsNotTriples		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUpdateUnit			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTQuadPattern			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTBooleanSpecialNode		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTMultiplicativeOperator	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTOffsetClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTConditionalOrExpression	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/SparqlSelectDescriptor		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTBlankNodePropertyListPath	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTValuesClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUpdate			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTOrderCondition		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTSimplePathMod			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTServiceGraphPattern		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTDeleteData			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTRelationalExpression		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTWhereClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTSolutionModifier 		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTMinusGraphPattern		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUsingClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTBuiltInCall			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTPropertyListNotEmpty		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTTripleAtom$BindVar		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTPathElt			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTFullSparqlQuery		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTMove				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTParenQuery			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGroupCondition		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTUnionGraphPattern		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTInsertClause			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTGraphPatternNotTriples	JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTLimitOffsetClauses		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/parser/sparql/ASTInversePathElt		JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SelectSPARQLTreeNode				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/SQLGenContext					JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/sparqlSemAnalyzer 				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$ACRinfo				JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/RelationalBGP$COptNatCondition			JAVA CLASS
+MDSYS				    oracle/spatial/rdf/server/AskSPARQLTreeNode 				JAVA CLASS
+MDSYS				    SEM_RDFCTX_DR								PACKAGE BODY
+MDSYS				    OPG_APIS									PACKAGE BODY
+MDSYS				    OPG_UTL									PACKAGE BODY
+
+474 rows selected.
+
+SQL> conn / as sysdba
+
+SQL> @?/rdbms/admin/utlrp.sql
+
+Session altered.
+
+
+TIMESTAMP
+--------------------------------------------------------------------------------
+COMP_TIMESTAMP UTLRP_BGN	      2021-04-27 12:18:32
+
+DOC>   The following PL/SQL block invokes UTL_RECOMP to recompile invalid
+DOC>   objects in the database. Recompilation time is proportional to the
+DOC>   number of invalid objects in the database, so this command may take
+DOC>   a long time to execute on a database with a large number of invalid
+DOC>   objects.
+DOC>
+DOC>   Use the following queries to track recompilation progress:
+DOC>
+DOC>   1. Query returning the number of invalid objects remaining. This
+DOC>	  number should decrease with time.
+DOC>	     SELECT COUNT(*) FROM obj$ WHERE status IN (4, 5, 6);
+DOC>
+DOC>   2. Query returning the number of objects compiled so far. This number
+DOC>	  should increase with time.
+DOC>	     SELECT COUNT(*) FROM UTL_RECOMP_COMPILED;
+DOC>
+DOC>   This script automatically chooses serial or parallel recompilation
+DOC>   based on the number of CPUs available (parameter cpu_count) multiplied
+DOC>   by the number of threads per CPU (parameter parallel_threads_per_cpu).
+DOC>   On RAC, this number is added across all RAC nodes.
+DOC>
+DOC>   UTL_RECOMP uses DBMS_SCHEDULER to create jobs for parallel
+DOC>   recompilation. Jobs are created without instance affinity so that they
+DOC>   can migrate across RAC nodes. Use the following queries to verify
+DOC>   whether UTL_RECOMP jobs are being created and run correctly:
+DOC>
+DOC>   1. Query showing jobs created by UTL_RECOMP
+DOC>	     SELECT job_name FROM dba_scheduler_jobs
+DOC>		WHERE job_name like 'UTL_RECOMP_SLAVE_%';
+DOC>
+DOC>   2. Query showing UTL_RECOMP jobs that are running
+DOC>	     SELECT job_name FROM dba_scheduler_running_jobs
+DOC>		WHERE job_name like 'UTL_RECOMP_SLAVE_%';
+DOC>#
+
+PL/SQL procedure successfully completed.
+
+
+TIMESTAMP
+--------------------------------------------------------------------------------
+COMP_TIMESTAMP UTLRP_END	      2021-04-27 12:18:33
+
+DOC> The following query reports the number of invalid objects.
+DOC>
+DOC> If the number is higher than expected, please examine the error
+DOC> messages reported with each object (using SHOW ERRORS) to see if they
+DOC> point to system misconfiguration or resource constraints that must be
+DOC> fixed before attempting to recompile these objects.
+DOC>#
+
+OBJECTS WITH ERRORS
+-------------------
+		  0
+
+DOC> The following query reports the number of exceptions caught during
+DOC> recompilation. If this number is non-zero, please query the error
+DOC> messages in the table UTL_RECOMP_ERRORS to see if any of these errors
+DOC> are due to misconfiguration or resource constraints that must be
+DOC> fixed before objects can compile successfully.
+DOC> Note: Typical compilation errors (due to coding errors) are not
+DOC>	   logged into this table: they go into DBA_ERRORS instead.
+DOC>#
+
+ERRORS DURING RECOMPILATION
+---------------------------
+			  0
+
+
+Function created.
+
+
+PL/SQL procedure successfully completed.
+
+
+Function dropped.
+
+
+PL/SQL procedure successfully completed.
+
+SQL>
+
+SQL> set lines 300 pages 100
+SQL> col owner for a35
+SQL> col object_name for a75
+SQL> col object_type for a65
+
+SQL> select owner, object_name, object_type from dba_objects where status='INVALID' and owner='MDSYS';
+
+no rows selected
+
+SQL> 
