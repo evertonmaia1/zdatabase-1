@@ -487,7 +487,139 @@ SDO_GEOMETRY(2001, 4326, SDO_POINT_TYPE(-122.23611, 37.482778, NULL), NULL, NULL
 SDO_GEOMETRY(2002, 4326, NULL, SDO_ELEM_INFO_ARRAY(1, 2, 1), SDO_ORDINATE_ARRAY(102, 0, 103, 1, 104, 0, 105, 1))
 SDO_GEOMETRY(2003, 4326, NULL, SDO_ELEM_INFO_ARRAY(1, 1003, 1), SDO_ORDINATE_ARRAY(100, 0, 101, 0, 101, 1, 100, 1, 100, 0))
 
-###NAO FINALIZADO 
-https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=167351890681999&parent=DOCUMENT&sourceId=1905175.1&id=1523117.1&_afrWindowMode=0&_adf.ctrl-state=ir86yxbtt_102
+SQL> CREATE INDEX geo_first_feature_idx ON j_geo (json_value(geo_doc, '$.features[0].geometry' RETURNING SDO_GEOMETRY)) INDEXTYPE IS MDSYS.SPATIAL_INDEX;
 
+Index created.
+
+SQL> SELECT id,
+       json_value(geo_doc, '$features[0].properties.Name') "Name",
+       SDO_GEOM.sdo_distance(
+         json_value(geo_doc, '$features[0].geometry') RETURNING SDO_GEOMETRY,
+         SDO_GEOMETRY(2001,
+                      4326,
+                      SDO_POINT_TYPE(-122.416667, 37.783333, NULL),
+                      NULL,
+                      NULL),
+         100, -- Tolerance in meters
+         'unit=KM') "Distance in kilometers"
+  FROM  j_geo
+  WHERE sdo_within_distance(
+          json_value(geo_doc, '$.features[0].geometry' RETURNING SDO_GEOMETRY),
+          SDO_GEOMETRY(2001,
+                       4326,
+                       SDO_POINT_TYPE(-122.416667, 37.783333, NULL),
+                       NULL,
+                       NULL),
+          'distance=100 unit=KM')
+        = 'TRUE';
+
+ID    Name           Distance in kilometers
+----- -------------- ----------------------
+1     Redwood City   26.9443035
+
+=================================================================================================================================================================
+
+#IN TERMS OF JSON OPTIMIZATION
+#NOTE
+We can use InMemory, we can create indexes, and we can also create materialized views based on JSON data
+
+SQL> ALTER TABLE j_purchaseorder ADD (userid VARCHAR2(20) GENERATED ALWAYS AS (json_value(po_document, '$.User' RETURNING VARCHAR2(20))));
+
+Table altered.
+
+SQL> ALTER TABLE j_purchaseorder ADD (costcenter VARCHAR2(6) GENERATED ALWAYS AS (json_value(po_document, '$.CostCenter' RETURNING VARCHAR2(6))));
+
+Table altered.
+
+SQL> CREATE INDEX user_cost_ctr_idx on j_purchaseorder(userid, costcenter);
+
+Index created.
+
+SQL> SELECT po_document FROM j_purchaseorder WHERE userid = 'ABULL' AND costcenter  = 'A50';
+
+PO_DOCUMENT
+--------------------------------------------------------------------------------
+{"PONumber":1600,"Reference":"ABULL-20140421","Requestor":"Alexis Bull","User":"
+ABULL","CostCenter":"A50","ShippingInstructions":{"name":"Alexis Bull","Address"
+:{"street":"200 Sporting Green","city":"South San Francisco","state":"CA","zipCo
+de":99236,"country":"United States of America"},"Phone":[{"type":"Office","numbe
+r":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]},"AllowPartialShip
+ment":true,"LineItems":[{"ItemNumber":1,"Part":{"Description":"One Magic Christm
+as","UnitPrice":19.95,"UPCCode":13131092899},"Quantity":9},{"ItemNumber":2,"Part
+":{"Description":"Lethal Weapon","UnitPrice":19.95,"UPCCode":85391628927},"Quant
+ity":5}],"totalQuantity":14,"totalPrice":279.3}
+
+SQL> SELECT po_document FROM j_purchaseorder WHERE json_value(po_document, '$.User') = 'ABULL' AND json_value(po_document, '$.CostCenter') = 'A50';
+
+PO_DOCUMENT
+--------------------------------------------------------------------------------
+{"PONumber":1600,"Reference":"ABULL-20140421","Requestor":"Alexis Bull","User":"
+ABULL","CostCenter":"A50","ShippingInstructions":{"name":"Alexis Bull","Address"
+:{"street":"200 Sporting Green","city":"South San Francisco","state":"CA","zipCo
+de":99236,"country":"United States of America"},"Phone":[{"type":"Office","numbe
+r":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]},"AllowPartialShip
+ment":true,"LineItems":[{"ItemNumber":1,"Part":{"Description":"One Magic Christm
+as","UnitPrice":19.95,"UPCCode":13131092899},"Quantity":9},{"ItemNumber":2,"Part
+":{"Description":"Lethal Weapon","UnitPrice":19.95,"UPCCode":85391628927},"Quant
+ity":5}],"totalQuantity":14,"totalPrice":279.3}
+            
+SQL> CREATE SEARCH INDEX po_search_idx ON j_purchaseorder (po_document) FOR JSON;
+
+Index created.
+
+=================================================================================================================================================================
+
+#IN TERMS OF INMMEMORY
+Database initialization parameter compatibility must be 12.2.0.0, or even higher
+database initialization parameter to extended max_string_size must
+have sufficient capacity to configure SGA InMemory (inmemory_size)
+the DBA needs to columns containing JSON tablespace, table or materialized view by CREATE or The ALERT method specifies
+the column in which INMEMORY stores JSON data, and must have is json constraints.
+Other initialization parameters should be set as follows
+        IMMEMORY_EXPRESSIONS_USAGE=ENABLE
+        IMMEMORY_VIRTUAL_COLUMNS = ENABLE
+Note: If the compatibility or max_string_size does not meet the above conditions, 
+the following script must be run ( rdbms/admin/ utlimcjson.sql ) JSON performance has been added .
+After marking the JSON column as INMEMORY, an in-memory virtual column will be added to each JSON column. 
+The corresponding virtual column is used to query the given JSON column. 
+The virtual column contains the same JSON data as the corresponding JSON column, but in the Oracle binary format OSON.
+IM column storage is used to query less than 32,767 bytes, which will benefit from IM column storage. If it is greater than 32767 bytes, it will not. 
+Consider splitting the column.
+
+--Execution plan display: TABLE ACCESS FULL
+
+SQL> SELECT COUNT(1) FROM j_purchaseorder WHERE  json_exists(po_document, '$.ShippingInstructions?(@.Address.zipCode == 99236)');
+
+  COUNT(1)
+----------
+	 2
+	 
+SQL> ALTER TABLE j_purchaseorder INMEMORY;
+
+Table altered.
+
+--Execution plan display: TABLE ACCESS INMEMORY FULL
+
+SQL> SELECT COUNT(1) FROM j_purchaseorder WHERE json_exists(po_document, '$.ShippingInstructions?(@.Address.zipCode == 99236)');
+
+  COUNT(1)
+----------
+	 2
+
+SQL> select plan_table_output from table(dbms_xplan.display('plan_table',null,'basic'));
+
+PLAN_TABLE_OUTPUT
+--------------------------------------------------------------------------------
+Plan hash value: 1830169197
+
+--------------------------------------------------------
+| Id  | Operation		     | Name	       |
+--------------------------------------------------------
+|   0 | SELECT STATEMENT	     |		       |
+|   1 |  SORT AGGREGATE 	     |		       |
+|   2 |   TABLE ACCESS BY INDEX ROWID| J_PURCHASEORDER |
+|   3 |    DOMAIN INDEX 	     | PO_SEARCH_IDX   |
+--------------------------------------------------------
+
+10 rows selected.
 
