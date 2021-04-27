@@ -7,7 +7,7 @@ This document explains how to reload locator without moving your spatial data an
 if the geometry data is not corrupt and only the Locator installation is corrupt.
 This will not fix the spatial data in case there is corruption in the data, it will only reload the Locator installation.
 
-============================================================================================================================================
+================================================================================================================================================================
 
 [oracle@ol7db1 ~]$ sqlplus / as sysdba
 
