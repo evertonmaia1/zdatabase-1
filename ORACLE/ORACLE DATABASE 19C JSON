@@ -1,0 +1,493 @@
+++++++++++++++++++++++++++++++
++  ORACLE DATABASE 19C JSON  +
+++++++++++++++++++++++++++++++
+
+#NOTE
+
+Starting from 12.1, the Oracle database supports JSON, and this data type is not added. 
+
+We can store JSON content in VARCHAR2 or CLOB data columns, of course, can also be stored in NVARCHAR, NCLOB and BLOB columns, 
+but it is not recommended that you do this.
+
+Then add an IS JSON constraint to the column to indicate that the column is valid JSON data. 
+Most of the content in this article comes from the official white paper JSON Developer's Guide, which mainly covers the following content:
+
+   * 19c new features
+   * introduce JSON
+   * creation, storage and management JSON
+   * insertion, update JSON data
+   * query JSON data to
+   * generate JSON format data
+   * PL/SQL JSON data type
+   * Storing, indexing and managing GeoJSON data through Oracle Spatial and Graph
+   * JSON performance tuning
+   * limitations of Oracle JSON
+
+Some new features have also been added in 19c, such as support for GeoJSON data and materialized views based on JSON data. 
+JSON Data Guide, JSON_OBJECT, JSON_MERGEPATCH, JSON_SERIALIZE are more powerful, and JSON_TABLE is replaced by SQL NESTED. 
+
+The following scripts can be obtained from this link. 
+https://docs.oracle.com/en/database/oracle/oracle-database/19/adjsn/loe.htmlCreate
+
+The official Oracle white paper JSON Developer's Guide is mainly divided into the following parts.
+
+=================================================================================================================================================================
+
+#STORE AND MANAGE JSON
+#NOTE
+IS JSON constraint will perform JSON syntax check. 
+If you want to check strongly, you can use (po document IS JSON (STRICT)). 
+In addition, JSON can also be stored in the partition table.
+Can also be created as an external table.
+
+[oracle@ol7db1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon Apr 26 21:41:28 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> show pdbs;
+
+    CON_ID CON_NAME			  OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+	 2 PDB$SEED			  READ ONLY  NO
+	 3 APPSPDB			  READ WRITE NO
+SQL> alter session set container=APPSPDB;
+
+Session altered.
+
+SQL> CREATE TABLE j_purchaseorder
+  (id          VARCHAR2 (32) NOT NULL PRIMARY KEY,
+   date_loaded TIMESTAMP (6) WITH TIME ZONE,
+   po_document VARCHAR2 (23767)
+   CONSTRAINT purchaseorder_json CHECK (po_document IS JSON));  2    3    4    5  
+
+Table created.
+
+SQL> CREATE TABLE j_purchaseorder_partitioned
+  (id VARCHAR2 (32) NOT NULL PRIMARY KEY,
+   date_loaded TIMESTAMP (6) WITH TIME ZONE,
+   po_document CLOB,
+   po_num_vc NUMBER GENERATED ALWAYS AS
+     (json_value (po_document, '$.PONumber' RETURNING NUMBER)))
+  LOB (po_document) STORE AS (CACHE)
+  PARTITION BY RANGE (po_num_vc)
+   (PARTITION p1 VALUES LESS THAN (1000),
+    PARTITION p2 VALUES LESS THAN (2000));  2    3    4    5    6    7    8    9   10  
+
+Table created.
+
+SQL> CREATE OR REPLACE DIRECTORY order_entry_dir AS '/home/oracle/demo/schema/order_entry';
+
+Directory created.
+
+SQL> CREATE TABLE json_dump_file_contents (json_document BLOB)
+  ORGANIZATION EXTERNAL (TYPE ORACLE_LOADER DEFAULT DIRECTORY order_entry_dir
+                         ACCESS PARAMETERS
+                           (RECORDS DELIMITED BY 0x'0A'
+                            DISABLE_DIRECTORY_LINK_CHECK
+                            FIELDS (json_document CHAR(5000)))
+                         LOCATION (order_entry_dir:'PurchaseOrders.dmp'))
+  PARALLEL
+  REJECT LIMIT UNLIMITED;  2    3    4    5    6    7    8    9  
+
+Table created.
+
+=================================================================================================================================================================
+
+#INSERT JSON DATA
+#NOTE
+We can confirm the tables and columns containing JSON type through the view, DBA_JSON_COLUMNS, USER_JSON_COLUMNS, ALL_JSON_COLUMNS
+
+SQL> INSERT INTO j_purchaseorder
+  VALUES (
+    SYS_GUID (),
+    to_date('30-DEC-2014'),
+    '{"PONumber"             : 1600,
+      "Reference"            : "ABULL-20140421",
+      "Requestor"            : "Alexis Bull",
+      "User"                 : "ABULL",
+      "CostCenter"           : "A50",
+      "ShippingInstructions" : {"name"    : "Alexis Bull",
+                                "Address" : {"street"  : "200 Sporting Green",
+                                             "city"    : "South San Francisco",
+                                             "state"   : "CA",
+                                             "zipCode" : 99236,
+                                             "country" : "United States of America"},
+                                "Phone"   : [{"type" : "Office", "number" : "909-555-7307"},
+                                             {"type" : "Mobile", "number" : "415-555-1234"}]},
+      "Special Instructions" : null,
+      "AllowPartialShipment" : true,
+      "LineItems"            : [{"ItemNumber" : 1,
+                                 "Part"       : {"Description" : "One Magic Christmas",
+                                                 "UnitPrice"   : 19.95,
+                                                 "UPCCode"     : 13131092899},
+                                 "Quantity"   : 9.0},
+                                {"ItemNumber" : 2,
+                                 "Part"       : {"Description" : "Lethal Weapon",
+                                                 "UnitPrice"   : 19.95,
+                                                 "UPCCode"     : 85391628927},
+                                 "Quantity"   : 5.0}]}');  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29  
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> INSERT INTO j_purchaseorder
+  VALUES (
+    SYS_GUID (),
+    to_date('30-DEC-2014'),
+    '{"PONumber"             : 672,
+      "Reference"            : "SBELL-20141017",
+      "Requestor"            : "Sarah Bell",
+      "User"                 : "SBELL",
+      "CostCenter"           : "A50",
+      "ShippingInstructions" : {"name"    : "Sarah Bell",
+                                "Address" : {"street"  : "200 Sporting Green",
+                                             "city"    : "South San Francisco",
+                                             "state"   : "CA",
+                                             "zipCode" : 99236,
+                                             "country" : "United States of America"},
+                                "Phone"   : "983-555-6509"},
+      "Special Instructions" : "Courier",
+      "LineItems"            : [{"ItemNumber" : 1,
+                                 "Part"       : {"Description" : "Making the Grade",
+                                                 "UnitPrice"   : 20,
+                                                 "UPCCode"     : 27616867759},
+                                 "Quantity"   : 8.0},
+                                {"ItemNumber" : 2,
+                                 "Part"       : {"Description" : "Nixon",
+                                                 "UnitPrice"   : 19.95,
+                                                 "UPCCode"     : 717951002396},
+                                 "Quantity"   : 5},
+                                {"ItemNumber" : 3,
+                                 "Part"       : {"Description" : "Eric Clapton: Best Of 1981-1999",
+                                                 "UnitPrice"   : 19.95,
+                                                 "UPCCode"     : 75993851120},
+                                 "Quantity"   : 5.0}
+                                ]} ');  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33  
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+=================================================================================================================================================================
+
+#UPDATE JSON DATA
+
+SQL> desc j_purchaseorder;
+ Name					   Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ID					   NOT NULL VARCHAR2(32)
+ DATE_LOADED					    TIMESTAMP(6) WITH TIME ZONE
+ PO_DOCUMENT					    VARCHAR2(23767)
+
+#NOTE
+We can also update JSON, if there is a problem with the format or syntax, it will fail
+
+SQL> update j_purchaseorder set PO_DOCUMENT ='{"type":"Office"';
+update j_purchaseorder set PO_DOCUMENT ='{"type":"Office"'
+*
+ERROR at line 1:
+ORA-02290: check constraint (SYS.PURCHASEORDER_JSON) violated
+
+#TRY AGAIN
+
+SQL> UPDATE j_purchaseorder SET po_document = json_mergepatch(po_document, '{"Special Instructions":null}');
+
+2 rows updated.
+
+SQL> commit;
+
+Commit complete.
+
+=================================================================================================================================================================
+
+#QUERY JSON DATA
+#NOTE
+Let's take a look at JSON_VALUE, JSON_QUERY, JSON_EXISTS, JSON_TABLE, JSON_SERIALIZE can be used to query JSON data. Added JSON_EQUAL function in 18c
+
+SQL> select count(*) from j_purchaseorder;
+
+  COUNT(*)
+----------
+	 2
+
+#NOTE
+In fact, the backend in the middle of po_document.
+PONumber is realized through the JSON function, which is equivalent to a query conversion. 
+If you are interested, you can track it through 10053. 
+SELECT JSON_QUERY("PO"."PO_DOCUMENT" /*+ LOB_BY_VALUE */ FORMAT JSON,'$.PONumber' RETURNING VARCHAR2(4000) ASIS WITHOUT ARRAY WRAPPER NULL ON ERROR) "PONUMBER" FROM "SYS"."J_PURCHASEORDER" "PO ";
+You can also see the error handling NULL ON ERROR, the common exception handling is {ERROR | NULL | DEFAULT literal} ON ERROR
+
+SQL> SELECT po.po_document.PONumber FROM j_purchaseorder po;
+
+PONUMBER
+--------------------------------------------------------------------------------
+1600
+672
+
+SQL> SELECT json_value(po_document, '$.PONumber') FROM j_purchaseorder;
+
+JSON_VALUE(PO_DOCUMENT,'$.PONUMBER')
+--------------------------------------------------------------------------------
+1600
+672
+
+SQL> SELECT po.po_document.ShippingInstructions.Phone FROM j_purchaseorder po;
+
+SHIPPINGINSTRUCTIONS
+--------------------------------------------------------------------------------
+[{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-12
+34"}]
+
+983-555-6509
+
+SQL> SELECT json_query(po_document, '$.ShippingInstructions.Phone') FROM j_purchaseorder;
+
+JSON_QUERY(PO_DOCUMENT,'$.SHIPPINGINSTRUCTIONS.PHONE')
+--------------------------------------------------------------------------------
+[{"type":"Office","number":"909-555-7307"},{"type":"Mobile","number":"415-555-12
+34"}]
+
+SQL> SELECT po.po_document.ShippingInstructions.Phone.type FROM j_purchaseorder po;
+
+SHIPPINGINSTRUCTIONS
+--------------------------------------------------------------------------------
+["Office","Mobile"]
+
+SQL> SELECT json_query(po_document, '$.ShippingInstructions.Phone.type' WITH WRAPPER)
+  FROM j_purchaseorder;  2  
+
+JSON_QUERY(PO_DOCUMENT,'$.SHIPPINGINSTRUCTIONS.PHONE.TYPE'WITHWRAPPER)
+--------------------------------------------------------------------------------
+["Office","Mobile"]
+
+SQL> SELECT po_document FROM j_purchaseorder WHERE json_exists(po_document, '$.ShippingInstructions.Address.country');
+
+PO_DOCUMENT
+--------------------------------------------------------------------------------
+{"PONumber":1600,"Reference":"ABULL-20140421","Requestor":"Alexis Bull","User":"
+ABULL","CostCenter":"A50","ShippingInstructions":{"name":"Alexis Bull","Address"
+:{"street":"200 Sporting Green","city":"South San Francisco","state":"CA","zipCo
+de":99236,"country":"United States of America"},"Phone":[{"type":"Office","numbe
+r":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]},"AllowPartialShip
+ment":true,"LineItems":[{"ItemNumber":1,"Part":{"Description":"One Magic Christm
+as","UnitPrice":19.95,"UPCCode":13131092899},"Quantity":9.0},{"ItemNumber":2,"Pa
+rt":{"Description":"Lethal Weapon","UnitPrice":19.95,"UPCCode":85391628927},"Qua
+ntity":5.0}]}
+
+{"PONumber":672,"Reference":"SBELL-20141017","Requestor":"Sarah Bell","User":"SB
+
+PO_DOCUMENT
+--------------------------------------------------------------------------------
+ELL","CostCenter":"A50","ShippingInstructions":{"name":"Sarah Bell","Address":{"
+street":"200 Sporting Green","city":"South San Francisco","state":"CA","zipCode"
+:99236,"country":"United States of America"},"Phone":"983-555-6509"},"LineItems"
+:[{"ItemNumber":1,"Part":{"Description":"Making the Grade","UnitPrice":20,"UPCCo
+de":27616867759},"Quantity":8.0},{"ItemNumber":2,"Part":{"Description":"Nixon","
+UnitPrice":19.95,"UPCCode":717951002396},"Quantity":5},{"ItemNumber":3,"Part":{"
+Description":"Eric Clapton: Best Of 1981-1999","UnitPrice":19.95,"UPCCode":75993
+851120},"Quantity":5.0}]}
+
+SQL> SELECT jt.* FROM j_purchaseorder, json_table(po_document, '$.ShippingInstructions.Phone[*]' COLUMNS (phone_type VARCHAR2(10) PATH '$.type', phone_num  VARCHAR2(20) PATH '$.number')) AS "JT";
+
+PHONE_TYPE PHONE_NUM
+---------- --------------------
+Office	   909-555-7307
+Mobile	   415-555-1234
+
+=================================================================================================================================================================
+
+#GENERATE JSON FORMAT DATA
+#NOTE
+through the function JSON_OBJECT, JSON_OBJECTAGG, JSON_ARRAY, JSON_ARRAYAGG, JSON_OBJECT, 
+you can generate JSON format. Such as realizing row and column conversion, data grouping and so on.
+
+* SQL/JSON functions can also handle null values
+    The default is NULL ON NULL (if it is empty, the display is empty), json_object, json_objectagg
+    It can also be set to ABSENT ON NULL (if it is empty, it will not be displayed), json_array, json_arrayagg
+    
+* RETURNING statement
+    RETURNING VARCHAR2, the default is VARCHAR2(4000)
+    RETURNING VARCHAR2(32767 BYTE), defined to return as returning VARCHAR2(32767)
+    RETURNING VARCHAR2 (200 CHAR), defined to return as
+    RETURNING CLOB    
+
+* FORMAT JSON
+   If the returned value is BLOB, you need to use FORMAT JSON, otherwise it is generally not needed
+   
+* SQL/JSON does not accept numbers as KEY
+   If you use a number as the key, you will encounter the following error. Can be converted by to_char
+   ORA-00932: inconsistent datatypes: expected CHAR got NUMBER   
+   
+SQL> select json_object(key 'Purchase ID' value ID,key 'Purchase Date' value DATE_LOADED) from j_purchaseorder;
+
+JSON_OBJECT(KEY'PURCHASEID'VALUEID,KEY'PURCHASEDATE'VALUEDATE_LOADED)
+--------------------------------------------------------------------------------
+{"Purchase ID":"C0EA9EE939C00858E0531612A8C0E3BC","Purchase Date":"2014-12-30T03
+:00:00.000000Z"}
+
+{"Purchase ID":"C0EA9EE939C10858E0531612A8C0E3BC","Purchase Date":"2014-12-30T03
+:00:00.000000Z"}
+
+SQL> select json_objectagg (key 'Purchase Date' value DATE_LOADED) from j_purchaseorder;
+
+JSON_OBJECTAGG(KEY'PURCHASEDATE'VALUEDATE_LOADED)
+--------------------------------------------------------------------------------
+{"Purchase Date":"2014-12-30T03:00:00.000000Z","Purchase Date":"2014-12-30T03:00
+:00.000000Z"}
+
+SQL> select json_array(rownum,json_object(key 'Purchase ID' value ID,key 'Purchase Date' value DATE_LOADED)) from j_purchaseorder;
+
+JSON_ARRAY(ROWNUM,JSON_OBJECT(KEY'PURCHASEID'VALUEID,KEY'PURCHASEDATE'VALUEDATE_
+--------------------------------------------------------------------------------
+[1,{"Purchase ID":"C0EA9EE939C00858E0531612A8C0E3BC","Purchase Date":"2014-12-30
+T03:00:00.000000Z"}]
+
+[2,{"Purchase ID":"C0EA9EE939C10858E0531612A8C0E3BC","Purchase Date":"2014-12-30
+T03:00:00.000000Z"}]
+
+SQL> select json_array(id) from j_purchaseorder;
+
+JSON_ARRAY(ID)
+--------------------------------------------------------------------------------
+["C0EA9EE939C00858E0531612A8C0E3BC"]
+["C0EA9EE939C10858E0531612A8C0E3BC"]
+
+SQL> select json_arrayagg(id) from j_purchaseorder;
+
+JSON_ARRAYAGG(ID)
+--------------------------------------------------------------------------------
+["C0EA9EE939C00858E0531612A8C0E3BC","C0EA9EE939C10858E0531612A8C0E3BC"]
+
+=================================================================================================================================================================
+
+#PL/SQL JSON DATA TYPE
+
+SQL> CREATE OR REPLACE FUNCTION add_totals(purchaseOrder IN VARCHAR2) RETURN VARCHAR2 IS
+  po_obj        JSON_OBJECT_T;
+  li_arr        JSON_ARRAY_T;
+  li_item       JSON_ELEMENT_T;
+  li_obj        JSON_OBJECT_T;
+  unitPrice     NUMBER;
+  quantity      NUMBER;
+  totalPrice    NUMBER := 0;
+  totalQuantity NUMBER := 0;
+BEGIN
+  po_obj := JSON_OBJECT_T.parse(purchaseOrder);
+  li_arr := po_obj.get_Array('LineItems');
+  FOR i IN 0 .. li_arr.get_size - 1 LOOP
+    li_obj := JSON_OBJECT_T(li_arr.get(i));
+    quantity := li_obj.get_Number('Quantity');
+    unitPrice := li_obj.get_Object('Part').get_Number('UnitPrice');
+    totalPrice := totalPrice + (quantity * unitPrice);
+    totalQuantity := totalQuantity + quantity;
+  END LOOP;
+  po_obj.put('totalQuantity', totalQuantity);
+  po_obj.put('totalPrice', totalPrice);
+  RETURN po_obj.to_string;
+END;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24  
+
+Function created.
+
+SQL> UPDATE j_purchaseorder SET (po_document) = add_totals(po_document);
+
+2 rows updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> SELECT po.po_document FROM j_purchaseorder po WHERE po.po_document.PONumber = 1600;
+
+PO_DOCUMENT
+--------------------------------------------------------------------------------
+{"PONumber":1600,"Reference":"ABULL-20140421","Requestor":"Alexis Bull","User":"
+ABULL","CostCenter":"A50","ShippingInstructions":{"name":"Alexis Bull","Address"
+:{"street":"200 Sporting Green","city":"South San Francisco","state":"CA","zipCo
+de":99236,"country":"United States of America"},"Phone":[{"type":"Office","numbe
+r":"909-555-7307"},{"type":"Mobile","number":"415-555-1234"}]},"AllowPartialShip
+ment":true,"LineItems":[{"ItemNumber":1,"Part":{"Description":"One Magic Christm
+as","UnitPrice":19.95,"UPCCode":13131092899},"Quantity":9},{"ItemNumber":2,"Part
+":{"Description":"Lethal Weapon","UnitPrice":19.95,"UPCCode":85391628927},"Quant
+ity":5}],"totalQuantity":14,"totalPrice":279.3}
+
+=================================================================================================================================================================
+
+#STORE, INDEX AND MANAGE GEOJSON DATA
+
+SQL> select count(*) from mdsys.SDO_GEOM_METADATA_TABLE;
+
+  COUNT(*)
+----------
+	 0
+
+SQL> Insert into USER_SDO_GEOM_METADATA (TABLE_NAME, COLUMN_NAME, DIMINFO, SRID) Values ('TBNAME', 'spatial_data', MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('LONG',-180,180,0.5),MDSYS.SDO_DIM_ELEMENT('LAT',-90,90,0.5)), 8307);
+
+1 row created.
+
+SQL> CREATE TABLE j_geo (id VARCHAR2 (32) NOT NULL, geo_doc VARCHAR2 (4000) CHECK (geo_doc IS JSON));
+
+Table created.
+
+SQL> INSERT INTO j_geo
+  VALUES (1,
+          '{"type"     : "FeatureCollection",
+            "features" : [{"type"       : "Feature",
+                           "geometry"   : {"type" : "Point",
+                                           "coordinates" : [-122.236111, 37.482778]},
+                           "properties" : {"Name" : "Redwood City"}},
+                          {"type" : "Feature",
+                           "geometry" : {"type" : "LineString",
+                                         "coordinates" : [[102.0, 0.0],
+                                                          [103.0, 1.0],
+                                                          [104.0, 0.0],
+                                                          [105.0, 1.0]]},
+                           "properties" : {"prop0" : "value0",
+                                           "prop1" : 0.0}},
+                          {"type"        : "Feature",
+                            "geometry"   : {"type" : "Polygon",
+                                            "coordinates" : [[[100.0, 0.0],
+                                                              [101.0, 0.0],
+                                                              [101.0, 1.0],
+                                                              [100.0, 1.0],
+                                                              [100.0, 0.0]]]},
+                            "properties" : {"prop0" : "value0",
+                                            "prop1" : {"this" : "that"}}}]}');  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24  
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> SELECT json_value(geo_doc, '$.features[0].geometry' RETURNING SDO_GEOMETRY ERROR ON ERROR) FROM j_geo;
+
+JSON_VALUE(GEO_DOC,'$.FEATURES[0].GEOMETRY'RETURNINGSDO_GEOMETRYERRORONERROR)(SD
+----------------------------------------------------------------------------------
+SDO_GEOMETRY(2001, 4326, SDO_POINT_TYPE(-122.23611, 37.482778, NULL), NULL, NULL)
+
+SQL> SELECT jt.* FROM j_geo, json_table(geo_doc, '$.features[*]' COLUMNS (sdo_val SDO_GEOMETRY PATH '$.geometry')) jt;
+
+SDO_VAL(SDO_GTYPE, SDO_SRID, SDO_POINT(X, Y, Z), SDO_ELEM_INFO, SDO_ORDINATES)
+--------------------------------------------------------------------------------
+SDO_GEOMETRY(2001, 4326, SDO_POINT_TYPE(-122.23611, 37.482778, NULL), NULL, NULL)
+SDO_GEOMETRY(2002, 4326, NULL, SDO_ELEM_INFO_ARRAY(1, 2, 1), SDO_ORDINATE_ARRAY(102, 0, 103, 1, 104, 0, 105, 1))
+SDO_GEOMETRY(2003, 4326, NULL, SDO_ELEM_INFO_ARRAY(1, 1003, 1), SDO_ORDINATE_ARRAY(100, 0, 101, 0, 101, 1, 100, 1, 100, 0))
+
+###NAO FINALIZADO 
+https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=167351890681999&parent=DOCUMENT&sourceId=1905175.1&id=1523117.1&_afrWindowMode=0&_adf.ctrl-state=ir86yxbtt_102
+
+
