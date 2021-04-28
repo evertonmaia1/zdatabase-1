@@ -55,6 +55,7 @@ DNS1=8.8.4.4
 
 #CREATE NAMED FILE
 [root@ol7dns ~]# mv /etc/named.conf /etc/named.conf.bkp
+[root@ol7dns ~]# vim /etc/named.conf
 options {
         directory "/var/named";
 };
