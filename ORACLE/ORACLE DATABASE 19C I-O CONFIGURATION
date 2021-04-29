@@ -63,6 +63,12 @@ Connected to:
 Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.3.0.0.0
 
+SQL> select count(*) from gv$instance;
+
+  COUNT(*)
+----------
+	 2
+
 SQL> set timing on;
 SQL> SET AUTOTRACE ON;
 SQL> create table t nologging as select owner, object_name from all_objects, (select 1 from dual connect by level <= 100);
