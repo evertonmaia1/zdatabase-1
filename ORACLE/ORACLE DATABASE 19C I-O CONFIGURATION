@@ -296,9 +296,10 @@ SQL> exit
 Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.3.0.0.0
 
-
-
-  
-  
-
+#NOTE
+	* In this scenario, to increase the maximum number of I / O operations per Second, it is necessary to increase the number of disks in the Storage or even disks with higher performance.
+	* The maximum number of I / O operations may or may not meet the needs of a particular application. This will depend on the operations that the application will request from the database.
+	* AWR reports can also help to find high latency in I / O requests to the Database.
+	* The results alternate according to the Hardware and Software configuration of each analyzed environment. 
+	  It is important to maintain a throughput compatible with the need of the Database in order to avoid performance problems when accessing applications.
 
