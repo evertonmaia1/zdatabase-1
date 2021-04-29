@@ -1,0 +1,304 @@
+#############################################
+#   ORACLE DATABASE 19C I/O CONFIGURATION		#
+#############################################
+
+#NOTE
+The I/O calibration feature of Oracle Database is accessed using the DBMS_RESOURCE_MANAGER.CALIBRATE_IO procedure. 
+This procedure issues an I/O intensive read-only workload, made up of one megabyte of random of I/Os, to the database files to determine the maximum IOPS (I/O requests per second) and MBPS (megabytes of I/O per second) that can be sustained by the storage subsystem.
+
+The I/O calibration occurs in two steps:
+
+In the first step of I/O calibration with the DBMS_RESOURCE_MANAGER.CALIBRATE_IO procedure, the procedure issues random database-block-sized reads, 
+by default, 8 KB, to all data files from all database instances. This step provides the maximum IOPS, in the output parameter max_iops, that the database can sustain. 
+The value max_iops is an important metric for OLTP databases. The output parameter actual_latency provides the average latency for this workload. 
+When you need a specific target latency, you can specify the target latency with the input parameter max_latency (specifies the maximum tolerable latency in milliseconds for database-block-sized IO requests).
+
+The second step of calibration using the DBMS_RESOURCE_MANAGER.CALIBRATE_IO procedure issues random, 1 MB reads to all data files from all database instances. 
+The second step yields the output parameter max_mbps, which specifies the maximum MBPS of I/O that the database can sustain. 
+This step provides an important metric for data warehouses.
+
+The calibration runs more efficiently if the user provides the num_physical_disks input parameter, which specifies the approximate number of physical disks in the database storage system.
+Due to the overhead from running the I/O workload, I/O calibration should only be performed when the database is idle, or during off-peak hours, 
+to minimize the impact of the I/O workload on the normal database workload.
+
+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Parâmetro	       | Descrição
++---------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| num_physical_disks  | Number of physical disks where the Database is allocated.
+| max_latency         | Maximum tolerance in milliseconds for I / O requests in the database
+| max_iops            | Maximum number of I / O requests per second that can be supported by the Storage structure. I / O requests are distributed by reading blocks from the database.
+| max_mbps            | Maximum throughput in MB / s that can be supported by the Storage structure. The requests are distributed in 1MB readings.
+| actual_latency      | Average latency in milliseconds for reading blocks from the Database.
++---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Pre-Requests
+Before execution some prerequisites are necessary.
+- User with SYSDBA Privilege (Normally executed with SYS user).
+- Parameter TIMED_STATISTICS = TRUE
+- ASYNCH_IO enabled for all files in the Database. To check, you can run the script below:
+- Perform only one operation (CALIBRATE) at a time.
+- Only run one calibration at a time on databases that use the same storage subsystem. 
+  If you simultaneously run the calibration across separate databases that use the same storage subsystem, the calibration will fail.
+- Quiesce the database to minimize I/O on the instance.
+- For Oracle Real Application Clusters (Oracle RAC) configurations, ensure that all instances are opened to calibrate the storage subsystem across nodes.
+- For an Oracle Real Application Clusters (Oracle RAC) database, the workload is simultaneously generated from all instances.
+- The num_physical_disks input parameter is optional. By setting the num_physical_disks parameter to the approximate number of physical disks in the database's storage system, the calibration can
+  be faster and more accurate.
+- In some cases, asynchronous I/O is permitted for data files, but the I/O subsystem for submitting asynchronous I/O may be maximized, and I/O calibration cannot continue. 
+  In such cases, refer to the port-specific documentation for information about checking the maximum limit for asynchronous I/O on the system.
+
+To run I/O calibration and assess the I/O capability of the storage subsystem used by Oracle Database, use the DBMS_RESOURCE_MANAGER.CALIBRATE_IO procedure:
+
+[root@oraclerac19cn1 ~]# su - oracle
+Last login: Qui Abr 29 11:21:19 -03 2021 on pts/0
+[oracle@oraclerac19cn1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Thu Apr 29 11:22:07 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> set timing on;
+SQL> SET AUTOTRACE ON;
+SQL> create table t nologging as select owner, object_name from all_objects, (select 1 from dual connect by level <= 100);
+
+Table created.
+
+Elapsed: 00:00:04.41
+SQL> 
+
+SQL> select count(*) from t;
+
+  COUNT(*)
+----------
+   7126800
+
+Elapsed: 00:00:00.29
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 2966233522
+
+-------------------------------------------------------------------
+| Id  | Operation	    | Name | Rows  | Cost (%CPU)| Time     |
+-------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |	   |	1  | 11873   (1) | 00:00:01 |
+|   1 |  SORT AGGREGATE    |	   |	1  |	         |	     |
+|   2 |   TABLE ACCESS FULL| T    |  6644K| 11873   (1)| 00:00:01  |
+-------------------------------------------------------------------
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=2)
+
+
+Statistics
+----------------------------------------------------------
+	 10  recursive calls
+	  0  db block gets
+      43786  consistent gets
+      43917  physical reads
+	  0  redo size
+	552  bytes sent via SQL*Net to client
+	384  bytes received via SQL*Net from client
+	  2  SQL*Net roundtrips to/from client
+	  0  sorts (memory)
+	  0  sorts (disk)
+	  1  rows processed
+
+SQL> SHOW PARAMETER PARALLEL_DEGREE_POLICY;              
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+parallel_degree_policy		     string	 MANUAL
+
+#NOTE
+Auto DOP
+Automatic Degree of Parallelism, or Auto DOP, goes some way to solving these problems by allowing Oracle to determine the DOP of a statement, rather than object settings or hints.
+Allowable values are as follows.
+
+	MANUAL : (DEFAULT) Disables auto DOP, statement queuing and in-memory parallel execution. Resembled pre-11.2 behaviour.
+	LIMITED : Enables auto DOP for statements against objects with parallel settings. Statement queuing and in-memory parallel execution are disabled. Resembled pre-11.2 behaviour.
+	AUTO : Enables auto DOP, statement queuing and in-memory parallel execution.
+	ADAPTIVE : (12c) This is like AUTO with performance feedback to allow additional reoptimization of subsequent executions.
+
+The PARALLEL_DEGREE_LIMIT parameter allows to influence the DOP used by the optimizer, when it decides to use parallel execution. The default setting is CPU, which is calculated as follows.
+
+	Single Instance: DOP = PARALLEL_THREADS_PER_CPU x CPU_COUNT
+	RAC            : DOP = PARALLEL_THREADS_PER_CPU x SUM(CPU_COUNT)
+
+SQL> SHOW PARAMETER PARALLEL_DEGREE_LIMIT;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+parallel_degree_limit		     string	 CPU
+
+SQL> SHOW PARAMETER PARALLEL_THREADS_PER_CPU;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+parallel_threads_per_cpu	     integer	 1
+
+SQL> SHOW PARAMETER CPU_COUNT;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+cpu_count			     integer	 1
+
+SQL> ALTER SYSTEM SET PARALLEL_DEGREE_POLICY = AUTO scope=spfile sid='*';
+
+System altered.
+
+SQL> SHOW PARAMETER PARALLEL_DEGREE_POLICY;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+parallel_degree_policy		     string	 AUTO
+
+SQL> select count(*) from t;
+
+  COUNT(*)
+----------
+   7126800
+
+Elapsed: 00:00:00.26
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 2966233522
+
+-------------------------------------------------------------------
+| Id  | Operation	    | Name | Rows | Cost (%CPU)| Time	   |
+-------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |	   |	1  | 11873   (1)| 00:00:01|
+|   1 |  SORT AGGREGATE    |	   |	1  |	        |	   |
+|   2 |   TABLE ACCESS FULL| T    |  6644K| 11873   (1)| 00:00:01|
+-------------------------------------------------------------------
+
+Note
+-----
+   - dynamic statistics used: dynamic sampling (level=2)
+   - automatic DOP: Computed Degree of Parallelism is 1 because of parallel thre
+shold
+
+
+
+Statistics
+----------------------------------------------------------
+	  0  recursive calls
+	  0  db block gets
+      43707  consistent gets
+      43702  physical reads
+	  0  redo size
+	552  bytes sent via SQL*Net to client
+	384  bytes received via SQL*Net from client
+	  2  SQL*Net roundtrips to/from client
+	  0  sorts (memory)
+	  0  sorts (disk)
+	  1  rows processed
+
+#NOTE 
+COMPARE PHYSICAL READS
++-----------------------------------+-------------------------------------------+
+|      43917  physical reads	     |		parallel_degree_policy = MANUAL   |
+|      43702  physical reads	     |		parallel_degree_policy = AUTO     |
++-----------------------------------+-------------------------------------------+
+
+#NOTE
+For a better use of parallelism it is necessary for oracle to know the disc I/O performance.
+This is done through PROCEDURE DBMS_RESOURCE_MANAGER.CALIBRATE_IO
+      
+SQL> show parameter ASYNCH_IO;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+disk_asynch_io			     boolean	 TRUE
+tape_asynch_io			     boolean	 TRUE
+
+SQL> show parameter TIMED_STATISTICS;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+timed_statistics		     boolean	 TRUE
+
+SQL> col NAME FOR A85
+SQL> SELECT name, asynch_io FROM v$datafile f,v$iostat_file i WHERE f.file# = i.file_no AND filetype_name  = 'Data File';
+
+NAME										      ASYNCH_IO
+------------------------------------------------------------------------------------- ---------
++DATA/ORADBC/DATAFILE/system.258.1071108405					      ASYNC_ON
++DATA/ORADBC/DATAFILE/sysaux.259.1071108431					      ASYNC_ON
++DATA/ORADBC/DATAFILE/undotbs1.260.1071108447					      ASYNC_ON
++DATA/ORADBC/86B637B62FE07A65E053F706E80A27CA/DATAFILE/system.266.1071108705	      ASYNC_ON
++DATA/ORADBC/86B637B62FE07A65E053F706E80A27CA/DATAFILE/sysaux.267.1071108705	      ASYNC_ON
++DATA/ORADBC/DATAFILE/users.261.1071108447					      ASYNC_ON
++DATA/ORADBC/86B637B62FE07A65E053F706E80A27CA/DATAFILE/undotbs1.268.1071108705     ASYNC_ON
++DATA/ORADBC/DATAFILE/undotbs2.270.1071109027					      ASYNC_ON
+
+8 rows selected.
+
+SQL> set lines 300 pages 100
+SQL> SELECT SUBSTR(dgs.name,1,10) AS diskgroup, SUBSTR(ds.name,1,10) AS asmdisk, ds.mount_status, ds.state, ds.reads, ds.writes, ds.read_time, ds.write_time, bytes_read, bytes_written 
+FROM V$ASM_DISKGROUP_STAT dgs, V$ASM_DISK_STAT ds WHERE dgs.group_number = ds.group_number AND dgs.name = 'DATA';  2  
+
+DISKGROUP				 ASMDISK				  MOUNT_S STATE 	READS	  WRITES  READ_TIME WRITE_TIME BYTES_READ BYTES_WRITTEN
+---------------------------------------- ---------------------------------------- ------- -------- ---------- ---------- ---------- ---------- ---------- -------------
+DATA					 DATA_0001				  CACHED  NORMAL	39911	    8804 235.418027  25.989592	905697792     156193280
+DATA					 DATA_0000				  CACHED  NORMAL	44863	    4558 186.654745  14.277106	870394368      84219904
+
+SQL> SET SERVEROUTPUT ON
+SQL> DECLARE
+  lat  INTEGER;
+  iops INTEGER;
+  mbps INTEGER;
+BEGIN
+-- DBMS_RESOURCE_MANAGER.CALIBRATE_IO (, , iops, mbps, lat);
+   DBMS_RESOURCE_MANAGER.CALIBRATE_IO (2, 10, iops, mbps, lat);
+
+  DBMS_OUTPUT.PUT_LINE ('max_iops = ' || iops);
+  DBMS_OUTPUT.PUT_LINE ('latency  = ' || lat);
+  dbms_output.put_line('max_mbps = ' || mbps);
+end;
+/  2    3    4    5    6    7    8    9   10   11   12   13  
+max_iops = 45061
+latency  = 1.122
+max_mbps = 1311
+max_iops = 45061
+latency  = 1
+max_mbps = 1311
+
+PL/SQL procedure successfully completed.
+
+
+SQL> set lines 300 pages 100
+SQL> col START_TIME for a45
+SQL> col END_TIME for a45
+SQL> col ADDITIONAL_INFO for a65
+
+SQL> select * from DBA_RSRC_IO_CALIBRATE;
+
+START_TIME		                END_TIME	                      MAX_IOPS   MAX_MBPS   MAX_PMBPS  LATENCY    NUM_PHYSICAL_DISKS ADDITIONAL_INFO
+----------------------------- ------------------------------- ---------- ---------- ---------- ---------- ------------------ -----------------------
+29-APR-21 03.58.29.674499 PM  29-APR-21 04.07.00.504042 PM	  45061	     1311       1220	     1.122      2
+
+SQL> show parameter PARALLEL_MIN_TIME_THRESHOLD;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+parallel_min_time_threshold	     string	 AUTO
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+
+
+  
+  
+
+
