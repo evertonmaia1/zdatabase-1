@@ -1,0 +1,129 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++     ORACLE DATABASE 19C RAC CREATE GOLD IMAGE FROM GRID HOME AND ORACLE HOME      +
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+Since Oracle 12.2, GI does not come as an installation package, 
+but as a zip file that must be extracted directly into your new ORACLE_HOME (in 18c, the installation of the database had the same behavior). 
+This is called a golden image
+
+#CONFIGURE AND MOUNT NFS PARTITION ON RAC NODE 1 OR 2
+mount 192.168.18.#:/mnt/nfs_oracle  /mnt/nfs_client
+
+#CREATE GOLDIMAGE DIRECTORY
+[root@oraclerac19cn1 ~]# df -h
+Filesystem                      Size  Used Avail Use% Mounted on
+devtmpfs                        3,9G     0  3,9G   0% /dev
+tmpfs                           3,9G  897M  3,1G  23% /dev/shm
+tmpfs                           3,9G  9,5M  3,9G   1% /run
+tmpfs                           3,9G     0  3,9G   0% /sys/fs/cgroup
+/dev/sda2                        26G   20G  5,5G  79% /
+/dev/sda1                       331M  179M  132M  58% /boot
+tmpfs                           799M     0  799M   0% /run/user/54332
+tmpfs                           799M   12K  799M   1% /run/user/42
+tmpfs                           799M     0  799M   0% /run/user/0
+192.168.18.#:/mnt/nfs_oracle    217G   94G  123G  44% /mnt/nfs_client
+
+[root@oraclerac19cn1 ~]# su - grid
+[grid@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/goldimage
+[grid@oraclerac19cn1 ~]$ ls -ltr /mnt/nfs_client/
+total 4
+drwxr-xr-x 2 grid oinstall 4096 May  2 19:01 goldimage
+
+#YOU CAN GENERATE THE IMAGE OF TWO WAYS
+  * GUI MODE
+  * SILENT MODE
+
+#GUI MODE
+[root@oraclerac19cn1 ~]# xhost +
+access control disabled, clients can connect from any host
+[root@oraclerac19cn1 ~]# su - grid
+[grid@oraclerac19cn1 ~]$ export DISPLAY=:0.0
+[grid@oraclerac19cn1 ~]$ cd $ORACLE_HOME
+[grid@oraclerac19cn1 grid]$ pwd
+/u01/app/19.3/grid
+[grid@oraclerac19cn1 ~]$ ./gridSetup.sh -createGoldImage -destinationLocation /mnt/nfs_client/goldimage
+Lauching Oracle Grid Infrastructure Setup Wizard ... 
+
+- Screen 1
+		Oracle Grid Infrastructure 19c Installer - Step 1 of 2
+	
+º Install Product	Progress
+º Finish		. . . . . . . . . . 30%
+			Creating the Gold Image
+			
+			Status
+			Create Gold Image				In Progress
+			
+			
+			[Details]  [Revert All]  [Revert]  [Retry]  [Skip]
+
+- Screen 2
+		Oracle Grid Infrastructure 19c Installer - Step 2 of 2
+		
+º Install Product	The creation of Oracle Grid Infrastructure Gold Image was successful.
+º Finish		Note:
+			Gold Image Location: /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-02-37PM.zip
+			
+									[Close]
+
+[grid@oraclerac19cn1 grid]$ ls -ltr /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-02-37PM.zip 
+-rw-r--r-- 1 grid oinstall 2911568127 May  2 19:07 /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-02-37PM.zip
+
+#SILENT MODE
+[root@oraclerac19cn1 ~]# su - grid
+[grid@oraclerac19cn1 ~]$ cd $ORACLE_HOME
+[grid@oraclerac19cn1 grid]$ pwd
+/u01/app/19.3/grid
+[grid@oraclerac19cn1 grid]$ ./gridSetup.sh -createGoldImage -destinationLocation /mnt/nfs_client/goldimage -silent
+Launching Oracle Grid Infrastructure Setup Wizard...
+
+Successfully Setup Software.
+Gold Image location: /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-12-31PM.zip
+
+[grid@oraclerac19cn1 grid]$ ls -ltr /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-12-31PM.zip
+-rw-r--r-- 1 grid oinstall 2911568123 May  2 19:17 /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-12-31PM.zip
+
+#NOTE
+When creating a Gold Image, log directories will be ignored. You can also skip some files, such as files that can be used for patch rollback operations. This can be done using the - exclFiles $GRID_HOME/.patch_storage paramete
+
+[grid@oraclerac19cn1 grid]$ /u01/app/19.3/grid/OPatch/opatch lspatches
+29585399;OCW RELEASE UPDATE 19.3.0.0.0 (29585399)
+29517247;ACFS RELEASE UPDATE 19.3.0.0.0 (29517247)
+29517242;Database Release Update : 19.3.0.0.190416 (29517242)
+29401763;TOMCAT RELEASE UPDATE 19.0.0.0.0 (29401763)
+
+OPatch succeeded.
+
+[grid@oraclerac19cn1 grid]$ ./gridSetup.sh -createGoldImage -destinationLocation /mnt/nfs_client/goldimage -silent -exclFiles /u01/app/19.3/grid/.patch_storage
+Launching Oracle Grid Infrastructure Setup Wizard...
+
+Successfully Setup Software.
+Gold Image location: /mnt/nfs_client/goldimage/grid_home_2021-05-02_07-24-40PM.zip
+
+#CREATE GOLD IMAGE FROM ORACLE DATABASE SOFTWARE
+
+#NOTE
+Just like the gold image of the grid home, the software can create the goldimage of oracle home, via gui or silent mode.
+
+[root@oraclerac19cn1 ~]# su - oracle
+[oracle@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/goldimage/
+[oracle@oraclerac19cn1 ~]$ ls -ltr /mnt/nfs_client/
+total 4
+drwxr-xr-x 2 oracle oinstall 4096 May  2 19:40 goldimage
+
+[oracle@oraclerac19cn1 ~]$ cd $ORACLE_HOME
+[oracle@oraclerac19cn1 dbhome_1]$ pwd
+/u01/app/oracle/product/19.3/dbhome_1
+
+[oracle@oraclerac19cn1 dbhome_1]$ ./runInstaller -createGoldImage -destinationLocation /mnt/nfs_client/goldimage -silent
+Launching Oracle Database Setup Wizard...
+
+Successfully Setup Software.
+Gold Image location: /mnt/nfs_client/goldimage/db_home_2021-05-02_07-41-15PM.zip
+
+[oracle@oraclerac19cn1 dbhome_1]$ exit
+logout
+[root@oraclerac19cn1 ~]# umount 192.168.18.#:/mnt/nfs_oracle
+
+
