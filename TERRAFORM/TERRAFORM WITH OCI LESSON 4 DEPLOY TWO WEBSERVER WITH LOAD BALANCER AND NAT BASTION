@@ -2751,7 +2751,7 @@ Terraform will perform the following actions:
   - resource "oci_core_dhcp_options" "RitaDhcpOptions1" {
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:38.768Z"
         } -> null
       - display_name   = "RitaDHCPOptions1" -> null
@@ -2782,7 +2782,7 @@ Terraform will perform the following actions:
       - boot_volume_id      = "ocid1.bootvolume.oc1.sa-saopaulo-1.abtxeljrzkoaooenwxzwh72gsfrzyyjp6psko6ycsx6y5ogjasmyyj4j2gxq" -> null
       - compartment_id      = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags        = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:57.042Z"
         } -> null
       - display_name        = "RitaBastionServer" -> null
@@ -2819,7 +2819,7 @@ Terraform will perform the following actions:
       - create_vnic_details {
           - assign_public_ip       = "true" -> null
           - defined_tags           = {
-              - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+              - "Oracle-Tags.CreatedBy" = "#################"
               - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:57.261Z"
             } -> null
           - display_name           = "RitaBastionServer" -> null
@@ -2867,7 +2867,7 @@ Terraform will perform the following actions:
       - boot_volume_id      = "ocid1.bootvolume.oc1.sa-saopaulo-1.abtxeljrfqnvus6t2z3zbgk6nm7ljyeubnqlyiij62a6fqdx7ds4wtzyo5yq" -> null
       - compartment_id      = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags        = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:57.920Z"
         } -> null
       - display_name        = "RitaWebServer1" -> null
@@ -2903,7 +2903,7 @@ Terraform will perform the following actions:
       - create_vnic_details {
           - assign_public_ip       = "false" -> null
           - defined_tags           = {
-              - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+              - "Oracle-Tags.CreatedBy" = "#################"
               - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:58.162Z"
             } -> null
           - display_name           = "RitaWebServer1" -> null
@@ -2951,7 +2951,7 @@ Terraform will perform the following actions:
       - boot_volume_id      = "ocid1.bootvolume.oc1.sa-saopaulo-1.abtxeljrlh7arwdbaymr52fj4nu4el5ikz7yvgcarfuxyklgwxii2nmvieuq" -> null
       - compartment_id      = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags        = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:57.917Z"
         } -> null
       - display_name        = "RitaWebServer2" -> null
@@ -2987,7 +2987,7 @@ Terraform will perform the following actions:
       - create_vnic_details {
           - assign_public_ip       = "false" -> null
           - defined_tags           = {
-              - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+              - "Oracle-Tags.CreatedBy" = "#################"
               - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:58.180Z"
             } -> null
           - display_name           = "RitaWebServer2" -> null
@@ -3033,7 +3033,7 @@ Terraform will perform the following actions:
   - resource "oci_core_internet_gateway" "RitaInternetGateway" {
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:38.694Z"
         } -> null
       - display_name   = "RitaInternetGateway" -> null
@@ -3050,7 +3050,7 @@ Terraform will perform the following actions:
       - block_traffic  = false -> null
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:38.273Z"
         } -> null
       - display_name   = "RitaNATGateway" -> null
@@ -3067,7 +3067,7 @@ Terraform will perform the following actions:
   - resource "oci_core_route_table" "RitaRouteTableViaIGW" {
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:39.622Z"
         } -> null
       - display_name   = "RitaRouteTableViaIGW" -> null
@@ -3088,7 +3088,7 @@ Terraform will perform the following actions:
   - resource "oci_core_route_table" "RitaRouteTableViaNAT" {
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:40.338Z"
         } -> null
       - display_name   = "RitaRouteTableViaNAT" -> null
@@ -3109,7 +3109,7 @@ Terraform will perform the following actions:
   - resource "oci_core_security_list" "RitaSSHSecurityList" {
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:38.821Z"
         } -> null
       - display_name   = "RitaSSHSecurityList" -> null
@@ -3149,7 +3149,7 @@ Terraform will perform the following actions:
   - resource "oci_core_security_list" "RitaWebSecurityList" {
       - compartment_id = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:38.688Z"
         } -> null
       - display_name   = "RitaWebSecurityList" -> null
@@ -3201,7 +3201,7 @@ Terraform will perform the following actions:
       - cidr_block                 = "10.0.3.0/24" -> null
       - compartment_id             = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags               = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:40.899Z"
         } -> null
       - dhcp_options_id            = "ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaaumk7joz7jbz64wbbywecmtrk3bli3rotml476qom3gr2u5egjwgq" -> null
@@ -3227,7 +3227,7 @@ Terraform will perform the following actions:
       - cidr_block                 = "10.0.2.0/24" -> null
       - compartment_id             = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags               = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:40.741Z"
         } -> null
       - dhcp_options_id            = "ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaaumk7joz7jbz64wbbywecmtrk3bli3rotml476qom3gr2u5egjwgq" -> null
@@ -3253,7 +3253,7 @@ Terraform will perform the following actions:
       - cidr_block                 = "10.0.1.0/24" -> null
       - compartment_id             = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags               = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:41.281Z"
         } -> null
       - dhcp_options_id            = "ocid1.dhcpoptions.oc1.sa-saopaulo-1.aaaaaaaaumk7joz7jbz64wbbywecmtrk3bli3rotml476qom3gr2u5egjwgq" -> null
@@ -3286,7 +3286,7 @@ Terraform will perform the following actions:
       - default_route_table_id   = "ocid1.routetable.oc1.sa-saopaulo-1.aaaaaaaamhuozj2vu5re6rjb7eqi2xkqmuc7jche4pn5frcwqby472muzica" -> null
       - default_security_list_id = "ocid1.securitylist.oc1.sa-saopaulo-1.aaaaaaaaz64gndlmhdfxcmyjru54q57mhayitjndcy5k36dl24x3gkeytlja" -> null
       - defined_tags             = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:36.938Z"
         } -> null
       - display_name             = "RitaVCN" -> null
@@ -3302,7 +3302,7 @@ Terraform will perform the following actions:
   - resource "oci_identity_compartment" "RitaCompartment" {
       - compartment_id = "ocid1.tenancy.oc1..aaaaaaaairaylvs2otgfkgojvrfgeatgqlxqknbroq55apxhdtooguclwfna" -> null
       - defined_tags   = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-03-31T19:46:56.545Z"
         } -> null
       - description    = "Rita Compartment" -> null
@@ -3318,7 +3318,7 @@ Terraform will perform the following actions:
   - resource "oci_load_balancer" "RitaPublicLoadBalancer" {
       - compartment_id     = "ocid1.compartment.oc1..aaaaaaaas5v72rrwtvaucb3bfs54e5zknqztkccfouk7qhrlereycplfmcja" -> null
       - defined_tags       = {
-          - "Oracle-Tags.CreatedBy" = "ritac.lemos01@gmail.com"
+          - "Oracle-Tags.CreatedBy" = "#################"
           - "Oracle-Tags.CreatedOn" = "2021-04-03T23:32:56.344Z"
         } -> null
       - display_name       = "RitaPublicLoadBalancer" -> null
