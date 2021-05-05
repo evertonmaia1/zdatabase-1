@@ -1,0 +1,143 @@
+############################################################
+#   INSTALL POSTGRES 14 INCREMENTAL MATERIALIZED VIEW OL7  #
+############################################################
+
+#NOTE
+Incremental materialized view maintenance PostgreSQL 14 (devel)
+Stop running refresh in materialized views.
+This is the future. An incremental future with data fed in a constant stream.
+
+#DISABLE FIREWALL AND SELINUX
+sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config && setenforce 0
+systemctl stop firewalld && systemctl disable firewalld
+
+#INSTALL PACKAGES FOR POSTGRES
+yum install openssl-devel libtermcap-devel readline-devel gcc bison flex perl libconfig-devel kernel-devel rsync -y
+yum install zlib jzlib zlib-devel -y
+yum install wget -y
+
+#DOWNLOAD POSTGRES IMV
+wget https://codeload.github.com/sraoss/pgsql-ivm/zip/refs/heads/IVM
+mv IVM pgsql-ivm-IVM.zip
+unzip pgsql-ivm-IVM.zip
+cd pgsql-ivm-IVM
+mkdir -p /usr/local/pgsql 
+./configure --prefix=/usr/local/pgsql --with-openssl
+make; make install; cd contrib; make; make install
+
+#INIT DATABASE 
+adduser postgres
+mkdir -p /dados/data
+chown postgres:postgres -R /dados/data
+su - postgres -c "/usr/local/pgsql/bin/initdb --locale=pt_BR.UTF-8 -D /dados/data/"
+
+#CREATE SERVICE POSTGRESQL
+vi /usr/lib/systemd/system/postgresql.service
+
+[Unit]
+Description=PostgreSQL database server
+After=network.target
+
+[Service]
+Type=forking
+
+User=postgres
+Group=postgres
+
+# Port number for server to listen on
+Environment=PGPORT=5432
+
+# Location of database directory
+Environment=PGDATA=/dados/data
+
+# Disable OOM kill on the postmaster
+OOMScoreAdjust=-1000
+
+ExecStart=/usr/local/pgsql/bin/pg_ctl start -D ${PGDATA} -s -o "-p ${PGPORT}" -w -t 300
+ExecStop=/usr/local/pgsql/bin/pg_ctl stop -D ${PGDATA} -s -m fast
+ExecReload=/usr/local/pgsql/bin/pg_ctl reload -D ${PGDATA} -s
+
+# Give a reasonable amount of time for the server to start up/shut down
+TimeoutSec=300
+
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl enable postgresql.service
+systemctl status postgresql.service
+systemctl start postgresql.service
+
+ps -ef | grep pgsql
+postgres 28053     1  0 16:52 ?        00:00:00 /usr/local/pgsql/bin/postgres -D /dados/data
+
+#DOWNLOAD DEMO DATABASE
+• demo_big.zip (232 MB) - flight data for the year (database size 2502 MB)
+https://mega.nz/file/gsdmxZqI#ZrjwVvwj5EUS7e8GnSSaLneuHEG8Y-KHejCm8BuqlA8
+
+#IMPORT DEMO DATABASE
+[postgres@localhost ~]$ /usr/local/pgsql/bin/psql -U postgres -d demo -f demo_big.sql
+
+#CREATE INCREMENTAL MATERIALIZED
+[postgres@localhost ~]$ /usr/local/pgsql/bin/psql -U postgres -d demo
+psql (14devel)
+Type "help" for help.
+
+demo=# select * from bookings.bookings limit 10;
+ book_ref |       book_date        | total_amount 
+----------+------------------------+--------------
+ 000004   | 2015-10-12 08:40:00-03 |     55800.00
+ 00000F   | 2016-09-01 20:12:00-03 |    265700.00
+ 000010   | 2016-03-08 12:45:00-03 |     50900.00
+ 000012   | 2016-09-11 02:02:00-03 |     37900.00
+ 000026   | 2015-10-29 04:08:00-03 |     95600.00
+ 00002D   | 2016-07-18 11:45:00-03 |    114700.00
+ 000034   | 2015-10-06 22:46:00-03 |     49100.00
+ 00003F   | 2016-02-10 08:02:00-03 |    109800.00
+ 000048   | 2015-11-15 18:57:00-03 |     92400.00
+ 00004A   | 2015-12-12 14:57:00-03 |     29000.00
+(10 rows)
+
+demo=# CREATE INCREMENTAL MATERIALIZED view mvbookings AS SELECT count(*) FROM bookings.bookings;
+NOTICE:  could not create an index on materialized view "mvbookings" automatically
+HINT:  Create an index on the materialized view for efficient incremental maintenance.
+SELECT 1
+demo=# select * from public.mvbookings;
+  count  
+---------
+ 2111112
+(1 row)
+
+demo=# insert into bookings.bookings values ('000001','2018-10-12 11:40:00-03',22800.00);
+INSERT 0 1
+demo=# select * from public.mvbookings;
+  count  
+---------
+ 2111113
+(1 row)
+
+demo=# \d+ mvbookings
+                                    Materialized view "public.mvbookings"
+    Column     |  Type  | Collation | Nullable | Default | Storage | Compression | Stats target | Description 
+---------------+--------+-----------+----------+---------+---------+-------------+--------------+-------------
+ count         | bigint |           |          |         | plain   |             |              | 
+ __ivm_count__ | bigint |           |          |         | plain   |             |              | 
+View definition:
+ SELECT count(*) AS count
+   FROM bookings.bookings;
+Access method: heap
+Incremental view maintenance: yes
+
+demo=# \d+ bookings.bookings
+                                                          Table "bookings.bookings"
+    Column    |           Type           | Collation | Nullable | Default | Storage  | Compression | Stats target |        Description        
+--------------+--------------------------+-----------+----------+---------+----------+-------------+--------------+---------------------------
+ book_ref     | character(6)             |           | not null |         | extended | pglz        |              | Номер бронирования
+ book_date    | timestamp with time zone |           | not null |         | plain    |             |              | Дата бронирования
+ total_amount | numeric(10,2)            |           | not null |         | main     | pglz        |              | Полная сумма бронирования
+Indexes:
+    "bookings_pkey" PRIMARY KEY, btree (book_ref)
+Referenced by:
+    TABLE "bookings.tickets" CONSTRAINT "tickets_book_ref_fkey" FOREIGN KEY (book_ref) REFERENCES bookings.bookings(book_ref)
+Access method: heap
+
