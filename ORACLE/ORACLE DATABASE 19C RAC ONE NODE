@@ -22,9 +22,9 @@ BROWSER_ONLY="no"
 BOOTPROTO="none"
 DEFROUTE="yes"
 IPV4_FAILURE_FATAL="no"
-IPV6INIT="yes"
-IPV6_AUTOCONF="yes"
-IPV6_DEFROUTE="yes"
+IPV6INIT="no"
+IPV6_AUTOCONF="no"
+IPV6_DEFROUTE="no"
 IPV6_FAILURE_FATAL="no"
 IPV6_ADDR_GEN_MODE="stable-privacy"
 NAME="enp0s3"
@@ -34,6 +34,25 @@ ONBOOT="yes"
 IPADDR=192.168.18.51
 PREFIX=24
 GATEWAY=192.168.18.1
+
+[root@oraclerac19con1 ~]# vi /etc/sysconfig/network-scripts/ifcfg-Wired_connection_1
+HWADDR=08:00:27:63:0E:27
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+IPV6_AUTOCONF=no
+IPV6_DEFROUTE=no
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME="Wired connection 1"
+UUID=b0063b94-5d7e-4528-8da2-ba439f9ceb6c
+ONBOOT=yes
+IPADDR=192.168.0.110
+PREFIX=24
 
 [root@oraclerac19con1 ~]# systemctl restart network
 
@@ -963,6 +982,172 @@ https://<hostname>:5501/em/		FOR <CONTAINER_NAME>
 user: sys
 password: <$password>
 container
+
+#CHECK CLUSTER HEATH
+
+[root@oraclerac19con1 ~]# export ORACLE_HOME=/u01/app/19.3/grid
+[root@oraclerac19con1 ~]# export PATH=$PATH:$ORACLE_HOME/bin
+[root@oraclerac19con1 ~]# crsctl status resource
+NAME=ora.ASMNET1LSNR_ASM.lsnr(ora.asmgroup)
+TYPE=ora.asm_listener.type
+TARGET=ONLINE                   , OFFLINE, OFFLINE
+STATE=ONLINE on oraclerac19con1, OFFLINE, OFFLINE
+
+NAME=ora.DATA.dg(ora.asmgroup)
+TYPE=ora.diskgroup.type
+TARGET=ONLINE                   , OFFLINE, OFFLINE
+STATE=ONLINE on oraclerac19con1, OFFLINE, OFFLINE
+
+NAME=ora.FRA.dg(ora.asmgroup)
+TYPE=ora.diskgroup.type
+TARGET=ONLINE                   , OFFLINE, OFFLINE
+STATE=ONLINE on oraclerac19con1, OFFLINE, OFFLINE
+
+NAME=ora.LISTENER.lsnr
+TYPE=ora.listener.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.LISTENER_SCAN1.lsnr
+TYPE=ora.scan_listener.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.LISTENER_SCAN2.lsnr
+TYPE=ora.scan_listener.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.LISTENER_SCAN3.lsnr
+TYPE=ora.scan_listener.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.LISTENER_SCAN4.lsnr
+TYPE=ora.scan_listener.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.MGMT.GHCHKPT.advm
+TYPE=ora.volume.type
+TARGET=OFFLINE
+STATE=OFFLINE
+
+NAME=ora.MGMT.dg(ora.asmgroup)
+TYPE=ora.diskgroup.type
+TARGET=ONLINE                   , OFFLINE, OFFLINE
+STATE=ONLINE on oraclerac19con1, OFFLINE, OFFLINE
+
+NAME=ora.MGMTLSNR
+TYPE=ora.mgmtlsnr.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.asm(ora.asmgroup)
+TYPE=ora.asm.type
+TARGET=ONLINE                   , OFFLINE, OFFLINE
+STATE=ONLINE on oraclerac19con1, OFFLINE, OFFLINE
+
+NAME=ora.asmnet1.asmnetwork(ora.asmgroup)
+TYPE=ora.asm_network.type
+TARGET=ONLINE                   , OFFLINE, OFFLINE
+STATE=ONLINE on oraclerac19con1, OFFLINE, OFFLINE
+
+NAME=ora.chad
+TYPE=ora.chad.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.cvu
+TYPE=ora.cvu.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.helper
+TYPE=ora.helper.type
+TARGET=OFFLINE
+STATE=OFFLINE
+
+NAME=ora.mgmt.ghchkpt.acfs
+TYPE=ora.acfs.type
+TARGET=OFFLINE
+STATE=OFFLINE
+
+NAME=ora.mgmtdb
+TYPE=ora.mgmtdb.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.net1.network
+TYPE=ora.network.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.ons
+TYPE=ora.ons.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.oraclerac19con1.vip
+TYPE=ora.cluster_vip_net1.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.oradbco.db
+TYPE=ora.database.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.oradbco.oradbco.appsdba.info.svc
+TYPE=ora.service.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.proxy_advm
+TYPE=ora.proxy_advm.type
+TARGET=OFFLINE
+STATE=OFFLINE
+
+NAME=ora.qosmserver
+TYPE=ora.qosmserver.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.rhpserver
+TYPE=ora.rhpserver.type
+TARGET=OFFLINE
+STATE=OFFLINE
+
+NAME=ora.scan1.vip
+TYPE=ora.scan_vip.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.scan2.vip
+TYPE=ora.scan_vip.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.scan3.vip
+TYPE=ora.scan_vip.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+NAME=ora.scan4.vip
+TYPE=ora.scan_vip.type
+TARGET=ONLINE
+STATE=ONLINE on oraclerac19con1
+
+[root@oraclerac19con1 ~]# crsctl check cluster -all
+**************************************************************
+oraclerac19con1:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+
+
+
 
 #FINISH
         
