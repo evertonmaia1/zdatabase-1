@@ -1158,5 +1158,54 @@ CRS-4533: Event Manager is online
 [root@oraclerac19con1 ~]# crsctl start has
 [root@oraclerac19con1 ~]# crsctl start cluster -all
 
+#STOP ORACLE TFA (TRACE FILE ANALYZER)
+[root@oraclerac19con1 ~]# systemctl status -l oracle-tfa
+● oracle-tfa.service - Oracle Trace File Analyzer
+   Loaded: loaded (/etc/systemd/system/oracle-tfa.service; enabled; vendor preset: disabled)
+   Active: active (running) since Dom 2021-05-09 18:44:16 -03; 2h 37min ago
+ Main PID: 20275 (init.tfa)
+    Tasks: 38
+   CGroup: /system.slice/oracle-tfa.service
+           ├─  705 /u01/app/19.3/grid/jdk/jre/bin/java -server -Xms32m -Xmx64m -Djava.awt.headless=true -Ddisable.checkForUpdate=true oracle.rat.tfa.TFAMain /u01/app/19.3/grid/tfa/oraclerac19con1/tfa_home
+           ├─ 6223 /bin/sleep 30
+           └─20275 /bin/sh /etc/init.d/init.tfa run >/dev/null 2>&1 </dev/null
+
+Mai 09 18:49:34 oraclerac19con1 init.tfa[20275]: Successfully stopped TFA..
+Mai 09 18:49:34 oraclerac19con1 init.tfa[20275]: Starting TFA..
+Mai 09 18:49:35 oraclerac19con1 init.tfa[20275]: WARNING - TFA Software is older than 180 days. Please consider upgrading TFA to the latest version.
+Mai 09 18:49:35 oraclerac19con1 init.tfa[20275]: Starting TFA out of init, Should be running in 10 seconds
+Mai 09 18:49:35 oraclerac19con1 init.tfa[20275]: Successfully updated jvmXmx to 64 in TFA...
+Mai 09 18:49:42 oraclerac19con1 init.tfa[20275]: OSWatcher is already deployed at /u01/app/19.3/grid/tfa/oraclerac19con1/tfa_home/ext/oswbb
+Mai 09 18:49:43 oraclerac19con1 init.tfa[20275]: WARNING - TFA Software is older than 180 days. Please consider upgrading TFA to the latest version.
+Mai 09 18:54:47 oraclerac19con1 su[16135]: (to grid) root on none
+Mai 09 19:00:09 oraclerac19con1 su[22060]: (to root) root on none
+Mai 09 19:55:09 oraclerac19con1 su[11989]: (to oracle) root on none
+[root@oraclerac19con1 ~]# systemctl stop oracle-tfa
+
+#STOP ORACLE OHASD (Oracle High Availability Services)
+[root@oraclerac19con1 ~]# systemctl status -l oracle-ohasd.service
+● oracle-ohasd.service - Oracle High Availability Services
+   Loaded: loaded (/etc/systemd/system/oracle-ohasd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Dom 2021-05-09 18:44:38 -03; 2h 39min ago
+ Main PID: 21573 (init.ohasd)
+    Tasks: 2
+   CGroup: /system.slice/oracle-ohasd.service
+           ├─ 7401 /bin/sleep 1
+           └─21573 /bin/sh /etc/init.d/init.ohasd run >/dev/null 2>&1 </dev/null
+
+Mai 09 19:21:24 oraclerac19con1 su[18514]: (to grid) root on none
+Mai 09 19:38:04 oraclerac19con1 su[25932]: (to grid) root on none
+Mai 09 19:53:11 oraclerac19con1 su[6514]: (to grid) root on none
+Mai 09 20:08:25 oraclerac19con1 su[19853]: (to grid) root on none
+Mai 09 20:23:43 oraclerac19con1 su[4952]: (to grid) root on none
+Mai 09 20:39:15 oraclerac19con1 su[16789]: (to grid) root on none
+Mai 09 20:54:19 oraclerac19con1 su[23949]: (to grid) root on none
+Mai 09 21:09:23 oraclerac19con1 su[31124]: (to grid) root on none
+Mai 09 21:14:41 oraclerac19con1 octssd.bin[32699]: Oracle Clusterware: 2021-05-09 21:14:41.574
+                                                   [(32699)]CRS-8504:Oracle Clusterware OCTSSD process with operating system process ID 32699 is exiting
+Mai 09 21:15:16 oraclerac19con1 osysmond.bin[2859]: Oracle Clusterware: 2021-05-09 21:15:16.537
+                                                    [(2859)]CRS-8500:Oracle Clusterware OSYSMOND process is starting with operating system process ID 2859
+[root@oraclerac19con1 ~]# systemctl stop oracle-ohasd.service
+
 #FINISH
         
