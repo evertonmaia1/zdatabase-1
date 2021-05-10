@@ -1146,8 +1146,17 @@ CRS-4529: Cluster Synchronization Services is online
 CRS-4533: Event Manager is online
 **************************************************************
 
+#STOP CLUSTER
+[root@oraclerac19con1 ~]# export ORACLE_HOME=/u01/app/19.3/grid
+[root@oraclerac19con1 ~]# export PATH=$PATH:$ORACLE_HOME/bin
+[root@oraclerac19con1 ~]# crsctl stop cluster -all
+[root@oraclerac19con1 ~]# crsctl stop has
 
-
+#START CLUSTER
+[root@oraclerac19con1 ~]# export ORACLE_HOME=/u01/app/19.3/grid
+[root@oraclerac19con1 ~]# export PATH=$PATH:$ORACLE_HOME/bin
+[root@oraclerac19con1 ~]# crsctl start has
+[root@oraclerac19con1 ~]# crsctl start cluster -all
 
 #FINISH
         
