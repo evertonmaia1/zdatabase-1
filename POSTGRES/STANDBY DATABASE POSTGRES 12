@@ -105,6 +105,24 @@ postgres=# SELECT * FROM pg_replication_slots;
  newstandby |        | physical  |        |          | f         | t      |       2589 |      |              | 72/FE000060 | 
 (1 row)
 
+#MANAGEMENT SLOTS STREAM REPLICATION
+postgres=# select pg_drop_replication_slot('standbone');
+
+postgres=# SELECT * FROM pg_replication_slots;
+ slot_name | plugin | slot_type | datoid | database | temporary | active | active_pid | xmin | catalog_xmin | restart_lsn  | confirmed_flush_lsn | wal_status | safe_wal_size 
+-----------+--------+-----------+--------+----------+-----------+--------+------------+------+--------------+--------------+---------------------+------------+---------------
+ 
+postgres=# SELECT pg_create_physical_replication_slot('standbone');
+ pg_create_physical_replication_slot 
+-------------------------------------
+ (standbone,)
+(1 row)
+
+postgres=# SELECT * FROM pg_replication_slots;
+ slot_name | plugin | slot_type | datoid | database | temporary | active | active_pid | xmin | catalog_xmin | restart_lsn  | confirmed_flush_lsn | wal_status | safe_wal_size 
+-----------+--------+-----------+--------+----------+-----------+--------+------------+------+--------------+--------------+---------------------+------------+---------------
+ standbone |        | physical  |        |          | f         | t      |       6667 |      |              | 186/BC61E000 |                     | reserved   |              
+
 #CHECK REPLICATION STATUS ON SLAVE
 
 $path/psql -U postgres
