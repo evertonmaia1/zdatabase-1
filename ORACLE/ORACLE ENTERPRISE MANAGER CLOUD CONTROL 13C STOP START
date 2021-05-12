@@ -1,0 +1,92 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++   ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C STOP START	  +
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+=============================================================================================================================================================
+
+#AUTOMATIC STARTUP SHUTDOWN
+Cloud Control is set to auto-start using the "gcstartup" service. The "/etc/oragchomelist" file contains the items that will be started by the system.
+
+[root@ol7em13cc ~]# vim /etc/oragchomelist
+/u01/app/oracle/middleware
+/u01/app/oracle/agent/agent_13.1.0.0.0:/u01/app/oracle/agent/agent_inst
+
+Automatic startup database using service on linux
+
+[root@ol7em13cc ~]# vim /lib/systemd/system/dbora.service
+[Unit]
+Description=The Oracle Database Service
+After=syslog.target network.target
+
+[Service]
+# systemd ignores PAM limits, so set any necessary limits in the service.
+# Not really a bug, but a feature.
+# https://bugzilla.redhat.com/show_bug.cgi?id=754285
+LimitMEMLOCK=infinity
+LimitNOFILE=65535
+
+#Type=simple
+# idle: similar to simple, the actual execution of the service binary is delayed
+#       until all jobs are finished, which avoids mixing the status output with shell output of services.
+RemainAfterExit=yes
+User=oracle
+Group=oinstall
+Restart=no
+ExecStart=/bin/bash -c '/home/oracle/scripts/start_all.sh'
+ExecStop=/bin/bash -c '/home/oracle/scripts/stop_all.sh'
+
+[Install]
+WantedBy=multi-user.target
+
+[root@ol7em13cc ~]# systemctl daemon-reload
+[root@ol7em13cc ~]# systemctl enable dbora.service
+
+=============================================================================================================================================================
+
+#MANUAL START ENVIRONMENT
+[oracle@ol7em13cc ~]$ /u01/app/oracle/product/12.1.0/dbhome_1/bin/dbstart /u01/app/oracle/product/12.1.0/dbhome_1
+Processing Database instance "appsemcdb": log file /u01/app/oracle/product/12.1.0/dbhome_1/startup.log
+
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl start oms
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Starting Oracle Management Server...
+WebTier Successfully Started
+Oracle Management Server Successfully Started
+Oracle Management Server is Up
+JVMD Engine is Up
+Starting BI Publisher Server ...
+BI Publisher Server Successfully Started
+BI Publisher Server is Up
+
+[oracle@ol7em13cc ~]$ /u01/app/oracle/agent/agent_13.2.0.0.0/bin/emctl start agent
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Starting agent ........................ started.
+
+=============================================================================================================================================================
+
+#MANUAL STOP ENVIRONMENT
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl stop oms -all
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Stopping Oracle Management Server...
+WebTier Successfully Stopped
+Oracle Management Server Successfully Stopped
+Oracle Management Server is Down
+JVMD Engine is Down
+Stopping BI Publisher Server...
+BI Publisher Server Successfully Stopped
+AdminServer Successfully Stopped
+BI Publisher Server is Down
+
+[oracle@ol7em13cc ~]$ /u01/app/oracle/agent/agent_13.2.0.0.0/bin/emctl stop agent
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Stopping agent ... stopped.
+
+[oracle@ol7em13cc ~]$ /u01/app/oracle/product/12.1.0/dbhome_1/bin/dbshut /u01/app/oracle/product/12.1.0/dbhome_1
+Processing Database instance "appsemcdb": log file /u01/app/oracle/product/12.1.0/dbhome_1/shutdown.log
+
+=============================================================================================================================================================
+
