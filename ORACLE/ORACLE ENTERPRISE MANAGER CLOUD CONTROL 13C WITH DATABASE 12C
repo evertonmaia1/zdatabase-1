@@ -317,16 +317,16 @@ when you need to change attributes like block size, which cannot be altered afte
 
 Select a template for your database.
 
-	+---------------+---------------------------------------------------------+------------------------+
+	+---------------+-------------------------------------------------------+-----------------------+
 	| Select	| Template						| Includes Datafiles	|
-	+---------------+---------------------------------------------------------+------------------------+
+	+---------------+-------------------------------------------------------+-----------------------+
 	| ( )		| General Purpose or Transaction Processing		| Yes			|
 	| ( )		| 12.1.0.2.0 Database Template for EM131000 Large	| Yes			|
 	| ( )		| 12.1.0.2.0 Database Template for EM131000 Medium	| Yes			|
 	| (@)		| 12.1.0.2.0 Database Template for EM131000 Small 	| Yes			|
 	| ( )		| Custom Database					| No			|
 	| ( ) 		| Data Warehouse					| Yes			|
-	+----------------+--------------------------------------------------------+------------------------+
+	+---------------+-------------------------------------------------------+-----------------------+
 
 	[Back]	[Next]	[Cancel]
 	
@@ -366,12 +366,12 @@ instance on this system by an Oracle system identifier (SID).
 	For security reasons, you must specify passwords for the following user accounts in the new database.
 	
 	( ) User Different Administrative Passwords
-		+----------------+---------------+------------------+
+		+---------------+---------------+------------------+
 		| User Name	| Password	| Confirm Password |
-		+----------------+---------------+------------------+
+		+---------------+---------------+------------------+
 		| SYS		|		|		   |
 		| SYSTEM	|		|		   |
-		+----------------+---------------+------------------+
+		+---------------+---------------+------------------+
 
 	(@) Use the Same Administrative Password for All Accounts
 		Password: Or1clerac19c
@@ -386,11 +386,11 @@ instance on this system by an Oracle system identifier (SID).
 	specify the listener name and port.
 	
 	Select Listenes.
-	+--------+------+--------+---------------+-------+
+	+--------+------+-------+---------------+-------+
 	| Select | Name	| Port 	| Oracle Home	| Status|
-	+--------+------+--------+---------------+-------+
+	+--------+------+-------+---------------+-------+
 	|	 |	|	|		|	|
-	+--------+------+--------+---------------+-------+	
+	+--------+------+-------+---------------+-------+	
 
 	[V] Create a New Listener
 		Listener Name: LISTENER
