@@ -1,0 +1,61 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++   ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C DISABLE ENABLE BI PUBLISHER     +
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+The BI Publisher will be started automatically during the startup process of the Enterprise Manager 13c. 
+You don’t like the BI Publisher or you don’t use it? Save the resources, speed up your startup process, disable it. 
+The password of the database repository owner SYSMAN is required.
+
+==========================================================================================================================================
+
+#CHECK ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C STATUS
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl status oms
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+WebTier is Up
+Oracle Management Server is Up
+JVMD Engine is Up
+BI Publisher Server is Up
+
+#DISABLE BI PUBLISHER 
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl config oms -disable_bip
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Enter Enterprise Manager Root (SYSMAN) Password : 
+Stopping BI Publisher Server...
+BI Publisher Server Successfully Stopped
+BI Publisher Server is Down
+BI Publisher has been disabled on this host and will not be started with the 'emctl start oms' or 'emctl start oms -bip_only' commands.
+Overall result of operations: SUCCESS
+
+===========================================================================================================================================
+
+#ENABLE BI PUBLISHER 
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl config oms -enable_bip
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Enter Enterprise Manager Root (SYSMAN) Password : 
+BI Publisher is enabled for startup on this host with the 'emctl start oms'  and 'emctl start oms -bip_only' commands.
+Overall result of operations: SUCCESS
+
+#START BI PUBLISHER 
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl start oms -bip_only
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Starting BI Publisher Server only.
+Starting BI Publisher Server ...
+WebTier Successfully Started
+BI Publisher Server Successfully Started
+BI Publisher Server is Up
+
+#CHECK ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C STATUS
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl status oms
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+WebTier is Up
+Oracle Management Server is Up
+JVMD Engine is Up
+BI Publisher Server is Up
+
+===========================================================================================================================================
