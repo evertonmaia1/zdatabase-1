@@ -481,9 +481,9 @@ total 7727668
 	
 	[Return] [Ignore]
 	
-+------------------------------------------------------------------------------------------+------------------------+
++---------------------------------------------------------------------------------------+-----------------------+
 |	Prerequisite Name								|	Status		|
-+------------------------------------------------------------------------------------------+------------------------+
++---------------------------------------------------------------------------------------+-----------------------+
 | Checking whether the Oracle software being installed is certified ...			| Succeeded		|
 | Checking whether the required packages are installed on the host ...			| Succeeded		|
 | Checking whether the required glibc package is installed on the h ...			| Succeeded		|
@@ -492,11 +492,11 @@ total 7727668
 | Checking time zone settings ...							| Succeeded		|
 | Checking for the required kernel parameters ...					| Succeeded		|
 | Checking for sufficient physical memory ...						| Succeeded		|
-| Checking for sufficient swap space ...							| Succeeded		|
+| Checking for sufficient swap space ...						| Succeeded		|
 | Checking for the LD_ASSUME_KERNEL environment varaiable ...				| Succeeded		|
 | Checking for the http_proxy environment variable ...					| Succeeded		|
 | Checking for the EMCLI_STATE_DIR environment variable					| Succeeded		|
-+------------------------------------------------------------------------------------------+------------------------+
++---------------------------------------------------------------------------------------+-----------------------+
 
 	[Back]	[Next]	[Cancel]
 	
