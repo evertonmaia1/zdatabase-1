@@ -1,0 +1,51 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++   ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C CHANGE MAXINACTIVETIME     +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+The page has expired. Click OK to continue; When you’re not actively using the console, it doesn’t take long before the message appears, 
+which is especially annoying when you have the performance monitoring pages running in the background!
+According to Oracle it’s a new security feature within the EM12c console.
+But it is possible to adjust and avoid this problem.
+
+#CHANGE ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C CONFIGURATION
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl set property -name oracle.sysman.eml.maxInactiveTime -value -1 -sysman_pwd Or1clerac19c
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Property oracle.sysman.eml.maxInactiveTime has been set to value -1 for all Management Servers
+OMS restart is not required to reflect the new property value
+
+#RESTART ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl stop oms -all
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Stopping Oracle Management Server...
+WebTier Successfully Stopped
+Oracle Management Server Successfully Stopped
+Oracle Management Server is Down
+JVMD Engine is Down
+Stopping BI Publisher Server...
+BI Publisher Server Successfully Stopped
+AdminServer Successfully Stopped
+BI Publisher Server is Down
+
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl start oms
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+Starting Oracle Management Server...
+WebTier Successfully Started
+Oracle Management Server Successfully Started
+Oracle Management Server is Up
+JVMD Engine is Up
+Starting BI Publisher Server ...
+BI Publisher Server Successfully Started
+BI Publisher Server is Up
+
+#CHECK ORACLE ENTERPRISE MANAGER CLOUD CONTROL 13C STATUS
+[oracle@ol7em13cc ~]$ /u01/app/oracle/middleware/bin/emctl status oms
+Oracle Enterprise Manager Cloud Control 13c Release 2  
+Copyright (c) 1996, 2016 Oracle Corporation.  All rights reserved.
+WebTier is Up
+Oracle Management Server is Up
+JVMD Engine is Up
+BI Publisher Server is Up
