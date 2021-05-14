@@ -473,6 +473,8 @@ LEVEL PAYLOAD
       *** 2021-05-14T15:48:11.328951-03:00 (PDBORADBCO(3))
        : cleared SCNs
 
+==================================================================================================================================
+
 #CREATION OF PACKAGES & ZIP FILES TO SEND TO ORACLE SUPPORT
 
 adrci> ips create package problem 1 correlate all
@@ -1339,6 +1341,8 @@ adrci> ips show files package 1
    FILE_NAME              manifest_1_1.txt
    LAST_SEQUENCE          1
    EXCLUDE                Included
+
+==================================================================================================================================
 
 #MANAGING, ESPECIALLY PURGING OF TRACEFILES
 
