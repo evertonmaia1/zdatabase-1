@@ -1,0 +1,163 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++   ORACLE DATABASE 19C RAC PHYSICAL BACKUP MASTER NODE  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+In a high availability environment that contains multi nodes, you need a backup routine that does not depend on a schedule tied to a specific node. 
+A good alternative is to work with an nfs mount point and oracle has ways to perform the backup on the master node only.
+Below the necessary steps to perform such a routine
+
+#BACKUP SERVER NFS SETUP
+
+yum install nfs-utils
+
+chmod -R 755 /mnt/nfs_oracle
+chown nfsnobody:nfsnobody /mnt/nfs_oracle
+
+root@bkp-server:~# cat /etc/exports 
+# /etc/exports: the access control list for filesystems which may be exported
+#		to NFS clients.  See exports(5).
+#
+# Example for NFSv2 and NFSv3:
+# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+#
+# Example for NFSv4:
+# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+#
+/mnt/nfs_oracle  192.168.18.0/24(rw,sync,no_subtree_check)
+
+systemctl enable rpcbind
+systemctl enable nfs-server
+systemctl enable nfs-lock
+systemctl enable nfs-idmap
+systemctl start rpcbind
+systemctl start nfs-server
+systemctl start nfs-lock
+systemctl start nfs-idmap
+
+=========================================================================================================================================================================
+
+#NFS SETUP ORACLE RAC NODE 1
+
+[root@oraclerac19cn1 ~]# yum install nfs-utils -y
+[root@oraclerac19cn1 ~]# mkdir -p /mnt/nfs_client/backup
+[root@oraclerac19cn1 ~]# chmod 777 -R /mnt/nfs_client/
+[root@oraclerac19cn1 ~]# chown oracle:oinstall -R /mnt/nfs_client/
+[root@oraclerac19cn1 ~]# vi /etc/fstab
+192.168.18.110:/mnt/nfs_oracle            /mnt/nfs_client         nfs     defaults        1 1
+
+[root@oraclerac19cn1 ~]# su - oracle
+[oracle@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/backup/logs
+[oracle@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/backup/control
+[oracle@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/backup/scripts
+[oracle@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/backup/rman/dados/cdb/
+[oracle@oraclerac19cn1 ~]$ mkdir -p /mnt/nfs_client/backup/rman/archives/
+
+#NFS SETUP ORACLE RAC NODE 2
+
+[root@oraclerac19cn2 ~]# yum install nfs-utils -y
+[root@oraclerac19cn2 ~]# mkdir -p /mnt/nfs_client/backup
+[root@oraclerac19cn2 ~]# chmod 777 -R /mnt/nfs_client/
+[root@oraclerac19cn2 ~]# chown oracle:oinstall -R /mnt/nfs_client/
+[root@oraclerac19cn2 ~]# vi /etc/fstab
+192.168.18.110:/mnt/nfs_oracle            /mnt/nfs_client         nfs     defaults        1 1
+
+=========================================================================================================================================================================
+
+#SCRIPT SETUP ALL NODES [ BACKUP LEVEL 0 ] 
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_master_level0.sh
+#!/bin/bash
+export ORACLE_HOME=/u01/app/19.3/grid
+export PATH=$PATH:$ORACLE_HOME/bin
+export MASTER_NODE=`oclumon manage -get master | grep Master | awk '{print $3}' | cut -d "." -f1 | sed -e 's/\(.*\)/\U\1/'`
+export HOST=`echo ${HOSTNAME} | cut -d "." -f1 |sed -e 's/\(.*\)/\U\1/'`
+if [ "${HOST}" == "${MASTER_NODE}" ]; then
+su - oracle -c "/mnt/nfs_client/backup/scripts/bkp_level0.sh"
+fi
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_level0.sh
+export data=$(date +"_%Y%m%d%H%M%S")
+rman target / log=/mnt/nfs_client/backup/logs/full_$data.log cmdfile=/mnt/nfs_client/backup/scripts/bkp_level0.rman
+find /mnt/nfs_client/backup/control/ -name "control*.bkp" -mtime +7 -exec rm -vf {} \;
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_level0.rman
+RUN
+{
+CROSSCHECK BACKUP;
+CROSSCHECK ARCHIVELOG ALL;
+BACKUP AS COMPRESSED BACKUPSET INCREMENTAL LEVEL=0 DATABASE TAG='BKP_FULL' FORMAT '/mnt/nfs_client/backup/rman/dados/cdb/DADOS_FULL_%D_%Y%M%D_%U.BKP';
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL DELETE ALL INPUT FORMAT '/mnt/nfs_client/backup/rman/archives/ARC_%D_%Y%M%D_%U.BKP' TAG='BKP_ARC';
+COPY CURRENT CONTROLFILE TO '/mnt/nfs_client/backup/control/CONTROL01_%D_%Y%M%D.BKP';
+DELETE NOPROMPT OBSOLETE;
+}
+
+#SCRIPT SETUP ALL NODES [ BACKUP LEVEL 2 ] 
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_master_level2.sh
+#!/bin/bash
+export ORACLE_HOME=/u01/app/19.3/grid
+export PATH=$PATH:$ORACLE_HOME/bin
+export MASTER_NODE=`oclumon manage -get master | grep Master | awk '{print $3}' | cut -d "." -f1 | sed -e 's/\(.*\)/\U\1/'`
+export HOST=`echo ${HOSTNAME} | cut -d "." -f1 |sed -e 's/\(.*\)/\U\1/'`
+if [ "${HOST}" == "${MASTER_NODE}" ]; then
+su - oracle -c "/mnt/nfs_client/backup/scripts/bkp_level2.sh"
+fi
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_level2.sh
+export data=$(date +"_%Y%m%d%H%M%S")
+rman target / log=/mnt/nfs_client/backup/logs/incremental_$data.log cmdfile=/mnt/nfs_client/backup/scripts/bkp_level2.rman
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_level2.rman
+RUN
+{
+CROSSCHECK BACKUP;
+CROSSCHECK ARCHIVELOG ALL;
+BACKUP AS COMPRESSED BACKUPSET INCREMENTAL LEVEL=2 CUMULATIVE DATABASE TAG='BKP_CUM' FORMAT '/mnt/nfs_client/backup/rman/dados/cdb/DADOS_CUM_%D_%Y%M%D_%U.BKP';
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL DELETE ALL INPUT FORMAT '/mnt/nfs_client/backup/rman/archives/ARC_%D_%Y%M%D.BKP_%U' TAG='BKP_ARC';
+COPY CURRENT CONTROLFILE TO '/mnt/nfs_client/backup/control/CONTROL01_%D_%Y%M%D.BKP';
+DELETE NOPROMPT OBSOLETE;
+}
+
+#SCRIPT SETUP ALL NODES [ BACKUP ARCHIVELOG ] 
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_master_archive.sh
+#!/bin/bash
+export ORACLE_HOME=/u01/app/19.3/grid
+export PATH=$PATH:$ORACLE_HOME/bin
+export MASTER_NODE=`oclumon manage -get master | grep Master | awk '{print $3}' | cut -d "." -f1 | sed -e 's/\(.*\)/\U\1/'`
+export HOST=`echo ${HOSTNAME} | cut -d "." -f1 |sed -e 's/\(.*\)/\U\1/'`
+if [ "${HOST}" == "${MASTER_NODE}" ]; then
+su - oracle -c "/mnt/nfs_client/backup/scripts/bkp_archive.sh"
+fi
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_archive.sh
+export data=$(date +"_%Y%m%d%H%M%S")
+rman target / log=/mnt/nfs_client/backup/logs/archive_$data.log cmdfile=/mnt/nfs_client/backup/scripts/bkp_archive.rman
+
+[root@oraclerac19cn1 ~]# vi /mnt/nfs_client/backup/scripts/bkp_archive.rman
+RUN
+{
+CROSSCHECK ARCHIVELOG ALL;
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL DELETE ALL INPUT FORMAT '/mnt/nfs_client/backup/rman/archives/ARC_%D_%Y%M%D_%U.BKP' TAG='BKP_ARC';
+COPY CURRENT CONTROLFILE TO '/mnt/nfs_client/backup/control/CONTROL01_%D_%Y%M%D.BKP';
+DELETE NOPROMPT OBSOLETE;
+}
+
+=========================================================================================================================================================================
+
+#CRONTAB SETUP NODE 1
+[root@oraclerac19cn1 ~]# mkdir -p /tmp/crontab/logs/
+[root@oraclerac19cn1 ~]# crontab -e
+30 00 * * 6 /mnt/nfs_client/backup/scripts/bkp_master_level0.sh > /tmp/crontab/logs/ 2>&1
+30 00 * * 0,1,2,3,4,5 /mnt/nfs_client/backup/scripts/bkp_master_level2.sh 1>/dev/null 2>/dev/null
+00 02,04,06,08,10,12,14,16,18,20,22 * * * /mnt/nfs_client/backup/scripts/bkp_master_archive.sh 1>/dev/null 2>/dev/null
+
+#CRONTAB SETUP NODE 2
+[root@oraclerac19cn2 ~]# mkdir -p /tmp/crontab/logs/
+[root@oraclerac19cn2 ~]# crontab -e
+30 00 * * 6 /mnt/nfs_client/backup/scripts/bkp_master_level0.sh 1>/dev/null 2>/dev/null
+30 00 * * 0,1,2,3,4,5 /mnt/nfs_client/backup/scripts/bkp_master_level2.sh 1>/dev/null 2>/dev/null 
+00 02,04,06,08,10,12,14,16,18,20,22 * * * /mnt/nfs_client/backup/scripts/bkp_master_archive.sh 1>/dev/null 2>/dev/null
+
+=========================================================================================================================================================================
