@@ -1,0 +1,1451 @@
++++++++++++++++++++++++++++++++++++
++     ORACLE DATABASE 19C ADRCI	  +
++++++++++++++++++++++++++++++++++++
+
+#NOTE
+Starting with 11gR1, we have a new way of handling Oracle Errors and Tracefiles: there is now a special dedicated command line utility for this purpose called adrci (Automatic Diagnostic Repository Command Interpreter)
+With the following actions:
+* Viewing the alert.log
+* The relation between incident & problem
+* Creation of Packages & ZIP files to send to Oracle Support
+* Managing, especially purging tracefiles
+
+==================================================================================================================================
+
+#SIMULATE THE PROBLEM
+
+[oracle@oraclerac19con1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Fri May 14 15:23:42 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> select * from v$version;
+
+BANNER									    BANNER_FULL													BANNER_LEGACY								    CON_ID
+-------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------- ----------
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production	    Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production Version 19.3.0.0.0                           Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production	    0
+										 
+SQL> show parameter diagnostic;
+
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+diagnostic_dest 		     string	 /u01/app/oracle
+
+SQL> alter session set "_ORACLE_SCRIPT"=true;  
+
+Session altered.
+
+SQL> create user danilo identified by danilo;
+
+User created.
+
+SQL> grant dba to danilo;
+
+Grant succeeded.
+
+SQL> grant connect, resource to danilo;
+
+Grant succeeded.
+
+SQL> connect danilo/danilo;
+Connected.
+
+SQL> create table t (n number);
+
+Table created.
+
+SQL> select object_id from user_objects;
+
+ OBJECT_ID
+----------
+     73229
+
+SQL> connect / as sysdba
+Connected.
+
+SQL> select OBJ#, DATAOBJ# from tab$ where OBJ#=73229;
+
+      OBJ#   DATAOBJ#
+---------- ----------
+     73229	73229
+
+SQL> update tab$ set cols=2 where obj#=73229;
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> alter system flush shared_pool;
+
+System altered.
+
+SQL> connect danilo/danilo;
+Connected.
+
+SQL> select * from t;
+select * from t
+*
+ERROR at line 1:
+ORA-03113: end-of-file on communication channel
+Process ID: 2379
+Session ID: 134 Serial number: 25724
+
+==================================================================================================================================
+
+#THE RELATION BETWEEN INCIDENT & PROBLEM
+
+[oracle@oraclerac19con1 ~]$ adrci
+
+ADRCI: Release 19.0.0.0.0 - Production on Fri May 14 15:44:18 2021
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+ADR base = "/u01/app/oracle"
+
+adrci> show home
+ADR Homes: 
+diag/rdbms/oradbco/oradbco_1
+diag/clients/user_oracle/host_4119728847_110
+
+adrci> set home diag/rdbms/oradbco/oradbco_1
+
+adrci> show alert -tail -f
+2021-05-14 14:58:56.158000 -03:00
+space available in the underlying filesystem or ASM diskgroup.
+2021-05-14 14:59:00.679000 -03:00
+TABLE SYS.WRP$_REPORTS: ADDED INTERVAL PARTITION SYS_P221 (4152) VALUES LESS THAN (TO_DATE(' 2021-05-15 01:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+TABLE SYS.WRP$_REPORTS_DETAILS: ADDED INTERVAL PARTITION SYS_P222 (4152) VALUES LESS THAN (TO_DATE(' 2021-05-15 01:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+TABLE SYS.WRP$_REPORTS_TIME_BANDS: ADDED INTERVAL PARTITION SYS_P225 (4151) VALUES LESS THAN (TO_DATE(' 2021-05-14 01:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+2021-05-14 14:59:15.772000 -03:00
+Decreasing number of high priority LMS from 1 to 0
+2021-05-14 15:36:15.634000 -03:00
+Exception [type: SIGSEGV, Address not mapped to object] [ADDR:0x0] [PC:0x1284C5F7, qcstda()+999] [flags: 0x0, count: 1]
+Errors in file /u01/app/oracle/diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ora_2379.trc  (incident=14817) (PDBNAME=CDB$ROOT):
+ORA-07445: exception encountered: core dump [qcstda()+999] [SIGSEGV] [ADDR:0x0] [PC:0x1284C5F7] [Address not mapped to object] []
+Incident details in: /u01/app/oracle/diag/rdbms/oradbco/oradbco_1/incident/incdir_14817/oradbco_1_ora_2379_i14817.trc
+Use ADRCI or Support Workbench to package the incident.
+See Note 411.1 at My Oracle Support for error and packaging details.
+2021-05-14 15:36:16.785000 -03:00
+Dumping diagnostic data in directory=[cdmp_20210514153616], requested by (instance=1, osid=2379), summary=[incident=14817].
+
+adrci> show problem
+
+ADR Home = /u01/app/oracle/diag/rdbms/oradbco/oradbco_1:
+*************************************************************************
+PROBLEM_ID           PROBLEM_KEY                                                 LAST_INCIDENT        LASTINC_TIME                             
+-------------------- ----------------------------------------------------------- -------------------- ---------------------------------------- 
+1                    ORA 7445 [qcstda]                                           14817                2021-05-14 15:36:15.674000 -03:00       
+1 row fetched
+
+adrci> show incident
+
+ADR Home = /u01/app/oracle/diag/rdbms/oradbco/oradbco_1:
+*************************************************************************
+INCIDENT_ID          PROBLEM_KEY                                                 CREATE_TIME                              
+-------------------- ----------------------------------------------------------- ---------------------------------------- 
+14817                ORA 7445 [qcstda]                                           2021-05-14 15:36:15.674000 -03:00       
+1 row fetched
+
+adrci> show incident -mode detail -p "incident_id=14817"
+
+ADR Home = /u01/app/oracle/diag/rdbms/oradbco/oradbco_1:
+*************************************************************************
+
+**********************************************************
+INCIDENT INFO RECORD 1
+**********************************************************
+   INCIDENT_ID                   14817
+   STATUS                        ready
+   CREATE_TIME                   2021-05-14 15:36:15.674000 -03:00
+   PROBLEM_ID                    1
+   CLOSE_TIME                    <NULL>
+   FLOOD_CONTROLLED              none
+   ERROR_FACILITY                ORA
+   ERROR_NUMBER                  7445
+   ERROR_ARG1                    qcstda
+   ERROR_ARG2                    SIGSEGV
+   ERROR_ARG3                    ADDR:0x0
+   ERROR_ARG4                    PC:0x1284C5F7
+   ERROR_ARG5                    Address not mapped to object
+   ERROR_ARG6                    <NULL>
+   ERROR_ARG7                    <NULL>
+   ERROR_ARG8                    <NULL>
+   ERROR_ARG9                    <NULL>
+   ERROR_ARG10                   <NULL>
+   ERROR_ARG11                   <NULL>
+   ERROR_ARG12                   <NULL>
+   SIGNALLING_COMPONENT          SQL_Parser
+   SIGNALLING_SUBCOMPONENT       <NULL>
+   SUSPECT_COMPONENT             <NULL>
+   SUSPECT_SUBCOMPONENT          <NULL>
+   ECID                          <NULL>
+   IMPACTS                       0
+   CON_UID                       1
+   PROBLEM_KEY                   ORA 7445 [qcstda]
+   FIRST_INCIDENT                14817
+   FIRSTINC_TIME                 2021-05-14 15:36:15.674000 -03:00
+   LAST_INCIDENT                 14817
+   LASTINC_TIME                  2021-05-14 15:36:15.674000 -03:00
+   IMPACT1                       0
+   IMPACT2                       0
+   IMPACT3                       0
+   IMPACT4                       0
+   KEY_NAME                      ProcId
+   KEY_VALUE                     52.8
+   KEY_NAME                      PQ
+   KEY_VALUE                     (0, 1621017374)
+   KEY_NAME                      Service
+   KEY_VALUE                     SYS$USERS
+   KEY_NAME                      Module
+   KEY_VALUE                     SQL*Plus
+   KEY_NAME                      PdbName
+   KEY_VALUE                     CDB$ROOT
+   KEY_NAME                      Client ProcId
+   KEY_VALUE                     oracle@oraclerac19con1 (TNS V1-V3).2379_139953410159552
+   KEY_NAME                      SID
+   KEY_VALUE                     134.25724
+   OWNER_ID                      1
+   INCIDENT_FILE                 /u01/app/oracle/diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ora_2379.trc
+   OWNER_ID                      1
+   INCIDENT_FILE                 /u01/app/oracle/diag/rdbms/oradbco/oradbco_1/incident/incdir_14817/oradbco_1_ora_2379_i14817.trc
+1 row fetched
+
+adrci> show tracefile %mmon%
+     diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mmon_7437.trc
+
+adrci> show trace oradbco_1_mmon_7437.trc
+Output the results to file: /tmp/utsout_7280_140502_4.ado
+
+/u01/app/oracle/diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mmon_7437.trc
+----------------------------------------------------------
+LEVEL PAYLOAD
+----- ------------------------------------------------------------------------------------------------------------------------------------------------
+      Trace file /u01/app/oracle/diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mmon_7437.trc
+      Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+      Version 19.3.0.0.0
+      Build label:    RDBMS_19.3.0.0.0DBRU_LINUX.X64_190417
+      ORACLE_HOME:    /u01/app/oracle/product/19.3/dbhome_1
+      System name:      Linux
+      Node name:        oraclerac19con1
+      Release:  3.10.0-1160.el7.x86_64
+      Version:  #1 SMP Thu Oct 1 17:21:35 PDT 2020
+      Machine:  x86_64
+      Instance name: oradbco_1
+      Redo thread mounted by this instance: 1
+      Oracle process number: 43
+      Unix process pid: 7437, image: oracle@oraclerac19con1 (MMON)
+
+
+      *** 2021-05-14T14:58:14.761327-03:00 (CDB$ROOT(1))
+      *** SESSION ID:(46.51702) 2021-05-14T14:58:14.761359-03:00
+      *** CLIENT ID:() 2021-05-14T14:58:14.761363-03:00
+      *** SERVICE NAME:(SYS$BACKGROUND) 2021-05-14T14:58:14.761366-03:00
+      *** MODULE NAME:() 2021-05-14T14:58:14.761369-03:00
+      *** ACTION NAME:() 2021-05-14T14:58:14.761372-03:00
+      *** CLIENT DRIVER:() 2021-05-14T14:58:14.761374-03:00
+      *** CONTAINER ID:(1) 2021-05-14T14:58:14.761377-03:00
+
+      QPI: Obtaining lock SUCCESSFUL, qp_result=0 at : 14-MAY-21 02.58.14.669394000 PM -03:00
+      QPI: Got lock get_opatch_lsinventory
+      QPI: In opatch_run_job
+      QPI: In sanity check..
+
+      *** 2021-05-14T14:58:19.039126-03:00 (CDB$ROOT(1))
+      QPI:  t_root is /u01/app/oracle/product/19.3/dbhome_1/
+      QPI:  t_orabase is /u01/app/oracle/product/19.3/dbhome_1/
+      QPI:  t_op_inst_path is /u01/app/oracle/product/19.3/dbhome_1/OPatch/
+      QPI:  t_op_scpt_path is /u01/app/oracle/product/19.3/dbhome_1/QOpatch/
+      QPI:  t_op_log_path is /u01/app/oracle/product/19.3/dbhome_1/rdbms/log/
+      QPI: op_scpt_path :/u01/app/oracle/product/19.3/dbhome_1/QOpatchpos1
+      QPI: opatch file present, opatch
+      QPI: qopiprep.bat file present
+      QPI:2 lnode:oraclerac19con1: iname:oradbco_1:
+      QPI:confcnt:1
+      QPI:3 lnode:oraclerac19con1: iname:oradbco_1:
+      QPI: In check_and_clean_job
+
+      *** 2021-05-14T14:58:20.679259-03:00 (CDB$ROOT(1))
+      QPI: Cleaning and refreshing metadata..
+      QPI: Cleaning and refreshing metadata..
+      QPI: In CLEANUP_JOBS_DATA
+      QPI: In clean_metadata_pri
+      QPI: clean_metadata opatch_inst_job :1
+      QPI: job count from dba_scheduler_jobs :1
+
+      *** 2021-05-14T14:58:22.582059-03:00 (CDB$ROOT(1))
+      QPI: drop of job LOAD_OPATCH_INVENTORY_1
+      QPI: End CLEANUP_JOBS_DATA
+      QPI: In config_oinv_jobs
+      QPI: fetching hostname from gv$instance :oraclerac19con1 for inst_number : 1
+      QPI: fetching instance_name from gv$instance :oradbco_1 for inst_number : 1
+      QPI: Jobs configured on all active instances
+      QPI: Node = oraclerac19con1 Instance = oradbco_1 is active
+      QPI: Jobname =Load_opatch_inventory_1
+      QPI : event set to query by GV$QPX_INVENTORY
+      QPI : query gv$ with inst_id 1
+
+      *** 2021-05-14T14:58:52.911687-03:00 (CDB$ROOT(1))
+      QPI : queried with gv$ with 1
+      QPI : machine name oraclerac19con1
+      QPI: Release lock get_opatch_lsinventory
+      QPI: Releasing lock SUCCESSFUL, qp_result=0 at : 14-MAY-21 02.58.52.952190000 PM -03:00
+
+      *** 2021-05-14T14:58:53.655545-03:00 (CDB$ROOT(1))
+       : cleared SCNs
+
+      *** 2021-05-14T14:58:53.667615-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T14:58:56.741760-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T14:58:57.006433-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T14:59:57.161030-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:00:57.366478-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:02:00.366979-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:02:03.367961-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:03:00.396002-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:04:00.419104-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:05:00.447701-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:06:00.573467-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:07:00.650480-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:08:00.698807-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:09:00.764243-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:09:03.771069-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:10:00.779032-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:11:00.874528-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:12:03.876973-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+       : cleared SCNs
+
+      *** 2021-05-14T15:14:06.934992-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:15:06.982479-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:16:03.993986-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:16:06.996138-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:17:07.013331-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:18:07.060658-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:19:07.090423-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:20:07.096508-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:21:07.146923-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:22:07.242557-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:23:04.263813-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:23:07.273493-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:24:07.337212-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:25:07.580257-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:26:07.600455-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:27:07.615639-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+       : cleared SCNs
+
+      *** 2021-05-14T15:29:10.649426-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:30:04.697576-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:30:10.701346-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:31:10.760808-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:32:10.773254-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:33:10.787904-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:34:10.823833-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:35:10.839193-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:36:10.918523-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:37:04.952138-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:37:10.956795-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:38:10.986366-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:39:11.008404-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:40:11.116561-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:41:11.130918-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:42:11.136672-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+       : cleared SCNs
+
+      *** 2021-05-14T15:44:05.206827-03:00 (CDB$ROOT(1))
+      keh_auto_cb: Auto ADDM Action Failed - no msg (Len 0 != 80)
+
+      *** 2021-05-14T15:44:11.210666-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:45:11.248416-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:46:11.279701-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:47:11.317929-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+      *** 2021-05-14T15:48:11.328951-03:00 (PDBORADBCO(3))
+       : cleared SCNs
+
+#CREATION OF PACKAGES & ZIP FILES TO SEND TO ORACLE SUPPORT
+
+adrci> ips create package problem 1 correlate all
+Created package 1 based on problem id 1, correlation level all
+
+adrci> ips generate package 1 in "/tmp/"
+Generated package 1 in file /tmp/ORA7445qc_20210514155520_COM_1.zip, mode complete
+
+adrci> ips show files package 1
+   FILE_ID                1
+   FILE_LOCATION          <ADR_HOME>/incident/incdir_14817
+   FILE_NAME              oradbco_1_ora_2379_i14817.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2
+   FILE_LOCATION          <ADR_HOME>/incident/incdir_14817
+   FILE_NAME              oradbco_1_ora_2379_i14817.trm
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                3
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_2379.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                4
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_2379.trm
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                5
+   FILE_LOCATION          <ADR_HOME>/alert
+   FILE_NAME              log.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                6
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              alert_oradbco_1.log
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                7
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m003_11872.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                8
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m003_11872.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                9
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m003_26397.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                10
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m003_26397.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                11
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m000_27888.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                12
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m000_27888.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                13
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_gcr0_7568.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                14
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_gcr0_7568.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                15
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_tt00_9801.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                16
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_tt00_9801.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                17
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m003_31020.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                18
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m003_31020.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                19
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m001_24032.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                20
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m001_24032.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                22
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_7587.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                23
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_7587.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                24
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lmd0_7350.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                25
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lmd0_7350.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                26
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lck1_7366.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                27
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lck1_7366.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                28
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_6132.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                29
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_6132.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                30
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m004_12038.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                31
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m004_12038.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                32
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_rbal_7426.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                33
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_rbal_7426.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                34
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mz05_12000.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                35
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mz05_12000.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                36
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_vkrm_7306.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                37
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_vkrm_7306.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                38
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_fenc_7433.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                39
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_fenc_7433.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                41
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ora_2379.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                42
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m002_9249.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                43
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m002_9249.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                44
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mark_7954.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                45
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mark_7954.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                46
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_asmb_7430.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                47
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_asmb_7430.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                48
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m004_20914.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                49
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m004_20914.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                50
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ping_7310.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                51
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ping_7310.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                52
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_dia0_7337_base_1.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                53
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_dia0_7337_base_1.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                54
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m001_11852.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                55
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m001_11852.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                56
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lmon_7341.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                57
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lmon_7341.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                58
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m000_11607.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                59
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m000_11607.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                60
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_rs00_7345_7358.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                61
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_rs00_7345_7358.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                62
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lmhb_7363.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                63
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lmhb_7363.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                64
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ofsd_7293_7295.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                65
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ofsd_7293_7295.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                66
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc0_9806.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                67
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc0_9806.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                68
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_diag_7286.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                69
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_diag_7286.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                70
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_svcb_7320.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                71
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_svcb_7320.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                72
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_pmon_7020.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                73
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_pmon_7020.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                74
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_dbrm_7301.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                75
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_dbrm_7301.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                76
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_vktm_7260.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                77
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_vktm_7260.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                78
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lreg_7401.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                79
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lreg_7401.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                80
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_rcbg_10467.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                81
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_rcbg_10467.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                82
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ipc0_7228.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                83
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_ipc0_7228.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                84
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc1_9810.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                85
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc1_9810.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                86
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m002_921.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                87
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m002_921.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                88
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mz01_7861.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                89
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mz01_7861.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                90
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lms0_7345_7348.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                91
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lms0_7345_7348.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                92
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_gen0_7267.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                93
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_gen0_7267.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                94
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m002_11860.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                95
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m002_11860.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                96
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m001_28658.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                97
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m001_28658.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                98
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_tt02_9837.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                99
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_tt02_9837.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                100
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_jp00_10677.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                101
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_jp00_10677.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                102
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lgwr_7377.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                103
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_lgwr_7377.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                104
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_dia0_7337.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                105
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_dia0_7337.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                106
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc3_9817.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                107
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc3_9817.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                108
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mmon_7437.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                109
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mmon_7437.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                110
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc2_9812.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                111
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_arc2_9812.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                112
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mz00_7855.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                113
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_mz00_7855.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                114
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m000_7580.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                115
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_m000_7580.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                116
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_tt01_9808.trc
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                117
+   FILE_LOCATION          <ADR_HOME>/trace
+   FILE_NAME              oradbco_1_tt01_9808.trm.trc
+   LAST_SEQUENCE          0
+   EXCLUDE                Included
+
+   FILE_ID                2007
+   FILE_LOCATION          <ADR_HOME>/log/debug
+   FILE_NAME              log.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2008
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_CONFIGURATION.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2009
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_PACKAGE.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2010
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_PACKAGE_INCIDENT.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2011
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_PACKAGE_FILE.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2012
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_PACKAGE_HISTORY.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2013
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_FILE_METADATA.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2014
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              IPS_FILE_COPY_LOG.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2015
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              DDE_USER_ACTION_DEF.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2016
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              DDE_USER_ACTION_PARAMETER_DEF.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2017
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              DDE_USER_ACTION.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2018
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              DDE_USER_ACTION_PARAMETER.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2019
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              DDE_USER_INCIDENT_TYPE.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2020
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              DDE_USER_INCIDENT_ACTION_MAP.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2021
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              INCIDENT.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2022
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              INCCKEY.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2023
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              INCIDENT_FILE.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2024
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              PROBLEM.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2025
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              HM_RUN.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2026
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/export
+   FILE_NAME              EM_USER_ACTIVITY.dmp
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2027
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1
+   FILE_NAME              config.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2028
+   FILE_LOCATION          <ADR_HOME>/incident/incdir_14817
+   FILE_NAME              incident_sig.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2029
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/opatch
+   FILE_NAME              opatch.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2030
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1/opatch
+   FILE_NAME              opatch.log
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2031
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1
+   FILE_NAME              metadata.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2032
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1
+   FILE_NAME              manifest_1_1.xml
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2033
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1
+   FILE_NAME              manifest_1_1.html
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+   FILE_ID                2034
+   FILE_LOCATION          <ADR_HOME>/incpkg/pkg_1/seq_1
+   FILE_NAME              manifest_1_1.txt
+   LAST_SEQUENCE          1
+   EXCLUDE                Included
+
+#MANAGING, ESPECIALLY PURGING OF TRACEFILES
+
+adrci> show tracefile -rt
+   14-MAY-21 15:58:51  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lmhb_7363.trc
+   14-MAY-21 15:58:11  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m001_28658.trc
+   14-MAY-21 15:58:11  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mmon_7437.trc
+   14-MAY-21 15:57:11  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m002_9249.trc
+   14-MAY-21 15:56:11  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m004_20914.trc
+   14-MAY-21 15:55:52  diag/rdbms/oradbco/oradbco_1/incident/incdir_14817/incident_sig.xml
+   14-MAY-21 15:55:11  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m000_11607.trc
+   14-MAY-21 15:55:04  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_dbrm_7301.trc
+   14-MAY-21 15:48:11  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m003_31020.trc
+   14-MAY-21 15:40:05  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m002_921.trc
+   14-MAY-21 15:36:58  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_pmon_7020.trc
+   14-MAY-21 15:36:16  diag/rdbms/oradbco/oradbco_1/trace/alert_oradbco_1.log
+   14-MAY-21 15:36:16  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ora_2379.trc
+   14-MAY-21 15:36:16  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_diag_7286.trc
+   14-MAY-21 15:36:16  diag/rdbms/oradbco/oradbco_1/incident/incdir_14817/oradbco_1_ora_2379_i14817.trc
+   14-MAY-21 15:30:04  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m000_27888.trc
+   14-MAY-21 15:25:07  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m002_11860.trc
+   14-MAY-21 15:20:04  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m003_26397.trc
+   14-MAY-21 15:16:06  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m001_24032.trc
+   14-MAY-21 15:13:06  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m000_7580.trc
+   14-MAY-21 15:10:03  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m003_11872.trc
+   14-MAY-21 15:04:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_dia0_7337_base_1.trc
+   14-MAY-21 15:00:03  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m001_11852.trc
+   14-MAY-21 14:59:57  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_m004_12038.trc
+   14-MAY-21 14:59:45  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_svcb_7320.trc
+   14-MAY-21 14:59:21  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lmd0_7350.trc
+   14-MAY-21 14:59:15  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lmon_7341.trc
+   14-MAY-21 14:58:56  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mz05_12000.trc
+   14-MAY-21 14:58:25  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ora_7587.trc
+   14-MAY-21 14:58:02  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_jp00_10677.trc
+   14-MAY-21 14:57:58  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lck1_7366.trc
+   14-MAY-21 14:57:56  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_rcbg_10467.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_tt00_9801.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_arc1_9810.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_tt02_9837.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_arc3_9817.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lgwr_7377.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_arc2_9812.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_tt01_9808.trc
+   14-MAY-21 14:57:47  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_arc0_9806.trc
+   14-MAY-21 14:57:35  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_asmb_7430.trc
+   14-MAY-21 14:57:32  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_fenc_7433.trc
+   14-MAY-21 14:57:32  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mz01_7861.trc
+   14-MAY-21 14:57:32  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mark_7954.trc
+   14-MAY-21 14:57:32  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ping_7310.trc
+   14-MAY-21 14:57:32  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_mz00_7855.trc
+   14-MAY-21 14:57:32  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_rbal_7426.trc
+   14-MAY-21 14:57:31  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lreg_7401.trc
+   14-MAY-21 14:57:31  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_gen0_7267.trc
+   14-MAY-21 14:57:30  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ipc0_7228.trc
+   14-MAY-21 14:57:30  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_gcr0_7568.trc
+   14-MAY-21 14:57:30  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ora_6132.trc
+   14-MAY-21 14:57:29  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_lms0_7345_7348.trc
+   14-MAY-21 14:57:29  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_rs00_7345_7358.trc
+   14-MAY-21 14:57:27  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_vktm_7260.trc
+   14-MAY-21 14:57:27  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_dia0_7337.trc
+   14-MAY-21 14:57:27  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_ofsd_7293_7295.trc
+   14-MAY-21 14:57:27  diag/rdbms/oradbco/oradbco_1/trace/oradbco_1_vkrm_7306.trc
+
+adrci> show control
+
+ADR Home = /u01/app/oracle/diag/rdbms/oradbco/oradbco_1:
+*************************************************************************
+ADRID                SHORTP_POLICY        LONGP_POLICY         LAST_MOD_TIME                            LAST_AUTOPRG_TIME                        LAST_MANUPRG_TIME                        ADRDIR_VERSION       ADRSCHM_VERSION      ADRSCHMV_SUMMARY     ADRALERT_VERSION     CREATE_TIME                              SIZEP_POLICY         PURGE_PERIOD         FLAGS                PURGE_THRESHOLD      
+-------------------- -------------------- -------------------- ---------------------------------------- ---------------------------------------- ---------------------------------------- -------------------- -------------------- -------------------- -------------------- ---------------------------------------- -------------------- -------------------- -------------------- -------------------- 
+1813711956           720                  8760                 2021-05-09 20:19:46.917544 -03:00                                                 2021-05-14 15:07:43.813614 -03:00        1                    2                    110                  1                    2021-05-09 20:19:46.917544 -03:00        18446744073709551615 0                    0                    95                  
+1 row fetched
+
+adrci> purge -age 24 -type trace
+
+adrci> help
+
+ HELP [topic]
+   Available Topics:
+        CREATE REPORT
+        ECHO
+        ESTIMATE
+        EXIT
+        HELP
+        HOST
+        IPS
+        PURGE
+        RUN
+        SELECT
+        SET BASE
+        SET BROWSER
+        SET CONTROL
+        SET ECHO
+        SET EDITOR
+        SET HOMES | HOME | HOMEPATH
+        SET TERMOUT
+        SHOW ALERT
+        SHOW BASE
+        SHOW CONTROL
+        SHOW HM_RUN
+        SHOW HOMES | HOME | HOMEPATH
+        SHOW INCDIR
+        SHOW INCIDENT
+        SHOW LOG
+        SHOW PROBLEM
+        SHOW REPORT
+        SHOW TRACEFILE
+        SPOOL
+
+ There are other commands intended to be used directly by Oracle, type
+ "HELP EXTENDED" to see the list
