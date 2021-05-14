@@ -28,9 +28,9 @@ Version 19.3.0.0.0
 
 SQL> select * from v$version;
 
-BANNER									    BANNER_FULL													BANNER_LEGACY								    CON_ID
--------------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------- ----------
-Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production	    Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production Version 19.3.0.0.0                           Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production	    0
+BANNER									  BANNER_FULL											     BANNER_LEGACY								    CON_ID
+------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------- ------------------------------------------------------------------------------ ----------
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production	  Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production Version 19.3.0.0.0          Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production	    0
 										 
 SQL> show parameter diagnostic;
 
