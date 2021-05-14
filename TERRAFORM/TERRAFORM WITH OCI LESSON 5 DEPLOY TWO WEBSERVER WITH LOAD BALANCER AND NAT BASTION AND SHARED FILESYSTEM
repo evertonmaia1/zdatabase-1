@@ -1543,7 +1543,7 @@ can't guarantee that exactly these actions will be performed if
 
 ###################################################################################################################
 
-root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON5_shared_filesystem-rita# terraform plan
+root@raspberrypi:~/foggykitchen_tf_oci_course/LESSON5_shared_filesystem-rita# terraform apply
 
 An execution plan has been generated and is shown below.
 Resource actions are indicated with the following symbols:
