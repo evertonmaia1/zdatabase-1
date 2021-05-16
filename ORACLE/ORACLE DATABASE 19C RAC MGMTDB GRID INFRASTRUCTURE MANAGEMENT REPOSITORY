@@ -1,0 +1,324 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++   ORACLE DATABASE 19C RAC MGMTDB GRID INFRASTRUCTURE MANAGEMENT REPOSITORY   +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+MGMTDB is new database instance which is used for storing Cluster Health Monitor (CHM) data.
+In 11g, .bdb files were stored in $ GRID_HOME/crf/db/hostname and used to take up lot of space (> 100G) due to bug in 11.2.0.2
+During 19c Grid infrastructure installation, there is option to configure Grid Infrastructure Management Repository.
+
+=============================================================================================================================================================
+
+#IDENTIFY ORACLE CRS HOME
+[root@oraclerac19cn1 ~]# cat /u01/app/19.3/grid/bin/crsd|grep ORA_CRS_HOME=
+ORA_CRS_HOME=/u01/app/19.3/grid
+
+#IDENTIFY PMON PROCESS
+[root@oraclerac19cn1 ~]# ps -ef | grep pmon
+grid      4021     1  0 19:20 ?        00:00:00 asm_pmon_+ASM1
+grid      6246     1  0 19:21 ?        00:00:00 mdb_pmon_-MGMTDB
+oracle    6518     1  0 19:21 ?        00:00:00 ora_pmon_oradbc1
+
+#GET MASTER NODE
+[root@oraclerac19cn1 ~]# export ORACLE_HOME=/u01/app/19.3/grid
+[root@oraclerac19cn1 ~]# export PATH=$PATH:$ORACLE_HOME/bin
+[root@oraclerac19cn1 ~]# oclumon manage -get master
+
+Master = oraclerac19cn1
+
+#STATUS MGMTDB SERVICE
+[root@oraclerac19cn1 ~]# srvctl status mgmtdb 
+Database is enabled
+Instance -MGMTDB is running on node oraclerac19cn1
+
+=============================================================================================================================================================
+
+#SHOW MGMTDB CONFIGURATION
+[root@oraclerac19cn1 ~]# srvctl config mgmtdb
+Database unique name: _mgmtdb
+Database name: 
+Oracle home: <CRS home>
+Oracle user: grid
+Spfile: +MGMT/_MGMTDB/PARAMETERFILE/spfile.271.1071104981
+Password file: +MGMT/_MGMTDB/PASSWORD/pwd_mgmtdb.258.1071104433
+Domain: 
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Type: Management
+PDB name: GIMR_DSCREP_10
+PDB service: GIMR_DSCREP_10
+Cluster name: oraclerac19c
+Database instance: -MGMTDB
+
+#NOTE
+Replace config with start/stop to start/stop database. Databases files for repository database are stored in same location as OCR/Voting disk
+
+=============================================================================================================================================================
+
+#VERIFY THE OCR USING OCLUMON COMMAND
+[grid@oraclerac19cn1 ~]$ oclumon manage -get reppath
+
+CHM Repository Path = +MGMT/_MGMTDB/C115B0BF08481954E0531F12A8C0A30B/DATAFILE/sysmgmtdata.279.1071105135
+
+#IDENTIFY THE OCR REPOSITORY ON +ASM WITH ASMCMD
+[grid@oraclerac19cn1 ~]$ asmcmd
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Logical_Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512             512   4096  4194304     40952    35156                0           35156              0             Y  DATA/
+MOUNTED  EXTERN  N         512             512   4096  4194304     20476    19256                0           19256              0             N  FRA/
+MOUNTED  EXTERN  N         512             512   4096  4194304     40952    15652                0           15652              0             N  MGMT/
+ASMCMD> ls -s MGMT/_MGMTDB/C115B0BF08481954E0531F12A8C0A30B/DATAFILE/sysmgmtdata.279.1071105135
+Block_Size  Blocks       Bytes       Space  Name
+      8192  262145  2147491840  2155872256  sysmgmtdata.279.1071105135
+
+#IDENTIFY THE OCR REPOSITORY ON +ASM INSTANCE
+[grid@oraclerac19cn1 ~]$ sqlplus / as sysasm
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat May 15 20:34:14 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> set lines 300 pages 100
+SQL> select f.group_number, f.file_number, bytes, space, space/(1024*1024) "InMB", a.name "Name" from v$asm_file f, v$asm_alias a where f.group_number=a.group_number and f.file_number=a.file_number and system_created='Y' and a.name like '%SYSMGMTDATA%' order by f.group_number, f.file_number;
+
+GROUP_NUMBER FILE_NUMBER      BYTES	 SPACE	     InMB Name
+------------ ----------- ---------- ---------- ---------- ----------------------------------------------------------------------
+	   3	     279 2147491840 2155872256	     2056 SYSMGMTDATA.279.1071105135
+	   3	     280 8589942784 8598323200	     8200 SYSMGMTDATADB.280.1071105137
+	   3	     281 5368717312 5377097728	     5128 SYSMGMTDATACHAFIX.281.1071105141
+	   3	     282 2147491840 2155872256	     2056 SYSMGMTDATAQ.282.1071105143
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+#CHANGE REPOSITORY SIZE 
+[grid@oraclerac19cn1 ~]$ oclumon manage -repos changerepossize 2500
+The Cluster Health Monitor repository was successfully resized.The new retention is 166380 seconds.
+
+#VALIDATE THE CHANGE IN THE REPOSITORY SIZE
+[grid@oraclerac19cn1 ~]$ sqlplus / as sysasm
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat May 15 20:34:14 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> set lines 300 pages 100
+SQL> select f.group_number, f.file_number, bytes, space, space/(1024*1024) "InMB", a.name "Name" from v$asm_file f, v$asm_alias a where f.group_number=a.group_number and f.file_number=a.file_number and system_created='Y' and a.name like '%SYSMGMTDATA%' order by f.group_number, f.file_number;
+
+GROUP_NUMBER FILE_NUMBER      BYTES	 SPACE	     InMB Name
+------------ ----------- ---------- ---------- ---------- ----------------------------------------------------------------------
+	   3	     279 2621448192 2629828608	     2508 SYSMGMTDATA.279.1071105135
+	   3	     280 8589942784 8598323200	     8200 SYSMGMTDATADB.280.1071105137
+	   3	     281 5368717312 5377097728	     5128 SYSMGMTDATACHAFIX.281.1071105141
+	   3	     282 2147491840 2155872256	     2056 SYSMGMTDATAQ.282.1071105143
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+#NOTE
+If we try to reduce the size from 2500 mb to 2148 mb, it will warn and upon user confirmation drop all repository data
+
+#REDUCE REPOSITORY SIZE
+[grid@oraclerac19cn1 ~]$ oclumon manage -repos changerepossize 2148
+Warning: Entire data in Cluster Health Monitor repository will be deleted.Do you want to continue(Yes/No)?
+Yes
+The Cluster Health Monitor repository was successfully resized.The new retention is 142920 seconds.
+
+=============================================================================================================================================================
+
+#CONNECT -MGMTDB INSTANCE
+[grid@oraclerac19cn1 ~]$ export ORACLE_SID=-MGMTDB
+[grid@oraclerac19cn1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat May 15 20:12:02 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> select instance_name from v$instance;
+
+INSTANCE_NAME
+----------------
+-MGMTDB
+
+#NOTE
+Databases files for repository database are stored in same location as OCR/Voting disk
+
+SQL> select file_name from dba_data_files union select member file_name from V$logfile;
+
+FILE_NAME
+--------------------------------------------------------------------------------
++MGMT/_MGMTDB/DATAFILE/sysaux.260.1071104461
++MGMT/_MGMTDB/DATAFILE/system.259.1071104453
++MGMT/_MGMTDB/DATAFILE/undotbs1.261.1071104467
++MGMT/_MGMTDB/ONLINELOG/group_1.263.1071104521
++MGMT/_MGMTDB/ONLINELOG/group_2.264.1071104521
++MGMT/_MGMTDB/ONLINELOG/group_3.265.1071104525
+
+6 rows selected.
+
+SQL> set lines 300 pages 100
+SQL> col file_name for a85
+SQL> select file_name,bytes/1024/1024,maxbytes/1024/1024,autoextensible from dba_data_files;
+
+FILE_NAME									      BYTES/1024/1024 MAXBYTES/1024/1024 AUT
+------------------------------------------------------------------------------------- --------------- ------------------ ---
++MGMT/_MGMTDB/DATAFILE/undotbs1.261.1071104467							   70	      32767.9844 YES
++MGMT/_MGMTDB/DATAFILE/system.259.1071104453							  600	      32767.9844 YES
++MGMT/_MGMTDB/DATAFILE/sysaux.260.1071104461							  400	      32767.9844 YES
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+=============================================================================================================================================================
+
+#SEE TRACE FILES AND ALERT 
+#NOTE
+Tracefiles for db are stored under /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/. 
+Alert log for instance can be found at this location. 
+Since file name start with -MGMTDB*, we need to use ./ to access files.
+
+[root@oraclerac19cn1 ~]# ls -ltr /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/alert_-MGMTDB.log 
+-rw-r----- 1 grid oinstall 313003 Mai 15 21:00 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/alert_-MGMTDB.log
+
+[root@oraclerac19cn1 ~]# find /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/ -name "-MGMTDB_mmon*.trc" -exec ls -ltr {} \;
+-rw-r----- 1 grid oinstall 3336 Mai  3 23:16 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_6070.trc
+-rw-r----- 1 grid oinstall 2653 Mai  7 00:01 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_6598.trc
+-rw-r----- 1 grid oinstall 4549 Mai 15 20:59 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_6438.trc
+-rw-r----- 1 grid oinstall 3126 Abr 29 02:21 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_4825.trc
+-rw-r----- 1 grid oinstall 1014 Abr 29 01:01 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_26387.trc
+-rw-r----- 1 grid oinstall 1020 Abr 29 01:03 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_27742.trc
+-rw-r----- 1 grid oinstall 1014 Abr 29 01:01 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_26829.trc
+-rw-r----- 1 grid oinstall 6245 Mai  9 21:07 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_6717.trc
+-rw-r----- 1 grid oinstall 3712 Abr 29 01:03 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_27440.trc
+-rw-r----- 1 grid oinstall 3358 Mai 14 21:24 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_6748.trc
+-rw-r----- 1 grid oinstall 2102 Abr 29 01:07 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_32407.trc
+-rw-r----- 1 grid oinstall 1014 Abr 29 01:00 /u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_mmon_26062.trc
+
+=============================================================================================================================================================
+
+#SAMPLE OUTPUT FROM A 2 NODE RAC SETUP
+
+[grid@oraclerac19cn1 ~]$ oclumon dumpnodeview -allnodes
+
+----------------------------------------
+Node: oraclerac19cn1 Clock: '2021-05-15 21.04.00-0300' SerialNo:1249 
+----------------------------------------
+
+SYSTEM:
+
+SYSTEM:
+#pcpus: 1 #cores: 1 #vcpus: 1 cpuht: N osname: Linux chipname: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz cpuusage[%]: 3.22 cpusys[%]: 1.46 cpuuser[%]: 1.75 cpunice[%]: 0.00 cpuiowait[%]: 0.29 cpusteal[%]: 0.00 #cpuq: 2 physmemfree[KB]: 96648 physmemtotal[KB]: 8174024 shmem[KB]: 2503316 buffer&cache[KB]: 4737200 buffer[KB]: 222840 cache[KB]: 4514360 pagecache[KB]: 4043420 slabreclaim[KB]: 470940 memavl[KB]: 2109112 swapfree[KB]: 3025660 swaptotal[KB]: 4194300 hugepagetotal[KB]: 0 hugepagefree[KB]: 0 hugepagesize[KB]: 2048 ior[KB/s]: 113 iow[KB/s]: 330 ios[#/s]: 47 swpin[KB/s]: 3 swpout[KB/s]: 0 pgin[#/s]: 113 pgout[#/s]: 330 netrr[KB/s]: 97.774 netwr[KB/s]: 52.611 #procs: 474 #procsoncpu: 1 #procs_blocked: 0 #rtprocs: 12 #rtprocsoncpu: N/A #fds: 29504 #sysfdlimit: 6815744 #disks: 6 #nics: 4 #nfs: N/A loadavg1: 0.43 loadavg5: 0.49 loadavg15: 0.65 nicErrors[#/s]: 0 #intr: 2786 #ctxswtch: 8592
+
+
+TOPCONSUMERS:
+TOP CONSUMERS:
+topcpu[%]: 'oclumon.bin(3741) 4.64' topprivmem[KB]: 'ologgerd(7864) 213564' topshmem[KB]: 'ora_lms0_oradbc1(6640) 321120' topvmem[KB]: 'ora_lms0_oradbc1(6640) 3415456' #topfd: 'oraagent.bin(4486) 350' #topthread: 'java(1775) 82' topio[KB/s]: 'mdb_lgwr_-MGMTDB(6365) 67' 
+
+----------------------------------------
+Node: oraclerac19cn2 Clock: '2021-05-15 21.04.00-0300' SerialNo:1249 
+----------------------------------------
+
+SYSTEM:
+
+SYSTEM:
+#pcpus: 1 #cores: 1 #vcpus: 1 cpuht: N osname: Linux chipname: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz cpuusage[%]: 1.82 cpusys[%]: 1.04 cpuuser[%]: 0.78 cpunice[%]: 0.00 cpuiowait[%]: 0.26 cpusteal[%]: 0.00 #cpuq: 1 physmemfree[KB]: 218452 physmemtotal[KB]: 8174024 shmem[KB]: 3372692 buffer&cache[KB]: 5267556 buffer[KB]: 140952 cache[KB]: 5126604 pagecache[KB]: 5000176 slabreclaim[KB]: 126428 memavl[KB]: 1894564 swapfree[KB]: 4194300 swaptotal[KB]: 4194300 hugepagetotal[KB]: 0 hugepagefree[KB]: 0 hugepagesize[KB]: 2048 ior[KB/s]: 77 iow[KB/s]: 287 ios[#/s]: 44 swpin[KB/s]: 0 swpout[KB/s]: 0 pgin[#/s]: 77 pgout[#/s]: 287 netrr[KB/s]: 38.018 netwr[KB/s]: 85.513 #procs: 399 #procsoncpu: 1 #procs_blocked: 0 #rtprocs: 10 #rtprocsoncpu: N/A #fds: 24736 #sysfdlimit: 6815744 #disks: 6 #nics: 4 #nfs: N/A loadavg1: 0.25 loadavg5: 0.35 loadavg15: 0.35 nicErrors[#/s]: 0 #intr: 2514 #ctxswtch: 7021
+
+
+TOPCONSUMERS:
+TOP CONSUMERS:
+topcpu[%]: 'asm_vktm_+ASM2(13330) 2.19' topprivmem[KB]: 'java(12048) 174848' topshmem[KB]: 'ora_lms0_oradbc2(14947) 179624' topvmem[KB]: 'ora_lms0_oradbc2(14947) 3413412' #topfd: 'ocssd.bin(3507) 287' #topthread: 'crsd.bin(4590) 53' topio[KB/s]: 'ora_ckpt_oradbc2(14976) 63' 
+
+----------------------------------------
+Node: oraclerac19cn1 Clock: '2021-05-15 21.04.05-0300' SerialNo:1250 
+----------------------------------------
+
+SYSTEM:
+
+SYSTEM:
+#pcpus: 1 #cores: 1 #vcpus: 1 cpuht: N osname: Linux chipname: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz cpuusage[%]: 4.40 cpusys[%]: 1.01 cpuuser[%]: 3.38 cpunice[%]: 0.00 cpuiowait[%]: 0.33 cpusteal[%]: 0.00 #cpuq: 3 physmemfree[KB]: 72696 physmemtotal[KB]: 8174024 shmem[KB]: 2503316 buffer&cache[KB]: 4737232 buffer[KB]: 222844 cache[KB]: 4514388 pagecache[KB]: 4043448 slabreclaim[KB]: 470940 memavl[KB]: 2085192 swapfree[KB]: 3025660 swaptotal[KB]: 4194300 hugepagetotal[KB]: 0 hugepagefree[KB]: 0 hugepagesize[KB]: 2048 ior[KB/s]: 77 iow[KB/s]: 307 ios[#/s]: 35 swpin[KB/s]: 0 swpout[KB/s]: 0 pgin[#/s]: 77 pgout[#/s]: 307 netrr[KB/s]: 84.299 netwr[KB/s]: 74.866 #procs: 471 #procsoncpu: 1 #procs_blocked: 0 #rtprocs: 12 #rtprocsoncpu: N/A #fds: 29696 #sysfdlimit: 6815744 #disks: 6 #nics: 4 #nfs: N/A loadavg1: 0.40 loadavg5: 0.49 loadavg15: 0.65 nicErrors[#/s]: 0 #intr: 2361 #ctxswtch: 7998
+
+
+TOPCONSUMERS:
+TOP CONSUMERS:
+topcpu[%]: 'ora_vktm_oradbc1(6556) 1.79' topprivmem[KB]: 'ologgerd(7864) 213564' topshmem[KB]: 'ora_lms0_oradbc1(6640) 321120' topvmem[KB]: 'ora_lms0_oradbc1(6640) 3415456' #topfd: 'oraagent.bin(4486) 350' #topthread: 'java(1775) 82' topio[KB/s]: 'mdb_lgwr_-MGMTDB(6365) 58' 
+
+----------------------------------------
+Node: oraclerac19cn2 Clock: '2021-05-15 21.04.05-0300' SerialNo:1250 
+----------------------------------------
+
+SYSTEM:
+
+SYSTEM:
+#pcpus: 1 #cores: 1 #vcpus: 1 cpuht: N osname: Linux chipname: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz cpuusage[%]: 1.48 cpusys[%]: 0.74 cpuuser[%]: 0.74 cpunice[%]: 0.00 cpuiowait[%]: 0.24 cpusteal[%]: 0.00 #cpuq: 0 physmemfree[KB]: 218360 physmemtotal[KB]: 8174024 shmem[KB]: 3372692 buffer&cache[KB]: 5267632 buffer[KB]: 140960 cache[KB]: 5126672 pagecache[KB]: 5000240 slabreclaim[KB]: 126432 memavl[KB]: 1894548 swapfree[KB]: 4194300 swaptotal[KB]: 4194300 hugepagetotal[KB]: 0 hugepagefree[KB]: 0 hugepagesize[KB]: 2048 ior[KB/s]: 29 iow[KB/s]: 155 ios[#/s]: 20 swpin[KB/s]: 0 swpout[KB/s]: 0 pgin[#/s]: 29 pgout[#/s]: 155 netrr[KB/s]: 39.242 netwr[KB/s]: 51.738 #procs: 399 #procsoncpu: 1 #procs_blocked: 0 #rtprocs: 10 #rtprocsoncpu: N/A #fds: 24736 #sysfdlimit: 6815744 #disks: 6 #nics: 4 #nfs: N/A loadavg1: 0.23 loadavg5: 0.34 loadavg15: 0.35 nicErrors[#/s]: 0 #intr: 2546 #ctxswtch: 7061
+
+
+TOPCONSUMERS:
+TOP CONSUMERS:
+topcpu[%]: 'ora_vktm_oradbc2(14876) 1.80' topprivmem[KB]: 'java(12048) 174848' topshmem[KB]: 'ora_lms0_oradbc2(14947) 179624' topvmem[KB]: 'ora_lms0_oradbc2(14947) 3413412' #topfd: 'ocssd.bin(3507) 287' #topthread: 'crsd.bin(4590) 53' topio[KB/s]: 'ora_ckpt_oradbc2(14976) 50' 
+
+----------------------------------------
+Node: oraclerac19cn1 Clock: '2021-05-15 21.04.10-0300' SerialNo:1251 
+----------------------------------------
+
+SYSTEM:
+
+SYSTEM:
+#pcpus: 1 #cores: 1 #vcpus: 1 cpuht: N osname: Linux chipname: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz cpuusage[%]: 3.48 cpusys[%]: 1.45 cpuuser[%]: 2.03 cpunice[%]: 0.00 cpuiowait[%]: 0.29 cpusteal[%]: 0.00 #cpuq: 0 physmemfree[KB]: 72084 physmemtotal[KB]: 8174024 shmem[KB]: 2503316 buffer&cache[KB]: 4737412 buffer[KB]: 222852 cache[KB]: 4514560 pagecache[KB]: 4043608 slabreclaim[KB]: 470952 memavl[KB]: 2084760 swapfree[KB]: 3025660 swaptotal[KB]: 4194300 hugepagetotal[KB]: 0 hugepagefree[KB]: 0 hugepagesize[KB]: 2048 ior[KB/s]: 99 iow[KB/s]: 439 ios[#/s]: 43 swpin[KB/s]: 5 swpout[KB/s]: 0 pgin[#/s]: 99 pgout[#/s]: 439 netrr[KB/s]: 149.598 netwr[KB/s]: 90.943 #procs: 475 #procsoncpu: 1 #procs_blocked: 0 #rtprocs: 12 #rtprocsoncpu: N/A #fds: 29696 #sysfdlimit: 6815744 #disks: 6 #nics: 4 #nfs: N/A loadavg1: 0.36 loadavg5: 0.48 loadavg15: 0.64 nicErrors[#/s]: 0 #intr: 2819 #ctxswtch: 8725
+
+
+TOPCONSUMERS:
+TOP CONSUMERS:
+topcpu[%]: 'rngd(595) 11.46' topprivmem[KB]: 'ologgerd(7864) 213564' topshmem[KB]: 'ora_lms0_oradbc1(6640) 321120' topvmem[KB]: 'ora_lms0_oradbc1(6640) 3415456' #topfd: 'oraagent.bin(4486) 350' #topthread: 'java(1775) 82' topio[KB/s]: 'mdb_lgwr_-MGMTDB(6365) 65' 
+
+----------------------------------------
+Node: oraclerac19cn2 Clock: '2021-05-15 21.04.10-0300' SerialNo:1251 
+----------------------------------------
+
+SYSTEM:
+
+SYSTEM:
+#pcpus: 1 #cores: 1 #vcpus: 1 cpuht: N osname: Linux chipname: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz cpuusage[%]: 1.55 cpusys[%]: 0.77 cpuuser[%]: 0.77 cpunice[%]: 0.00 cpuiowait[%]: 0.25 cpusteal[%]: 0.00 #cpuq: 0 physmemfree[KB]: 218264 physmemtotal[KB]: 8174024 shmem[KB]: 3372692 buffer&cache[KB]: 5267644 buffer[KB]: 140968 cache[KB]: 5126676 pagecache[KB]: 5000244 slabreclaim[KB]: 126432 memavl[KB]: 1894464 swapfree[KB]: 4194300 swaptotal[KB]: 4194300 hugepagetotal[KB]: 0 hugepagefree[KB]: 0 hugepagesize[KB]: 2048 ior[KB/s]: 77 iow[KB/s]: 201 ios[#/s]: 32 swpin[KB/s]: 0 swpout[KB/s]: 0 pgin[#/s]: 77 pgout[#/s]: 201 netrr[KB/s]: 43.462 netwr[KB/s]: 122.339 #procs: 399 #procsoncpu: 1 #procs_blocked: 0 #rtprocs: 10 #rtprocsoncpu: N/A #fds: 24736 #sysfdlimit: 6815744 #disks: 6 #nics: 4 #nfs: N/A loadavg1: 0.30 loadavg5: 0.35 loadavg15: 0.36 nicErrors[#/s]: 0 #intr: 2684 #ctxswtch: 7222
+
+
+TOPCONSUMERS:
+TOP CONSUMERS:
+topcpu[%]: 'ora_vktm_oradbc2(14876) 1.59' topprivmem[KB]: 'java(12048) 174848' topshmem[KB]: 'ora_lms0_oradbc2(14947) 179624' topvmem[KB]: 'ora_lms0_oradbc2(14947) 3413412' #topfd: 'ocssd.bin(3507) 287' #topthread: 'crsd.bin(4590) 53' topio[KB/s]: 'jbd2/sda2-8(279) 41' 
+
+#NOTE
+You can learn more about oclumon usage by referring to OCLUMON Command Reference
+https://docs.oracle.com/en/database/oracle/oracle-database/12.2/atnms/oclumon-command-reference.html#GUID-1A00F7D4-4843-4647-AFF8-07021719404F
+
+
+
+
+
+
+
+
+
+
+
+
