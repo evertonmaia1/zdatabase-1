@@ -8,8 +8,8 @@
 Cloud Control is set to auto-start using the "gcstartup" service. The "/etc/oragchomelist" file contains the items that will be started by the system.
 
 [root@ol7em13cc ~]# vim /etc/oragchomelist
-/u01/app/oracle/middleware
-/u01/app/oracle/agent/agent_13.1.0.0.0:/u01/app/oracle/agent/agent_inst
+#/u01/app/oracle/middleware
+#/u01/app/oracle/agent/agent_13.1.0.0.0:/u01/app/oracle/agent/agent_inst
 
 Automatic startup database using service on linux
 
