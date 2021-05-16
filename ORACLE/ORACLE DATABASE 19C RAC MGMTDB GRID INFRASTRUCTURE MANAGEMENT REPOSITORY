@@ -311,6 +311,33 @@ topcpu[%]: 'ora_vktm_oradbc2(14876) 1.59' topprivmem[KB]: 'java(12048) 174848' t
 You can learn more about oclumon usage by referring to OCLUMON Command Reference
 https://docs.oracle.com/en/database/oracle/oracle-database/12.2/atnms/oclumon-command-reference.html#GUID-1A00F7D4-4843-4647-AFF8-07021719404F
 
+#Note
+oclumon is part of a set of tools that make up the Cluster Health Monitor that is part of the Oracle Autonomous Health Framework feature
+
+=============================================================================================================================================================
+
+#HOW TO CHECK AUTONOMOUS HEALTH FRAMEWORK FEATURE
+[root@oraclerac19cn1 ~]# systemctl status oracle-tfa.service
+● oracle-tfa.service - Oracle Trace File Analyzer
+   Loaded: loaded (/etc/systemd/system/oracle-tfa.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sáb 2021-05-15 19:19:20 -03; 1h 58min ago
+ Main PID: 1274 (init.tfa)
+    Tasks: 94
+   CGroup: /system.slice/oracle-tfa.service
+           ├─ 1274 /bin/sh /etc/init.d/init.tfa run >/dev/null 2>&1 </dev/null
+           ├─ 1775 /u01/app/19.3/grid/jdk/jre/bin/java -server -Xms32m -Xmx64m -Djava.awt.headless=true -Ddisable.checkForUpdate=true oracle.rat.tfa.TFAMain /u01/app/19.3/grid/tfa/oraclerac19cn1/tfa_home
+           └─10763 /bin/sleep 30
+
+Mai 15 19:19:20 oraclerac19cn1 systemd[1]: Started Oracle Trace File Analyzer.
+Mai 15 19:19:27 oraclerac19cn1 init.tfa[1274]: Starting TFA..
+Mai 15 19:19:32 oraclerac19cn1 init.tfa[1274]: WARNING - TFA Software is older than 180 days. Please consider upgrading TFA to the latest version.
+Mai 15 19:19:32 oraclerac19cn1 init.tfa[1274]: Starting TFA out of init, Should be running in 10 seconds
+Mai 15 19:19:32 oraclerac19cn1 init.tfa[1274]: Successfully updated jvmXmx to 64 in TFA...
+Mai 15 19:19:41 oraclerac19cn1 init.tfa[1274]: OSWatcher is already deployed at /u01/app/19.3/grid/tfa/oraclerac19cn1/tfa_home/ext/oswbb
+Mai 15 19:19:41 oraclerac19cn1 init.tfa[1274]: Starting OSWatcher
+Mai 15 19:19:41 oraclerac19cn1 su[2362]: (to grid) root on none
+Mai 15 19:19:41 oraclerac19cn1 init.tfa[1274]: ERROR: Failed to start OSWatcher. Please review /u01/app/grid/tfa/repository/suptools/oraclerac19cn1/oswbb/grid/run_1621117181.log for details
+Mai 15 19:19:43 oraclerac19cn1 init.tfa[1274]: WARNING - TFA Software is older than 180 days. Please consider upgrading TFA to the latest version.
 
 
 
