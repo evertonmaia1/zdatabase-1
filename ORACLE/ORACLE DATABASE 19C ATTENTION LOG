@@ -1,0 +1,112 @@
++++++++++++++++++++++++++++++++++++++++
++  ORACLE DATABASE 19C ATTENTION LOG  +
++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+The attention log is a structured, externally modifiable file that contains information about critical and highly visible database events. 
+Use the attention log to quickly access information about critical events that need action.
+There is one attention log for each database instance. The attention log contains a pre-determined, translatable series of messages, 
+with one message for each event. Some important attributes of a message are as follows:
+
+	Attention ID: A unique identifier for the message.
+	Attention type: The type of attention message. Possible values are Error, Warning, Notification, or Additional information. The attention type can be modified dynamically.
+	Message text
+	Urgency: Possible values are Immediate, Soon, Deferrable, or Information.
+	Scope: Possible values are Session, Process, PDB Instance, CDB Instance, CDB Cluster, PDB (for issues in persistent storage that a database restart will not fix), or CDB (for issues in persistent storage that a database restart will not fix).
+	Target user: The user who must act on this attention log message. Possible values are Clusterware Admin, CDB admin, or PDB admin.
+	Cause
+	Action
+
+=============================================================================================================================================================
+
+#HOW TO FIND ATTENTION.LOG FILE
+
+#NOTE
+for oracle rac each instance will have an attention.log file
+
+#USING FIND COMMAND
+[root@oraclerac19cn1 ~]# find /u01 -name "attention.log"
+/u01/app/grid/diag/rdbms/_mgmtdb/-MGMTDB/log/attention.log
+/u01/app/grid/diag/apx/+apx/+APX1/log/attention.log
+/u01/app/grid/diag/asm/+asm/+ASM1/log/attention.log
+/u01/app/oracle/diag/rdbms/oradbc/oradbc1/log/attention.log
+
+=============================================================================================================================================================
+
+#GET THE FOLDER BY INSTANCE DATABASE
+[root@oraclerac19cn1 ~]# su - oracle
+[oracle@oraclerac19cn1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sat May 15 22:08:59 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> set lines 300 pages 100
+SQL> col value for a115
+SQL> select name, value from gv$diag_info;
+
+NAME								 VALUE
+---------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------
+Diag Enabled							 TRUE
+ADR Base							 /u01/app/oracle
+ADR Home							 /u01/app/oracle/diag/rdbms/oradbc/oradbc1
+Diag Trace							 /u01/app/oracle/diag/rdbms/oradbc/oradbc1/trace
+Diag Alert							 /u01/app/oracle/diag/rdbms/oradbc/oradbc1/alert
+Diag Incident							 /u01/app/oracle/diag/rdbms/oradbc/oradbc1/incident
+Diag Cdump							 /u01/app/oracle/diag/rdbms/oradbc/oradbc1/cdump
+Health Monitor							 /u01/app/oracle/diag/rdbms/oradbc/oradbc1/hm
+Active Problem Count						 0
+Active Incident Count						 0
+ORACLE_HOME							 /u01/app/oracle/product/19.3/dbhome_1
+Diag Enabled							 TRUE
+ADR Base							 /u01/app/oracle
+ADR Home							 /u01/app/oracle/diag/rdbms/oradbc/oradbc2
+Diag Trace							 /u01/app/oracle/diag/rdbms/oradbc/oradbc2/trace
+Diag Alert							 /u01/app/oracle/diag/rdbms/oradbc/oradbc2/alert
+Diag Incident							 /u01/app/oracle/diag/rdbms/oradbc/oradbc2/incident
+Diag Cdump							 /u01/app/oracle/diag/rdbms/oradbc/oradbc2/cdump
+Health Monitor							 /u01/app/oracle/diag/rdbms/oradbc/oradbc2/hm
+Active Problem Count						 0
+Active Incident Count						 0
+ORACLE_HOME							 /u01/app/oracle/product/19.3/dbhome_1
+
+22 rows selected.
+
+=============================================================================================================================================================
+
+#GET THE ALERT MESSAGES BY v$DIAG_ALERT_EXT
+SQL> col MESSAGE_TEXT for a65
+SQL> select message_type, message_text, version, host_id from v$DIAG_ALERT_EXT where message_level = 16 OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
+
+MESSAGE_TYPE  MESSAGE_TEXT						                                        VERSION		        HOST_ID
+------------- --------------------------------------------------------------- ----------------- ----------------------------------
+	   5        LICENSE_MAX_SESSION = 0					                                0		              oraclerac19cn1
+	   5        LICENSE_SESSIONS_WARNING = 0					                          0 		            oraclerac19cn1
+	   1        Initial number of CPU is 1 					                            0 		            oraclerac19cn1
+	   1        Number of processor cores in the system is 1			              0 		            oraclerac19cn1
+	   1        Number of processor sockets in the system is 1		              0 		            oraclerac19cn1
+	   1        KSXRTEST ISGA: RM Channel count = 1				                      0 		            oraclerac19cn1
+	   1        KSXRTEST ISGA: rcnt= 70 rmrcnt = 1 				                      0 		            oraclerac19cn1
+	   1        Shared memory segment for instance monitoring created		        0 		            oraclerac19cn1
+	   1        Capability Type : Network					                              0 		            oraclerac19cn1
+	   1        capabilities requested : 7 detected : 0 Simulated : 0		        0 		            oraclerac19cn1
+
+10 rows selected.
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+=============================================================================================================================================================
+
+#LOOKING INSIDE ATTENTION.LOG FILE
+[oracle@oraclerac19cn1 ~]$ vim /u01/app/oracle/diag/rdbms/oradbc/oradbc1/log/attention.log
+2021-05-14T21:26:59.103-03:00 NOTIFICATION 16 VOS shutdown 35782659: Shutting down ORACLE instance (abort) (OS id: 11731)
+2021-05-15T19:21:34.514-03:00 NOTIFICATION 16 VOS startup 35782658: Starting ORACLE instance (normal) (OS id: 5718)
+

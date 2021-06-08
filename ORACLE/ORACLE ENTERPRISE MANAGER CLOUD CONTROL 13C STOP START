@@ -8,8 +8,8 @@
 Cloud Control is set to auto-start using the "gcstartup" service. The "/etc/oragchomelist" file contains the items that will be started by the system.
 
 [root@ol7em13cc ~]# vim /etc/oragchomelist
-/u01/app/oracle/middleware
-/u01/app/oracle/agent/agent_13.1.0.0.0:/u01/app/oracle/agent/agent_inst
+#/u01/app/oracle/middleware
+#/u01/app/oracle/agent/agent_13.1.0.0.0:/u01/app/oracle/agent/agent_inst
 
 Automatic startup database using service on linux
 
@@ -32,8 +32,8 @@ RemainAfterExit=yes
 User=oracle
 Group=oinstall
 Restart=no
-ExecStart=/bin/bash -c '/home/oracle/scripts/start_all.sh'
-ExecStop=/bin/bash -c '/home/oracle/scripts/stop_all.sh'
+ExecStart=/bin/bash -c '/u01/app/oracle/product/12.1.0/dbhome_1/bin/dbstart /u01/app/oracle/product/12.1.0/dbhome_1; /u01/app/oracle/middleware/bin/emctl start oms; /u01/app/oracle/agent/agent_13.2.0.0.0/bin/emctl start agent'
+ExecStop=/bin/bash -c '/u01/app/oracle/middleware/bin/emctl stop oms -all; /u01/app/oracle/agent/agent_13.2.0.0.0/bin/emctl stop agent; /u01/app/oracle/product/12.1.0/dbhome_1/bin/dbshut /u01/app/oracle/product/12.1.0/dbhome_1'
 
 [Install]
 WantedBy=multi-user.target
