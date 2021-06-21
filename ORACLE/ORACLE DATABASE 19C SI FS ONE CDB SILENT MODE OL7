@@ -391,6 +391,15 @@ SQL> ALTER PLUGGABLE DATABASE APPSPDB SAVE STATE;
 
 Pluggable database altered.
 
+SQL> @state
+SQL> col col_name for a30
+SQL> select con_name, state from dba_pdb_saved_states
+  2 / 
+
+CON_NAME			STATE
+------------------------------- -------------
+APPSPDB
+
 SQL> exit
 
 lsnrctl status
