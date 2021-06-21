@@ -376,7 +376,20 @@ Connected to:
 Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.3.0.0.0
 
+SQL> ALTER PLUGGABLE DATABASE APPSPDB OPEN;
+
+Pluggable database altered.
+
+SQL> @state
+SQL> col col_name for a30
+SQL> select con_name, state from dba_pdb_saved_states
+  2 / 
+
+no rows selected
+
 SQL> ALTER PLUGGABLE DATABASE APPSPDB SAVE STATE;
+
+Pluggable database altered.
 
 SQL> exit
 
