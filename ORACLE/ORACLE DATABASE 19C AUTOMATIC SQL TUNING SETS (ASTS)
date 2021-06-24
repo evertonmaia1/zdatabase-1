@@ -52,9 +52,9 @@ Version 19.3.0.0.0
 
 SQL> Select Task_Name, Interval Task_Interval_in_Seconds, Enabled From DBA_AutoTask_Schedule_Control Where Task_Name = 'Auto STS Capture Task';
 
-TASK_NAME                 TASK_INTERVAL_IN_SECONDS	ENABLED
-------------------------- ------------------------- --------
-Auto STS Capture Task			900                       TRUE
+TASK_NAME                   TASK_INTERVAL_IN_SECONDS    ENABLED
+--------------------------- --------------------------- --------
+Auto STS Capture Task       900                         TRUE
 
 SQL> With dur As
 (
