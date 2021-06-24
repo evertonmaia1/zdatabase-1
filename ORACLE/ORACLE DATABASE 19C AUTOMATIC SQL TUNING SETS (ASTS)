@@ -138,7 +138,7 @@ The task can be enabled and disabled but it Is recommended to enable ASTS to col
 
 SQL> Select Task_Name, Enabled From DBA_AutoTask_Schedule_Control Where Task_Name = 'Auto STS Capture Task';
 
-TASK_NAME		       ENABLED
+TASK_NAME                   ENABLED
 --------------------------- --------
 Auto STS Capture Task       TRUE
 
