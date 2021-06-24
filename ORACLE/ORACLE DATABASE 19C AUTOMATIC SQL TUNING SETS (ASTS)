@@ -100,24 +100,24 @@ Order By Table_Size_MB Desc;  3    4    5    6    7    8    9   10   11   12   1
 
 TABLE_NAME					TABLE_SIZE_MB TOTAL_SIZE_MB
 ----------------------------------------- ------------- -------------
-WRI$_SQLSET_PLAN_LINES			1550.188	3162.688
-WRH$_SQLTEXT					1195.188	3162.688
-WRI$_SQLSET_PLANS				 170	       3162.688
-WRI$_SQLSET_PLAN_LINES_PK			 80	       3162.688
-WRI$_SQLSET_STATISTICS			 44	       3162.688
-WRI$_SQLSET_STATEMENTS			 32	       3162.688
-WRI$_SQLSET_STATEMENTS_IDX_02		 17	       3162.688
-WRI$_SQLSET_STATEMENTS_IDX_01		 17	       3162.688
-WRI$_SQLSET_PLANS_PK				 13	       3162.688
-WRI$_SQLSET_STATISTICS_PK			 13	       3162.688
-WRI$_SQLSET_MASK_PK				 13	       3162.688
-WRI$_SQLSET_MASK				 10	       3162.688
-WRI$_SQLSET_STATEMENTS_PK			  8	       3162.688
-WRI$_SQLSET_DEFINITIONS 			  .063	       3162.688
-WRI$_SQLSET_REFERENCES_PK			  .063	       3162.688
-WRI$_SQLSET_DEFINITIONS_IDX_01		  .063	       3162.688
-WRI$_SQLSET_REFERENCES			  .063	       3162.688
-WRI$_SQLSET_DEFINITIONS_PK			  .063	       3162.688
+WRI$_SQLSET_PLAN_LINES                    1550.188	3162.688
+WRH$_SQLTEXT                              1195.188	3162.688
+WRI$_SQLSET_PLANS                          170	       3162.688
+WRI$_SQLSET_PLAN_LINES_PK                   80	       3162.688
+WRI$_SQLSET_STATISTICS                      44	       3162.688
+WRI$_SQLSET_STATEMENTS                      32	       3162.688
+WRI$_SQLSET_STATEMENTS_IDX_02               17	       3162.688
+WRI$_SQLSET_STATEMENTS_IDX_01               17	       3162.688
+WRI$_SQLSET_PLANS_PK                        13	       3162.688
+WRI$_SQLSET_STATISTICS_PK                   13	       3162.688
+WRI$_SQLSET_MASK_PK                         13	       3162.688
+WRI$_SQLSET_MASK                            10	       3162.688
+WRI$_SQLSET_STATEMENTS_PK                    8	       3162.688
+WRI$_SQLSET_DEFINITIONS                      .063	3162.688
+WRI$_SQLSET_REFERENCES_PK                    .063	3162.688
+WRI$_SQLSET_DEFINITIONS_IDX_01               .063	3162.688
+WRI$_SQLSET_REFERENCES                       .063	3162.688
+WRI$_SQLSET_DEFINITIONS_PK                   .063	3162.688
 
 18 rows selected.
 
@@ -125,9 +125,9 @@ WRI$_SQLSET_DEFINITIONS_PK			  .063	       3162.688
 
 SQL> Select Decode(SQLSet_Name,'SYS_AUTO_STS','ASTS','NON-ASTS') SQLSets, Count(*) Count From DBA_SQLSet_Statements Group By Decode(SQLSet_Name,'SYS_AUTO_STS','ASTS','NON-ASTS');
 
-SQLSETS  COUNT
--------- ----------
-ASTS	   348292
+SQLSETS       COUNT
+------------- ----------
+ASTS          348292
 
 #CONTROLLING THE ASTS TASK
 #NOTE
