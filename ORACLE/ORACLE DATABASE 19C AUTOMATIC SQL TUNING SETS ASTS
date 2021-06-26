@@ -1,0 +1,164 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++  ORACLE DATABASE 19C AUTOMATIC SQL TUNING SETS ASTS  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE
+Oracle Database - Enterprise Edition - Version 19.7.0.0.0 and later
+Information in this document applies to any platform.
+Oracle Database 19c RU 19.7 exposes a new database infrastructure component called the automatic SQL Tuning Set (ASTS). 
+It is available in Enterprise Edition for all platforms and has no additional licensing requirement.
+The ASTS is maintained using an automatic background task, which is enabled by default in Oracle Database 19c RU 19.7. 
+
+While ASTS is common infrastructure functionality that does not have any impact on the runtime behavior of a 
+database (other than occupying limited space in SYSAUX), some customers expressed the preference of not enabling this functionality by default in an RU. 
+Oracle has therefore decided to disable ASTS in future RUs for this database release by default, giving customers the responsibility to enable ASTS explicitly. 
+It is disabled by default in 19c RU 19.8.
+
+The ASTS is a historic record of SQL execution plans and SQL statement performance metrics. It differs from the automatic workload repository (AWR) because it is not limited to statements that consume significant system resources. Over time, the ASTS will include examples of all queries seen on the system, but it does impose a limit on the collection of non-reusable statements such as ad-hoc queries or statements that use literals instead of bind variables.
+ASTS is complementary to AWR and considered a similar core manageability infrastructure of the Oracle Database.
+The ASTS is particularly useful for diagnosing and potentially correcting SQL performance regressions in situations where the regression is caused by a plan change. 
+In cases like this, the better plan is unlikely to be available in AWR, but it will be available in the ASTS. 
+This is significant because, for example, SQL plan management can be used to locate, test, and enforce better SQL execution plans contained in the ASTS. 
+This allows SQL performance regressions to be corrected quickly and with little effort. 
+In addition, automatic SQL plan management implements this entire workflow without manual intervention 
+(see the Database Licensing Information User Manual for availability details).
+In summary, the ASTS is a component designed to resolve SQL statement performance regressions quickly and easily. 
+It mitigates the risks associated with database change, system configuration changes, and upgrades.
+
+The ASTS is self-maintaining with no requirement for it to be configured. Oracle recommends that it is enabled, but it can be disabled if preferred.
+Automatic Indexing relies on the ASTS, so you must not disable the ASTS task if you are using this feature. 
+Automatic SQL plan management uses ASTS as a source of alternative SQL execution plans, so ASTS should not be disabled if you use this feature.
+
+Task Performance and Space Utilization
+The resource utilization for normal systems is negligible and can be ignored in most cases; this is true for both space and CPU consumption. 
+The following SQL statements provide an insight into the resources used.
+
+=============================================================================================================================================================
+
+* Runtime Performance
+You can acquire a summary of runtime performance for the ASTS task as follows:
+
+[oracle@oraclerac19con1 ~]$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Jun 23 22:38:25 2021
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> Select Task_Name, Interval Task_Interval_in_Seconds, Enabled From DBA_AutoTask_Schedule_Control Where Task_Name = 'Auto STS Capture Task';
+
+TASK_NAME                   TASK_INTERVAL_IN_SECONDS    ENABLED
+--------------------------- --------------------------- --------
+Auto STS Capture Task       900                         TRUE
+
+SQL> With dur As
+(
+Select (To_Date('1','J')+Run_Duration-to_Date('1','J'))* 86400 Duration_Sec,
+       (To_Date('1','J')+CPU_Used-to_Date('1','J'))* 86400 CPU_Used_Sec
+From DBA_Scheduler_Job_Run_Details
+Where job_name = 'ORA$_ATSK_AUTOSTS'
+)
+Select Min(Duration_Sec) ASTS_Min_Time_Sec,
+       Max(Duration_Sec) ASTS_Max_Time_Sec,
+       Avg(Duration_Sec) ASTS_Average_Time_Sec,
+       Avg(CPU_Used_Sec) ASTS_Average_CPU_Sec
+From dur;  2    3    4    5    6    7    8    9   10   11   12  
+
+ASTS_MIN_TIME_SEC ASTS_MAX_TIME_SEC ASTS_AVERAGE_TIME_SEC ASTS_AVERAGE_CPU_SEC
+----------------- ----------------- --------------------- --------------------
+6                 905               19.1590909            10.9390496
+
+* Space Consumption
+The amount of space consumed by all SQL tuning sets can be queried as follows:
+
+SQL> Select Table_Name,
+Round(Sum(size_b)/1024/1024, 3) Table_Size_MB,
+Round(Max(Total_Size_B)/1024/1024, 3) Total_Size_MB
+From (Select Table_Name, Size_B, Sum(Size_B) Over() Total_Size_B
+From
+(Select Segment_Name as table_Name, Bytes Size_B
+From DBA_Segments
+Where Segment_Name Not Like '%WORKSPA%'
+And Owner = 'SYS'
+And (segment_Name Like 'WRI%SQLSET%'
+Or Segment_Name Like 'WRH$_SQLTEXT')
+Union All
+Select t.Table_Name, Bytes Size_B
+From DBA_Segments s,
+(Select Table_Name, Segment_Name
+From DBA_Lobs
+Where Tabl  2  e_Name In ('WRI$_SQLSET_PLAN_LINES','WRH$_SQLTEXT')
+And Owner = 'SYS') t
+Where s.Segment_Name = t.Segment_Name))
+Group By Table_Name
+Order By Table_Size_MB Desc;  3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21  
+
+TABLE_NAME					TABLE_SIZE_MB TOTAL_SIZE_MB
+----------------------------------------- ------------- -------------
+WRI$_SQLSET_PLAN_LINES                    1550.188	3162.688
+WRH$_SQLTEXT                              1195.188	3162.688
+WRI$_SQLSET_PLANS                          170	       3162.688
+WRI$_SQLSET_PLAN_LINES_PK                   80	       3162.688
+WRI$_SQLSET_STATISTICS                      44	       3162.688
+WRI$_SQLSET_STATEMENTS                      32	       3162.688
+WRI$_SQLSET_STATEMENTS_IDX_02               17	       3162.688
+WRI$_SQLSET_STATEMENTS_IDX_01               17	       3162.688
+WRI$_SQLSET_PLANS_PK                        13	       3162.688
+WRI$_SQLSET_STATISTICS_PK                   13	       3162.688
+WRI$_SQLSET_MASK_PK                         13	       3162.688
+WRI$_SQLSET_MASK                            10	       3162.688
+WRI$_SQLSET_STATEMENTS_PK                    8	       3162.688
+WRI$_SQLSET_DEFINITIONS                      .063	3162.688
+WRI$_SQLSET_REFERENCES_PK                    .063	3162.688
+WRI$_SQLSET_DEFINITIONS_IDX_01               .063	3162.688
+WRI$_SQLSET_REFERENCES                       .063	3162.688
+WRI$_SQLSET_DEFINITIONS_PK                   .063	3162.688
+
+18 rows selected.
+
+* The following query reports statement counts per SQL tuning set, allowing you to approximately apportion space usage to individual SQL tuning sets:
+
+SQL> Select Decode(SQLSet_Name,'SYS_AUTO_STS','ASTS','NON-ASTS') SQLSets, Count(*) Count From DBA_SQLSet_Statements Group By Decode(SQLSet_Name,'SYS_AUTO_STS','ASTS','NON-ASTS');
+
+SQLSETS       COUNT
+------------- ----------
+ASTS          348292
+
+#CONTROLLING THE ASTS TASK
+#NOTE
+ASTS is collected through Oracle’s automatic task framework: SQL statement performance metrics and execution plans are collected continuously. 
+The task can be enabled and disabled but it Is recommended to enable ASTS to collect historical SQL plan and execution statistics.
+
+* Viewing Task Status
+
+SQL> Select Task_Name, Enabled From DBA_AutoTask_Schedule_Control Where Task_Name = 'Auto STS Capture Task';
+
+TASK_NAME                   ENABLED
+--------------------------- --------
+Auto STS Capture Task       TRUE
+
+* Enabling Task
+
+SQL> exec DBMS_AUTO_TASK_ADMIN.ENABLE(Client_Name => 'Auto STS Capture Task', Operation => NULL, Window_name => NULL);
+
+* Disabling Task
+
+SQL> exec DBMS_Auto_Task_Admin.Disable(Client_Name => 'Auto STS Capture Task', Operation => NULL, Window_name => NULL);
+
+#NOTE
+In 19.7, autotask should be disabled in all containers all pdbs.
+There are checks and balances to prevent ATST from growing indefinitely – but we found some issues with this under some circumstances. 
+When all bugs are fixed in the RU, then it should no longer happen and ASTS will be much smaller.
+
+Probably the feature was turned off to avoid rampant space consumption where the user or dba is often unaware of the reason for space consumption. 
+But soon this feature should return to the default package.
+
+
+
+
+

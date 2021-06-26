@@ -55,7 +55,7 @@ postgres=# CREATE SCHEMA SQLSERVER;
 
 #CREATE FOREIGN TABLE
 postgres=# DROP FOREIGN TABLE SQLSERVER.t_Persons;
-postgres=# CREATE TABLE Persons (
+postgres=# CREATE FOREIGN TABLE Persons (
     PersonID int,
     LastName varchar(255),
     FirstName varchar(255),
