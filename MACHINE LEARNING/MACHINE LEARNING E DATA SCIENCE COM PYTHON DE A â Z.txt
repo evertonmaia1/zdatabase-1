@@ -1,0 +1,67 @@
+######################################################################
+#	MACHINE LEARNING E DATA SCIENCE COM PYTHON DE A â Z	#
+######################################################################
+
+#NOTE 
+Content of course
+
+----------------------------------------------------------------------
+
+Parte 1 - Classificação
+
+pre-processamento
+naive bayes
+arvores de decisao
+ramdom forest
+knn
+regressao logistica
+svm
+redes neurais artificiais
+avaliação de algoritimos
+combinação e rejeição de classificação
+
+----------------------------------------------------------------------
+
+Parte 2 - Regressao
+regressao linear simples
+regressao linear multipla
+regressao polinominal
+arvore de decisao
+ramdom forest
+svm
+redes neurais artificiais
+
+----------------------------------------------------------------------
+
+Parte 3 - Associação
+algoritimo apriori
+algoritimo eclat
+bases de dados de mercado
+
+----------------------------------------------------------------------
+
+Parte 4 - Agrupamento 
+algoritimo k-means
+agrupamento hierarquico
+dbscan
+base de dados cartao de credito
+
+----------------------------------------------------------------------
+
+Parte 5 - Topicos complementares
+aprendizagem por reforço
+processamento de linguagem natural
+visao computacional
+dados desbalanceados
+selecao de atributos
+redução de dimensionalidades (pca e lda)
+detecção de outliers
+series temporais
+
+----------------------------------------------------------------------
+
+ANEXO - Programaçao básica em python
+
+----------------------------------------------------------------------
+
+
