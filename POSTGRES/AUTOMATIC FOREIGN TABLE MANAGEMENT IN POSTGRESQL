@@ -11,11 +11,11 @@ The idea of the solution is to automate the process of updating foreign tables i
 
 #CREATE EXTENSION postgres_fdw;
 
-#CREATE SERVER $foreignserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '$ip', port '$port', dbname '$foreigndatabase');
+#CREATE SERVER fdw_pg11 FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '$ip', port '$port', dbname '$foreigndatabase');
 
-#ALTER SERVER $foreigndatabase OWNER TO $user;
+#ALTER SERVER fdw_pg11 OWNER TO $user;
 
-#CREATE USER MAPPING FOR $user SERVER $foreigndatabase OPTIONS (user '$user', password '$password');
+#CREATE USER MAPPING FOR $user SERVER fdw_pg11 OPTIONS (user '$user', password '$password');
 
 #CREATE TABLE REGISTER FOREING TABLES
 
