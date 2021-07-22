@@ -9,6 +9,12 @@ When the original table is modified, the foreign table may become unusable.
 Needing to be recreated or modified to correct its characteristics. 
 The idea of the solution is to automate the process of updating foreign tables in postgres.
 
+#
+CREATE EXTENSION postgres_fdw;
+CREATE SERVER $foreignserver FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '$ip', port '$port', dbname '$foreigndatabase');
+ALTER SERVER $foreigndatabase OWNER TO $user;
+CREATE USER MAPPING FOR $user SERVER $foreigndatabase OPTIONS (user '$user', password '$password');
+
 #CREATE TABLE REGISTER FOREING TABLES
 
 DROP TABLE public.fdw_tables_list;
