@@ -283,7 +283,7 @@ ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
 
 -bash-4.2$ vim pg_hba.conf
 # TYPE  DATABASE        USER            ADDRESS               METHOD
-#host   all             enterprisedb    192.168.18.106/32       md5     
+#host   all             enterprisedb    192.168.18.0/24       md5  
 hostssl all             enterprisedb    192.168.18.0/24         cert clientcert=1
 
 #RESTART DATABASE EDB
