@@ -1,0 +1,119 @@
++++++++++++++++++++++++++++++++++++++++++
++	      INSTALL EDB BARMAN ON OL7	      +
++++++++++++++++++++++++++++++++++++++++++
+
+#CONFIGURE REPOSITORY
+[root@oracleedbes ~]# yum -y install https://yum.enterprisedb.com/edbrepos/edb-repo-latest.noarch.rpm
+
+[root@oracleedbes ~]# vim /etc/yum.repos.d/edb.repo
+[edb]
+name=EnterpriseDB RPMs $releasever - $basearch
+baseurl=https://<USERNAME>:<PASSWORD>@yum.enterprisedb.com/edb/redhat/rhel-$releasever-$basearch
+enabled=1
+repo_gpgcheck=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[edb-testing]
+name=EnterpriseDB Testing - Not For Production $releasever - $basearch
+baseurl=https://<USERNAME>:<PASSWORD>@yum.enterprisedb.com/edb-testing/redhat/rhel-$releasever-$basearch
+enabled=0
+repo_gpgcheck=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+#INSTALL EDB BARMAN CLI
+[root@oracleedbes ~]# yum -y barman-cli
+
+#USER PROVISIONING
+-bash-4.2$ /usr/edb/as13/bin/createuser --superuser --replication -P barman
+Enter password for new role: 
+Enter it again:
+
+-bash-4.2$ /usr/edb/as13/bin/createuser --replication -P streaming_barman 
+Enter password for new role: 
+Enter it again: 
+
+#ADD RULE TO PG_HBA FILE
+-bash-4.2$ sed -i '$ a host   replication    streaming_barman   all 			md5' /var/lib/edb/as13/data/pg_hba.conf
+-bash-4.2$ sed -i '$ a host   all            barman          	10.5.150.0/24           md5' /var/lib/edb/as13/data/pg_hba.conf
+-bash-4.2$ /usr/edb/as13/bin/psql postgres
+psql (13.3.7, server 13.3.7)
+Type "help" for help.
+
+postgres=# SELECT pg_reload_conf();
+ pg_reload_conf 
+----------------
+ t
+(1 row)
+
+#CREATE DATABASE DEMO AND IMPORT DUMP
+
+-bash-4.2$ /usr/edb/as13/bin/psql postgres -c "CREATE DATABASE DEMO;"
+CREATE DATABASE
+-bash-4.2$ /usr/edb/as13/bin/psql -d demo -f /tmp/demo_small.sql 
+
+#SETTING STREAMMING PARAMETERS
+-bash-4.2$ /usr/edb/as13/bin/psql -d demo
+psql (13.3.7, server 13.3.7)
+Type "help" for help.
+
+demo=# show max_wal_senders;
+ max_wal_senders 
+-----------------
+ 10
+(1 row)
+
+demo=# show max_replication_slots;
+ max_replication_slots 
+-----------------------
+ 10
+(1 row)
+
+#INSTALL BARMAN AND CONFIGURE
+
+[root@oracleedbes ~]# yum install -y barman
+
+[root@oracleedbes ~]# cat <<'EOF' >> /etc/barman.d/pg.conf
+[pg]
+description =  "Example of PostgreSQL Database (Streaming-Only)"
+conninfo = host=oracleedbes user=barman dbname=demo
+streaming_conninfo = host=pg user=streaming_barman dbname=demo
+backup_method = postgres
+streaming_archiver = on
+slot_name = barman
+create_slot = auto
+EOF
+
+[root@oracleedbes ~]# su - barman
+-bash-4.2$
+
+#CONFIGURE POSTGRESQL CONNECTION PASSWORD FILE
+
+-bash-4.2$ cat <<'EOF' >>~/.pgpass
+pg:*:*:barman:<password>
+pg:*:*:streaming_barman:<password>
+EOF
+-bash-4.2$ chmod 0600 ~/.pgpass
+
+-bash-4.2$ barman cron
+Starting WAL archiving for server oracleedbes
+Starting streaming archiver for server oracleedbes
+
+-bash-4.2$ barman check oracleedbes
+Server SEPOS-371506:
+	WAL archive: FAILED (please make sure WAL shipping is setup)
+	PostgreSQL: FAILED
+	directories: OK
+	retention policy settings: OK
+	backup maximum age: OK (no last_backup_maximum_age provided)
+	compression settings: OK
+	failed backups: OK (there are 0 failed backups)
+	minimum redundancy requirements: OK (have 0 backups, expected at least 0)
+	pg_basebackup: OK
+	pg_basebackup compatible: FAILED (PostgreSQL version: None, pg_basebackup version: 13.3.7)
+	systemid coherence: OK (no system Id available)
+	pg_receivexlog: FAILED
+	pg_receivexlog compatible: FAILED (PostgreSQL version: None, pg_receivexlog version: None)
+	receive-wal running: FAILED (See the Barman log file for more details)
+	archiver errors: OK
