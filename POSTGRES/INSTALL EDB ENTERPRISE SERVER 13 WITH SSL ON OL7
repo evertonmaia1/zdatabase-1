@@ -171,91 +171,119 @@ Disconnected from EnterpriseDB Database.
 [root@oracleedbes ~]# sudo su - enterprisedb
 -bash-4.2$ cd /var/lib/edb/as13/data 
 
-======= GENERATE A PRIVATE KEY (YOU MUST ENTER A PASS PHRASE): =======
+======= CREATE A SELF CERTIFICATE =======
 
--bash-4.2$ openssl genrsa -des3 -out server.key 1024
-Generating RSA private key, 1024 bit long modulus
-............++++++
-.......++++++
-e is 65537 (0x10001)
-Enter pass phrase for server.key:
-Verifying - Enter pass phrase for server.key:
+openssl req -new -nodes -text -out server.csr -keyout server.key -subj "/CN=oracleedbes.appsdba.info"
+Generating a 2048 bit RSA private key
+................................................................+++
+...............................+++
+writing new private key to 'server.key'
+-----
 
-======= REMOVE THE PASSPHRASE TO ALLOW AUTOMATIC START-UP OF THE SERVER: =======
-
--bash-4.2$ openssl rsa -in server.key -out server.key
-Enter pass phrase for server.key:
-writing RSA key
+-bash-4.2$ openssl x509 -req -in server.csr -text -days 3650 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -signkey server.key -out server.crt
+Signature ok
+subject=/CN=oracleedbes.appsdba.info
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number:
+            86:09:36:7c:b7:4b:b8:18
+    Signature Algorithm: NULL
+        Issuer: CN=oracleedbes.appsdba.info
+        Validity
+            Not Before: Aug 11 16:38:27 2021 GMT
+            Not After : Aug  9 16:38:27 2031 GMT
+        Subject: CN=oracleedbes.appsdba.info
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:c6:3b:a4:61:38:01:7b:c5:a2:5d:f0:09:31:62:
+                    0c:a0:2d:b6:a2:0d:3c:6a:d6:20:eb:f5:28:ba:a9:
+                    8f:f6:36:9a:24:46:58:09:a0:d6:f8:39:da:b0:0d:
+                    60:37:84:a9:4d:06:f1:d9:c2:25:f5:82:af:89:cb:
+                    22:ee:52:3e:c1:e8:cf:c6:6d:1a:67:3b:e6:23:0a:
+                    42:c7:9c:27:e7:b6:36:76:7a:1b:ad:92:32:f2:fc:
+                    eb:ab:27:ba:cd:77:4a:d2:22:8d:ee:08:25:93:a1:
+                    10:fd:71:b2:a8:65:e9:30:35:8c:60:c6:9f:ae:31:
+                    3c:71:03:1d:20:74:45:6a:47:4b:e3:1a:4e:c3:6c:
+                    72:4e:0d:ed:0c:ec:e7:a7:c9:a8:3f:79:1f:5f:2c:
+                    71:97:b5:43:0c:b2:3e:c5:e1:e9:fb:92:2d:57:27:
+                    0e:2c:f7:a4:41:34:fc:de:60:5d:5c:a0:2b:6e:6b:
+                    35:31:f3:14:b6:ea:9d:17:63:18:a1:4a:f6:23:20:
+                    4a:54:70:5d:49:8c:82:8b:db:7c:de:69:e4:79:72:
+                    ba:eb:79:50:dd:a4:dc:59:96:ed:c1:9e:20:32:e1:
+                    74:e0:58:7c:9e:1b:dc:28:7b:5e:21:7b:f5:8f:4f:
+                    81:7f:62:37:19:77:4f:38:0f:ea:13:0e:19:e1:56:
+                    b0:15
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: NULL
+Getting Private key
 
 ======= REMOVE GROUP AND OTHER’S PERMISSION FROM THE PRIVATE KEY FILE: =======
 
--bash-4.2$ chmod og-rwx server.key 
-
-======= CREATE A SELF-SIGNED CERTIFICATE. =======
-
--bash-4.2$ openssl req -new -key server.key -days 3650 -out server.crt -x509
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [XX]:BR
-State or Province Name (full name) []:CEARA
-Locality Name (eg, city) [Default City]:FORTALEZA
-Organization Name (eg, company) [Default Company Ltd]:EDB
-Organizational Unit Name (eg, section) []:1
-Common Name (eg, your name or your server's hostname) []:oracleedbes
-Email Address []:
+-bash-4.2$ chmod og-rwx server.key server.crt 
 
 ======= FOR SELF-SIGNED CERTIFICATES, USE THE SERVER CERTIFICATE AS THE TRUSTED ROOT CERTIFICATE: =======
 
 -bash-4.2$ cp server.crt root.crt
 
-======= CREATE THE PRIVATE KEY POSTGRESQL.KEY FOR THE CLIENT MACHINE AND REMOVE THE PASSPHRASE: =======
+====== CREATE A CLIENTE CERTIFICATE AND SIGN WITH enterprisedb
 
--bash-4.2$ openssl genrsa -des3 -out /tmp/postgresql.key 1024
-Generating RSA private key, 1024 bit long modulus
-....++++++
-..............................................++++++
-e is 65537 (0x10001)
-Enter pass phrase for /tmp/postgresql.key:
-Verifying - Enter pass phrase for /tmp/postgresql.key:
-
--bash-4.2$ openssl rsa -in /tmp/postgresql.key -out /tmp/postgresql.key
-Enter pass phrase for /tmp/postgresql.key:
-writing RSA key
-
-======= CREATE THE CERTIFICATE POSTGRESQL.CRT. =======
-
--bash-4.2$ openssl req -new -key /tmp/postgresql.key -out /tmp/postgresql.csr
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
+-bash-4.2$ openssl req -new -nodes -text -out /tmp/client.csr -keyout /tmp/client.key -subj "/CN=enterprisedb"
+Generating a 2048 bit RSA private key
+................................................................................................+++
+..................+++
+writing new private key to '/tmp/client.key'
 -----
-Country Name (2 letter code) [XX]:BR
-State or Province Name (full name) []:CEARA
-Locality Name (eg, city) [Default City]:FORTALEZA
-Organization Name (eg, company) [Default Company Ltd]:EDB
-Organizational Unit Name (eg, section) []:1
-Common Name (eg, your name or your server's hostname) []:oracleedbes
-Email Address []:
 
-Please enter the following 'extra' attributes
-to be sent with your certificate request
-A challenge password []:
-An optional company name []:
-
-======= SIGN IT USING THE TRUSTED ROOT CERTIFICATE: =======
-
--bash-4.2$ openssl x509 -req -in /tmp/postgresql.csr -CA root.crt -CAkey server.key -out  /tmp/postgresql.crt -CAcreateserial
+-bash-4.2$ openssl x509 -req -in /tmp/client.csr -text -days 365 -CA /var/lib/edb/as13/data/root.crt -CAkey /var/lib/edb/as13/data/server.key -CAcreateserial -out /tmp/client.crt 
 Signature ok
-subject=/C=BR/ST=CEARA/L=FORTALEZA/O=EDB/OU=1/CN=oracleedbes
+subject=/CN=enterprisedb
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number:
+            da:07:20:e8:02:37:dd:36
+    Signature Algorithm: NULL
+        Issuer: CN=enterprisedb
+        Validity
+            Not Before: Aug 11 17:20:21 2021 GMT
+            Not After : Aug 11 17:20:21 2022 GMT
+        Subject: CN=enterprisedb
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b3:81:ba:6e:a3:ee:27:56:df:a9:a6:2b:87:9b:
+                    39:f8:65:b6:93:58:3c:59:30:b8:f9:c1:55:ef:ff:
+                    e3:47:73:e8:92:ac:f4:40:f3:66:5d:99:7c:1e:40:
+                    21:ad:4d:cd:63:4a:ab:44:3f:99:2a:d5:90:6a:4d:
+                    64:1e:6f:c3:02:39:7d:42:60:ed:09:4c:36:b1:bb:
+                    0e:a3:b0:0b:4f:ed:b4:00:6c:2e:a0:95:0f:4f:bb:
+                    cb:96:aa:b0:e0:31:33:24:b4:ad:2b:db:07:51:fb:
+                    ee:e3:fc:db:1d:62:01:0f:2d:0c:7a:d9:3a:5a:d5:
+                    b3:d8:b4:e7:5e:f3:80:29:61:5f:c7:6f:b8:0d:2c:
+                    0b:32:bc:1f:84:86:6e:17:fc:f1:f7:22:db:07:30:
+                    0b:5b:f6:12:bd:bf:1e:79:73:d9:fd:14:98:cb:c0:
+                    18:d1:1d:2c:93:53:fc:3a:70:ac:a7:c8:08:e3:52:
+                    a7:ea:67:f4:09:9d:ff:22:12:55:1a:34:5d:73:f8:
+                    88:d8:54:51:22:0f:06:9a:1e:3a:1c:2a:b6:43:b7:
+                    be:d1:11:c0:b7:94:51:c4:b1:98:51:a0:eb:90:b3:
+                    d9:1b:6e:39:22:51:b4:4b:e2:87:9f:ef:c6:1a:85:
+                    61:23:e1:9c:cb:8b:dc:8c:4d:52:4a:df:83:3c:ce:
+                    85:69
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: NULL
 Getting CA Private Key
+
+======= REMOVE GROUP AND OTHER’S PERMISSION FROM THE CLIENT KEY FILE: =======
+
+chmod 600 /tmp/client.*
+
+======= COPY ROOT CERTIFICATE ========
+
+cp /var/lib/edb/as13/data/root.crt /tmp/root.crt
 
 ======= LIST FILES ========
 
@@ -265,10 +293,11 @@ Getting CA Private Key
 -rw-rw-r--  1 enterprisedb enterprisedb   948 Aug  3 23:16 root.crt
 -rw-rw-r--  1 enterprisedb enterprisedb    17 Aug  3 23:21 root.srl
 
--bash-4.2$ ls -ltr /tmp/postgresql.*
--rw-rw-r-- 1 enterprisedb enterprisedb 887 Aug  3 23:19 /tmp/postgresql.key
--rw-rw-r-- 1 enterprisedb enterprisedb 643 Aug  3 23:20 /tmp/postgresql.csr
--rw-rw-r-- 1 enterprisedb enterprisedb 830 Aug  3 23:21 /tmp/postgresql.crt
+-bash-4.2$ ls -ltr /tmp/
+-rw-------. 1 enterprisedb enterprisedb 1704 Aug 11 14:18 client.key
+-rw-------. 1 enterprisedb enterprisedb 3323 Aug 11 14:18 client.csr
+-rw-------. 1 enterprisedb enterprisedb 1009 Aug 11 14:20 client.crt
+-rw-------. 1 enterprisedb enterprisedb 1151 Aug 11 14:37 root.crt
 
 #CONFIGURE SSL PARAMETERS ON POSTGRESQL.CONF AND CHECK PARAMETER ssl_ca_file ON DATABASE
 -bash-4.2$ vim postgresql.conf
@@ -279,12 +308,13 @@ ssl_ca_file = 'root.crt'
 ssl_cert_file = 'server.crt'
 ssl_crl_file = ''
 ssl_key_file = 'server.key'
-ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
+ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL' 
+ssl_prefer_server_ciphers = on
 
 -bash-4.2$ vim pg_hba.conf
 # TYPE  DATABASE        USER            ADDRESS               METHOD
 #host   all             enterprisedb    192.168.18.0/24       md5  
-hostssl all             enterprisedb    192.168.18.0/24         cert clientcert=1
+hostssl all             enterprisedb    192.168.18.0/24       md5 clientcert=1
 
 #RESTART DATABASE EDB
 -bash-4.2$ exit
@@ -346,26 +376,47 @@ postgres=# show ssl_ca_file;
 2021-08-03 23:22:49 -03 LOG:  database system is ready to accept connections
 2021-08-03 23:22:49 -03 LOG:  dbms_aq launcher started
 
-#TEST CONNECTION FROM REMOTE MACHINE (NEED TO INSTALL PSQL)
-remote@remote-x:~ cd edb_cert
-remote@remote-x:~/edb_cert$ ls -ltr 
--rw-rw-r-- 1 remote remote 948 ago  3 23:27 root.crt
--rw-rw-r-- 1 remote remote 887 ago  3 23:29 postgresql.key
--rw-rw-r-- 1 remote remote 830 ago  3 23:29 postgresql.crt
-
-psql 'host=192.168.18.23 port=5444 dbname=edb user=enterprisedb sslmode=verify-full sslcert=postgresql.crt sslkey=postgresql.key sslrootcert=root.crt'
-psql (12.7, server 13.3.7)
+#TEST CONNECTION FROM LOCAL MACHINE USING SERVER KEY
+-bash-4.2$ /usr/edb/as13/bin/psql 'host=oracleedbes.appsdba.info port=5444 dbname=postgres user=enterprisedb sslmode=verify-full sslcert=/var/lib/edb/as13/data/server.crt sslkey=/var/lib/edb/as13/data/server.key sslrootcert=/var/lib/edb/as13/data/root.crt'
+Password for user enterprisedb: 
+psql (13.3.7, server 13.3.7)
+SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256, compression: off)
 Type "help" for help.
 
-postgres=# \du
-                                         List of roles
-       Role name       |                         Attributes                         | Member of 
------------------------+------------------------------------------------------------+-----------
- aq_administrator_role | No inheritance, Cannot login                              +| {}
-                       | Profile default                                            | 
- enterprisedb          | Superuser, Create role, Create DB, Replication, Bypass RLS+| {}
-                       | Profile default                                            | 
+postgres=# \q
+
+#TEST CONNECTION FROM LOCAL MACHINE USING CLIENT KEY
+-bash-4.2$ /usr/edb/as13/bin/psql 'host=oracleedbes.appsdba.info port=5444 dbname=postgres user=enterprisedb sslmode=verify-full sslcert=/tmp/client.crt sslkey=/tmp/client.key sslrootcert=/tmp/root.crt'
+Password for user enterprisedb: 
+psql (13.3.7, server 13.3.7)
+SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256, compression: off)
+Type "help" for help.
 
 postgres=# \q
+
+#TEST CONNECTION FROM REMOTE MACHINE USING CLIENT KEY
+
+======= CREATE USER FOR REMOTE CONNECTION ========
+
+[root@remote ~]# adduser enterprisedb
+
+======= CONNECT AND COPY KEYS ========
+
+[root@remote ~]# su - enterprisedb
+[enterprisedb@remote]$ scp root@:192.168.18.23/tmp/{client.key,client.csr,client.crt,root.crt} /tmp/
+[enterprisedb@remote]$ ls -ltr /tmp
+-rw-------  1 enterprisedb enterprisedb 1704 Aug 11 14:43 client.key
+-rw-------  1 enterprisedb enterprisedb 3323 Aug 11 14:43 client.csr
+-rw-------  1 enterprisedb enterprisedb 1009 Aug 11 14:43 client.crt
+-rw-------  1 enterprisedb enterprisedb 1151 Aug 11 14:44 root.crt
+
+======= TEST REMOTE CONNECTION ========
+[enterprisedb@remote]$ /usr/local/pgsql-12.3/bin/psql 'host=oracleedbes.appsdba.info port=5444 dbname=postgres user=enterprisedb sslmode=verify-full sslcert=/tmp/client.crt sslkey=/tmp/client.key sslrootcert=/tmp/root.crt'
+Password for user enterprisedb: 
+psql (12.3, server 13.3.7)
+WARNING: psql major version 12, server major version 13.
+         Some psql features might not work.
+SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256, compression: off)
+Type "help" for help.
 
 ## FINISH ##
