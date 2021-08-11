@@ -23,7 +23,7 @@ gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
 
 #INSTALL EDB BARMAN CLI
-[root@oracleedbes ~]# yum -y barman-cli
+[root@oracleedbes ~]# yum install -y barman-cli
 
 #USER PROVISIONING
 -bash-4.2$ /usr/edb/as13/bin/createuser --superuser --replication -P barman
