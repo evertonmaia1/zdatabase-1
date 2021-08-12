@@ -132,7 +132,7 @@ Starting streaming archiver for server oracleedbes
 
 -bash-4.2$ barman check oracleedbes.appsdba.info
 Server oracleedbes.appsdba.info:
-	WAL archive: **FAILED (please make sure WAL shipping is setup)**
+	WAL archive: FAILED (please make sure WAL shipping is setup)
 	PostgreSQL: OK
 	superuser or standard user with backup privileges: OK
 	PostgreSQL streaming: FAILED (fe_sendauth: no password supplied)
@@ -152,7 +152,7 @@ Server oracleedbes.appsdba.info:
 	pg_receivexlog compatible: FAILED (PostgreSQL version: None, pg_receivexlog version: None)
 	receive-wal running: FAILED (See the Barman log file for more details)
 	archiver errors: OK
-	
+
 -bash-4.2$ barman show-server oracleedbes.appsdba.info
 Server oracleedbes.appsdba.info:
 	active: True
@@ -173,7 +173,7 @@ Server oracleedbes.appsdba.info:
 	compression: None
 	config_file: /var/lib/edb/as13/data/postgresql.conf
 	connection_error: fe_sendauth: no password supplied
-	conninfo: host=oracleedbes.appsdba.info port=5444 user=barman dbname=demo
+	conninfo: host=oracleedbes.appsdba.info port=5444 user=barman <font color="red">Status: dbname=demo
 	create_slot: auto
 	current_lsn: 0/1340C6C0
 	current_size: 365096139
