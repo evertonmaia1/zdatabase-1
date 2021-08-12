@@ -70,6 +70,29 @@ demo=# show max_replication_slots;
  10
 (1 row)
 
+#POSTEGRESQL CONNECTION
+
+-bash-4.2$ /usr/edb/as13/bin/psql postgres
+psql (13.3.7, server 13.3.7)
+Type "help" for help.
+
+postgres=# GRANT EXECUTE ON FUNCTION pg_start_backup(text, boolean, boolean) to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_stop_backup() to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_stop_backup(boolean, boolean) to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_switch_wal() to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_create_restore_point(text) to barman;
+GRANT
+postgres=# GRANT pg_read_all_settings TO barman;
+GRANT ROLE
+postgres=# GRANT pg_read_all_stats TO barman;
+GRANT ROLE
+postgres=# \q
+
+
 #INSTALL BARMAN AND CONFIGURE
 
 [root@oracleedbes ~]# yum install -y barman
