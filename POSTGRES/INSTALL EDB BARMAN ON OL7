@@ -132,7 +132,7 @@ Starting streaming archiver for server oracleedbes
 
 -bash-4.2$ barman check oracleedbes.appsdba.info
 Server oracleedbes.appsdba.info:
-	WAL archive: <font color="red">Status: **FAILED (please make sure WAL shipping is setup)**</font>
+	WAL archive: **FAILED (please make sure WAL shipping is setup)**
 	PostgreSQL: OK
 	superuser or standard user with backup privileges: OK
 	PostgreSQL streaming: FAILED (fe_sendauth: no password supplied)
