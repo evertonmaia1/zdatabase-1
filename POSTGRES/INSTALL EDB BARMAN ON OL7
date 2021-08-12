@@ -75,10 +75,10 @@ demo=# show max_replication_slots;
 [root@oracleedbes ~]# yum install -y barman
 
 [root@oracleedbes ~]# cat <<'EOF' >> /etc/barman.d/pg.conf
-[pg]
+[oracleedbes.appsdba.info]
 description =  "Example of PostgreSQL Database (Streaming-Only)"
-conninfo = host=oracleedbes user=barman dbname=demo
-streaming_conninfo = host=pg user=streaming_barman dbname=demo
+conninfo = host=oracleedbes.appsdba.info user=barman dbname=demo
+streaming_conninfo = host=oracleedbes.appsdba.info user=streaming_barman dbname=demo
 backup_method = postgres
 streaming_archiver = on
 slot_name = barman
@@ -91,8 +91,8 @@ EOF
 #CONFIGURE POSTGRESQL CONNECTION PASSWORD FILE
 
 -bash-4.2$ cat <<'EOF' >>~/.pgpass
-pg:*:*:barman:<password>
-pg:*:*:streaming_barman:<password>
+oracleedbes.appsdba.info:5444:barman:enterprisedb
+oracleedbes.appsdba.info:5444:streaming_barman:enterprisedb
 EOF
 -bash-4.2$ chmod 0600 ~/.pgpass
 
@@ -100,7 +100,7 @@ EOF
 Starting WAL archiving for server oracleedbes
 Starting streaming archiver for server oracleedbes
 
--bash-4.2$ barman check oracleedbes
+-bash-4.2$ barman check oracleedbes.appsdba.info
 Server SEPOS-371506:
 	WAL archive: FAILED (please make sure WAL shipping is setup)
 	PostgreSQL: FAILED
