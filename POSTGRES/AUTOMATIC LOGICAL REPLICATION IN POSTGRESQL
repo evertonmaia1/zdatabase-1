@@ -1,0 +1,316 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++
++   AUTOMATIC LOGICAL REPLICATION IN POSTGRESQL   +
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+========================================================================================================================================================================================================
+
+DROP TABLE public.meta_subscription;
+
+CREATE TABLE public.meta_subscription (
+	subname name NULL COLLATE "C",
+	subconninfo text NULL COLLATE "C",
+	subslotname name NULL COLLATE "C",
+	subpublications _text NULL COLLATE "C",
+	subschema text NULL COLLATE "C",
+	subdatabase text NULL COLLATE "C"
+);
+
+INSERT INTO public.meta_subscription
+(subname, subconninfo, subslotname, subpublications, subschema, subdatabase)
+VALUES('paciente_seguranca_hm_aws','host=10.5.150.191 port=5432 user=postgres dbname=seguranca password=Z6PT7@9C*UuBrHG66', 'paciente_seguranca_hm_aws', '{seguranca_paciente_hm_aws}','seguranca','paciente');
+
+          subname          | subowner | subenabled |                                      subconninfo                                      |        subslotname        | subsynccommit |       subpublications       
+---------------------------+----------+------------+---------------------------------------------------------------------------------------+---------------------------+---------------+-----------------------------
+ paciente_seguranca_hm_aws |       10 | t          | host=10.5.150.191 port=5432 user=postgres dbname=seguranca password=Z6PT7@9C*UuBrHG66 | paciente_seguranca_hm_aws | off           | {seguranca_paciente_hm_aws}
+
+========================================================================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION public.disable_subscription_logical(namesub text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ENABLED boolean;
+SUB text;
+BEGIN   
+select ps.subenabled from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into ENABLED;
+IF ENABLED = true THEN
+select ms.subname from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into SUB;
+EXECUTE 'SET client_min_messages TO WARNING;';
+EXECUTE 'ALTER SUBSCRIPTION ' || SUB || ' DISABLE;';
+END IF;
+END;
+$function$
+;
+
+========================================================================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION public.slote_none_subscription_logical(namesub text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ENABLED boolean;
+SUB text;
+BEGIN   
+select ps.subenabled from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into ENABLED;
+IF (ENABLED = false OR ENABLED IS NULL) THEN 
+select ms.subname from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into SUB;
+EXECUTE 'SET client_min_messages TO WARNING;';
+EXECUTE 'ALTER SUBSCRIPTION ' || SUB || ' SET (slot_name = NONE);';
+END IF;
+END;
+$function$
+;
+
+========================================================================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION public.create_slot_logical(namesub text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ENABLED boolean;
+SUB text;
+CONINFO text;
+BEGIN  
+select ps.subenabled from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into ENABLED;
+IF (ENABLED = false OR ENABLED IS NULL) THEN 
+select ms.subname from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into SUB;
+EXECUTE 'SET client_min_messages TO WARNING;';
+select ms.subconninfo from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into CONINFO;
+EXECUTE 'SELECT * FROM dblink_exec('''||CONINFO||''',''select pg_create_physical_replication_slot('''''||SUB||''''')'');';
+END IF;
+END;
+$function$
+;
+
+========================================================================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION public.drop_slot_logical(namesub text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ENABLED boolean;
+SUB text;
+CONINFO text;
+BEGIN  
+select ps.subenabled from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into ENABLED;
+IF (ENABLED = false OR ENABLED IS NULL) THEN 
+select ms.subname from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into SUB;
+EXECUTE 'SET client_min_messages TO WARNING;';
+select ms.subconninfo from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into CONINFO;
+EXECUTE 'SELECT * FROM dblink_exec('''||CONINFO||''',''select pg_drop_replication_slot('''''||SUB||''''')'');';
+END IF;
+END;
+$function$
+;
+
+========================================================================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION public.drop_subscription_logical(namesub text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ENABLED boolean;
+SUB text;
+BEGIN   
+select ps.subenabled from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into ENABLED;
+IF (ENABLED = false OR ENABLED IS NULL) THEN 
+select ms.subname from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into SUB;
+EXECUTE 'SET client_min_messages TO WARNING;';
+EXECUTE 'DROP SUBSCRIPTION IF EXISTS ' || SUB || ';';
+END IF;
+END;
+$function$
+;
+
+========================================================================================================================================================================================================
+
+#EXECUCAO DA REMOÇÃO DA SUBSCRICAO
+SELECT public.disable_subscription_logical('paciente_seguranca_hm_aws');
+SELECT public.slote_none_subscription_logical('paciente_seguranca_hm_aws');
+SELECT public.drop_slot_logical('paciente_seguranca_hm_aws');
+SELECT public.drop_subscription_logical('paciente_seguranca_hm_aws');
+
+#CRIACAO DE UM SLOT 
+SELECT public.create_slot_logical('paciente_seguranca_hm_aws');
+
+#CRIAR UMA REPLICAÇAO LOGICA
+CREATE SUBSCRIPTION paciente_seguranca_hm_aws CONNECTION 'host=10.5.150.191 port=5432 user=postgres dbname=seguranca password=Z6PT7@9C*UuBrHG66' PUBLICATION seguranca_paciente_hm_aws;
+
+========================================================================================================================================================================================================
+
+#CATALOGO DE OBJETOS DO SCHEMA REPLICADO
+
+CREATE OR REPLACE FUNCTION public.create_catalog_sub_logical(namesub text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+SUBSCHEMA text;
+BEGIN   
+select ms.subschema from pg_subscription ps full join public.meta_subscription ms on ms.subname = ps.subname where ms.subname = namesub into SUBSCHEMA;
+EXECUTE 'DROP TABLE IF EXISTS public.meta_schema_logical;';
+EXECUTE 'CREATE TABLE public.meta_schema_logical AS SELECT DISTINCT dep.deptype, dep.classid, cl.relkind, ad.adbin, pg_get_expr(ad.adbin, ad.adrelid) as adsrc,
+	    CASE WHEN cl.relkind IS NOT NULL THEN CASE WHEN cl.relkind = ''r'' THEN cl.relkind || COALESCE(dep.objsubid::text, '''') ELSE cl.relkind END
+	        WHEN tg.oid IS NOT NULL THEN ''Tr''::text
+	        WHEN ty.oid IS NOT NULL THEN CASE WHEN ty.typtype = ''d'' THEN ''d''::text ELSE ''Ty''::text END
+	        WHEN ns.oid IS NOT NULL THEN ''n''::text
+	        WHEN pr.oid IS NOT NULL AND (prtyp.typname = ''trigger'' OR prtyp.typname = ''event_trigger'') THEN ''Pt''::text
+	        WHEN pr.oid IS NOT NULL THEN CASE WHEN pr.prokind = ''p'' THEN ''Pp''::text ELSE ''Pf''::text END
+	        WHEN la.oid IS NOT NULL THEN ''l''::text
+	        WHEN rw.oid IS NOT NULL THEN ''Rl''::text
+	        WHEN co.oid IS NOT NULL THEN CASE WHEN co.contypid > 0 THEN ''Cd'' ELSE ''C''::text || contype END
+	        WHEN ad.oid IS NOT NULL THEN ''A''::text
+	        WHEN fs.oid IS NOT NULL THEN ''Fs''::text
+	        WHEN fdw.oid IS NOT NULL THEN ''Fw''::text
+	        WHEN evt.oid IS NOT NULL THEN ''Et''::text
+	        WHEN col.oid IS NOT NULL THEN ''Co''::text
+	        WHEN ftsc.oid IS NOT NULL THEN ''Fc''::text
+	        WHEN ftsp.oid IS NOT NULL THEN ''Fp''::text
+	        WHEN ftsd.oid IS NOT NULL THEN ''Fd''::text
+	        WHEN ftst.oid IS NOT NULL THEN ''Ft''::text
+	        WHEN ext.oid IS NOT NULL THEN ''Ex''::text
+	        WHEN pl.oid IS NOT NULL THEN ''Rs''::text
+	    ELSE ''''
+	    END AS type,
+	    cl.oid as oid,
+	    COALESCE(coc.relname, clrw.relname) AS ownertable,
+	    CASE WHEN cl.relname IS NOT NULL AND att.attname IS NOT NULL THEN cl.relname || COALESCE(''.'' || att.attname, '''')
+	    ELSE COALESCE(cl.relname, co.conname, pr.proname, tg.tgname, ty.typname, la.lanname, rw.rulename, ns.nspname,
+	                  fs.srvname, fdw.fdwname, evt.evtname, col.collname, ftsc.cfgname, ftsd.dictname, ftsp.prsname,
+	                  ftst.tmplname, ext.extname, pl.polname)
+	    END AS refname,
+	    COALESCE(nsc.nspname, nso.nspname, nsp.nspname, nst.nspname, nsrw.nspname, colns.nspname, ftscns.nspname,
+	        ftsdns.nspname, ftspns.nspname, ftstns.nspname) AS nspname,
+	    CASE WHEN inhits.inhparent IS NOT NULL THEN ''1'' ELSE ''0'' END AS is_inherits,
+	    CASE WHEN inhed.inhparent IS NOT NULL THEN ''1'' ELSE ''0'' END AS is_inherited
+	FROM pg_depend dep
+	LEFT JOIN pg_class cl ON dep.objid=cl.oid
+	LEFT JOIN pg_attribute att ON dep.objid=att.attrelid AND dep.objsubid=att.attnum
+	LEFT JOIN pg_namespace nsc ON cl.relnamespace=nsc.oid
+	LEFT JOIN pg_proc pr ON dep.objid=pr.oid
+	LEFT JOIN pg_namespace nsp ON pr.pronamespace=nsp.oid
+	LEFT JOIN pg_trigger tg ON dep.objid=tg.oid
+	LEFT JOIN pg_type ty ON dep.objid=ty.oid
+	LEFT JOIN pg_namespace nst ON ty.typnamespace=nst.oid
+	LEFT JOIN pg_constraint co ON dep.objid=co.oid
+	LEFT JOIN pg_class coc ON co.conrelid=coc.oid
+	LEFT JOIN pg_namespace nso ON co.connamespace=nso.oid
+	LEFT JOIN pg_rewrite rw ON dep.objid=rw.oid
+	LEFT JOIN pg_class clrw ON clrw.oid=rw.ev_class
+	LEFT JOIN pg_namespace nsrw ON clrw.relnamespace=nsrw.oid
+	LEFT JOIN pg_language la ON dep.objid=la.oid
+	LEFT JOIN pg_namespace ns ON dep.objid=ns.oid
+	LEFT JOIN pg_attrdef ad ON ad.oid=dep.objid
+	LEFT JOIN pg_foreign_server fs ON fs.oid=dep.objid
+	LEFT JOIN pg_foreign_data_wrapper fdw ON fdw.oid=dep.objid
+	LEFT JOIN pg_type prtyp ON prtyp.oid = pr.prorettype
+	LEFT JOIN pg_inherits inhits ON (inhits.inhrelid=dep.objid)
+	LEFT JOIN pg_inherits inhed ON (inhed.inhparent=dep.objid)
+	LEFT JOIN pg_event_trigger evt ON evt.oid=dep.objid
+	LEFT JOIN pg_collation col ON col.oid=dep.objid
+	LEFT JOIN pg_namespace colns ON col.collnamespace=colns.oid
+	LEFT JOIN pg_ts_config ftsc ON ftsc.oid=dep.objid
+	LEFT JOIN pg_namespace ftscns ON ftsc.cfgnamespace=ftscns.oid
+	LEFT JOIN pg_ts_dict ftsd ON ftsd.oid=dep.objid
+	LEFT JOIN pg_namespace ftsdns ON ftsd.dictnamespace=ftsdns.oid
+	LEFT JOIN pg_ts_parser ftsp ON ftsp.oid=dep.objid
+	LEFT JOIN pg_namespace ftspns ON ftsp.prsnamespace=ftspns.oid
+	LEFT JOIN pg_ts_template ftst ON ftst.oid=dep.objid
+	LEFT JOIN pg_namespace ftstns ON ftst.tmplnamespace=ftstns.oid
+	LEFT JOIN pg_extension ext ON ext.oid=dep.objid
+	LEFT JOIN pg_policy pl ON pl.oid=dep.objid
+	WHERE dep.refobjid = (select oid::oid from pg_namespace where nspname=''' || SUBSCHEMA || ''') AND
+	classid IN ( SELECT oid FROM pg_class WHERE relname IN
+	   (''pg_class'', ''pg_constraint'', ''pg_conversion'', ''pg_language'', ''pg_proc'', ''pg_rewrite'', ''pg_namespace'',
+	   ''pg_trigger'', ''pg_type'', ''pg_attrdef'', ''pg_event_trigger'', ''pg_foreign_server'', ''pg_foreign_data_wrapper'',
+	   ''pg_collation'', ''pg_ts_config'', ''pg_ts_dict'', ''pg_ts_parser'', ''pg_ts_template'', ''pg_extension'', ''pg_policy''))
+	ORDER BY classid, cl.relkind;';
+EXECUTE 'ALTER TABLE public.meta_schema_logical ADD ddl_def text NULL COLLATE "C";';	
+END;
+$function$
+;
+
+select public.create_catalog_sub_logical('paciente_seguranca_hm_aws');
+select * from public.meta_schema_logical;
+
+========================================================================================================================================================================================================
+
+CREATE or replace FUNCTION  public.get_viewdef_logical(poid oid) RETURNS SETOF text AS
+$BODY$
+BEGIN
+    RETURN QUERY select * from (
+SELECT
+	   'DROP VIEW IF EXISTS ' || nsp.nspname || '.' || c.relname || ';' || E'\n' ||
+	   'CREATE VIEW ' || nsp.nspname || '.' || c.relname || E'\nAS\n' ||                      
+            pg_catalog.pg_get_viewdef(c.oid, true) || 
+            E'\n ALTER VIEW ' || nsp.nspname || '.' || c.relname || ' OWNER TO postgres;' ||           
+            E'\n' as campo
+        FROM pg_catalog.pg_class c
+        LEFT OUTER JOIN pg_catalog.pg_namespace nsp on nsp.oid = c.relnamespace
+        LEFT OUTER JOIN pg_catalog.pg_tablespace spc on spc.oid=c.reltablespace
+        LEFT OUTER JOIN pg_catalog.pg_description des ON (des.objoid=c.oid and des.objsubid=0 AND des.classoid='pg_class'::regclass)
+            WHERE ((c.relhasrules AND (EXISTS (
+                SELECT
+                    r.rulename
+                FROM
+                    pg_catalog.pg_rewrite r
+                WHERE
+                    ((r.ev_class = c.oid)
+                        AND (bpchar(r.ev_type) = '1'::bpchar)) )))
+                    AND (c.relkind = 'v'::char)
+                  )
+            AND c.oid = poid::oid
+UNION ALL
+SELECT 'GRANT ' || array_to_string(array_agg(privilege_type), ',', '*')|| ' ON ' || d.schemaname || '.' || d.viewname || ' TO ' || COALESCE(gt.rolname, 'PUBLIC') || ';' as campo
+	FROM
+	    (SELECT
+	        d.grantee, d.grantor, d.is_grantable,
+	        CASE d.privilege_type
+	        WHEN 'DELETE' THEN 'DELETE'
+	        WHEN 'INSERT' THEN 'INSERT'
+	        WHEN 'REFERENCES' THEN 'REFERENCES'
+	        WHEN 'SELECT' THEN 'SELECT'
+	        WHEN 'TRIGGER' THEN 'TRIGGER'
+	        WHEN 'UPDATE' THEN 'UPDATE'
+	        WHEN 'TRUNCATE' THEN 'TRUNCATE'
+	        ELSE 'UNKNOWN'
+	        END AS privilege_type,
+			acl.schemaname,
+		 	acl.viewname
+	    FROM
+	        (SELECT
+			relacl, 
+			pv.schemaname,
+			pv.viewname
+			FROM
+			pg_class cl
+			LEFT OUTER JOIN pg_shdescription descr ON
+			(cl.oid=descr.objoid AND descr.classoid='pg_class'::regclass)
+			JOIN pg_catalog.pg_views pv ON cl.relname=pv.viewname
+			WHERE
+			cl.oid = poid::OID AND relkind = 'v'
+	        ) acl,
+	        aclexplode(relacl) d
+	    ) d
+	LEFT JOIN pg_catalog.pg_roles g ON (d.grantor = g.oid)
+	LEFT JOIN pg_catalog.pg_roles gt ON (d.grantee = gt.oid)
+	GROUP BY
+	    g.rolname,
+	    gt.rolname,
+		d.schemaname,
+		d.viewname ) as a ;
+    RETURN;
+ END
+$BODY$
+LANGUAGE plpgsql;
+
+select public.get_viewdef_logical(20434);
+
+========================================================================================================================================================================================================
+
+UPDATE public.meta_schema_logical set ddl_def = (select STRING_AGG(get_viewdef_logical, E'\n') from (select public.get_viewdef_logical(20434)) as meta) where oid=20434;
