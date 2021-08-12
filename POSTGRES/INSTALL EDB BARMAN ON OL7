@@ -92,7 +92,6 @@ postgres=# GRANT pg_read_all_stats TO barman;
 GRANT ROLE
 postgres=# \q
 
-
 #INSTALL BARMAN AND CONFIGURE
 
 [root@oracleedbes ~]# yum install -y barman
@@ -111,11 +110,19 @@ EOF
 [root@oracleedbes ~]# su - barman
 -bash-4.2$
 
+#TEST CONNECTION DATABASE 
+-bash-4.2$ /usr/edb/as13/bin/psql -h oracleedbes.appsdba.info -p 5444 -d postgres -U barman -c 'SELECT version()'
+Password for user barman: 
+                                                                    version                                                                    
+-----------------------------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 13.3 (EnterpriseDB Advanced Server 13.3.7) on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-36), 64-bit
+(1 row)
+
 #CONFIGURE POSTGRESQL CONNECTION PASSWORD FILE
 
 -bash-4.2$ cat <<'EOF' >>~/.pgpass
-oracleedbes.appsdba.info:5444:barman:enterprisedb
-oracleedbes.appsdba.info:5444:streaming_barman:enterprisedb
+oracleedbes.appsdba.info:5444:demo:barman:enterprisedb
+oracleedbes.appsdba.info:5444:demo:streaming_barman:enterprisedb
 EOF
 -bash-4.2$ chmod 0600 ~/.pgpass
 
