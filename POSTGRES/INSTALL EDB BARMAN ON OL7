@@ -1,0 +1,272 @@
++++++++++++++++++++++++++++++++++++++++++
++	      INSTALL EDB BARMAN ON OL7	      +
++++++++++++++++++++++++++++++++++++++++++
+
+#CONFIGURE REPOSITORY
+[root@oracleedbes ~]# yum -y install https://yum.enterprisedb.com/edbrepos/edb-repo-latest.noarch.rpm
+
+[root@oracleedbes ~]# vim /etc/yum.repos.d/edb.repo
+[edb]
+name=EnterpriseDB RPMs $releasever - $basearch
+baseurl=https://<USERNAME>:<PASSWORD>@yum.enterprisedb.com/edb/redhat/rhel-$releasever-$basearch
+enabled=1
+repo_gpgcheck=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[edb-testing]
+name=EnterpriseDB Testing - Not For Production $releasever - $basearch
+baseurl=https://<USERNAME>:<PASSWORD>@yum.enterprisedb.com/edb-testing/redhat/rhel-$releasever-$basearch
+enabled=0
+repo_gpgcheck=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+#INSTALL EDB BARMAN CLI
+[root@oracleedbes ~]# yum install -y barman-cli
+
+#USER PROVISIONING
+-bash-4.2$ /usr/edb/as13/bin/createuser --superuser --replication -P barman
+Enter password for new role: 
+Enter it again:
+
+-bash-4.2$ /usr/edb/as13/bin/createuser --replication -P streaming_barman 
+Enter password for new role: 
+Enter it again: 
+
+#ADD RULE TO PG_HBA FILE
+-bash-4.2$ sed -i '$ a host   replication    streaming_barman   all 			md5' /var/lib/edb/as13/data/pg_hba.conf
+-bash-4.2$ sed -i '$ a host   all            barman          	10.5.150.0/24           md5' /var/lib/edb/as13/data/pg_hba.conf
+-bash-4.2$ /usr/edb/as13/bin/psql postgres
+psql (13.3.7, server 13.3.7)
+Type "help" for help.
+
+postgres=# SELECT pg_reload_conf();
+ pg_reload_conf 
+----------------
+ t
+(1 row)
+
+#CREATE DATABASE DEMO AND IMPORT DUMP
+
+-bash-4.2$ /usr/edb/as13/bin/psql postgres -c "CREATE DATABASE DEMO;"
+CREATE DATABASE
+-bash-4.2$ /usr/edb/as13/bin/psql -d demo -f /tmp/demo_small.sql 
+
+#SETTING STREAMMING PARAMETERS
+-bash-4.2$ /usr/edb/as13/bin/psql -d demo
+psql (13.3.7, server 13.3.7)
+Type "help" for help.
+
+demo=# show max_wal_senders;
+ max_wal_senders 
+-----------------
+ 10
+(1 row)
+
+demo=# show max_replication_slots;
+ max_replication_slots 
+-----------------------
+ 10
+(1 row)
+
+#POSTEGRESQL CONNECTION
+
+-bash-4.2$ /usr/edb/as13/bin/psql postgres
+psql (13.3.7, server 13.3.7)
+Type "help" for help.
+
+postgres=# GRANT EXECUTE ON FUNCTION pg_start_backup(text, boolean, boolean) to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_stop_backup() to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_stop_backup(boolean, boolean) to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_switch_wal() to barman;
+GRANT
+postgres=# GRANT EXECUTE ON FUNCTION pg_create_restore_point(text) to barman;
+GRANT
+postgres=# GRANT pg_read_all_settings TO barman;
+GRANT ROLE
+postgres=# GRANT pg_read_all_stats TO barman;
+GRANT ROLE
+postgres=# \q
+
+#INSTALL BARMAN AND CONFIGURE
+
+[root@oracleedbes ~]# yum install -y barman
+
+[root@oracleedbes ~]# cat <<'EOF' >> /etc/barman.d/pg.conf
+[oracleedbes.appsdba.info]
+description =  "Example of PostgreSQL Database (Streaming-Only)"
+conninfo = host=oracleedbes.appsdba.info user=barman dbname=demo
+streaming_conninfo = host=oracleedbes.appsdba.info user=streaming_barman dbname=demo
+backup_method = postgres
+streaming_archiver = on
+slot_name = barman
+create_slot = auto
+EOF
+
+[root@oracleedbes ~]# su - barman
+-bash-4.2$
+
+#TEST CONNECTION DATABASE 
+-bash-4.2$ /usr/edb/as13/bin/psql -h oracleedbes.appsdba.info -p 5444 -d postgres -U barman -c 'SELECT version()'
+Password for user barman: 
+                                                                    version                                                                    
+-----------------------------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 13.3 (EnterpriseDB Advanced Server 13.3.7) on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-36), 64-bit
+(1 row)
+
+#CONFIGURE POSTGRESQL CONNECTION PASSWORD FILE
+
+-bash-4.2$ cat <<'EOF' >>~/.pgpass
+oracleedbes.appsdba.info:5444:demo:barman:enterprisedb
+oracleedbes.appsdba.info:5444:demo:streaming_barman:enterprisedb
+EOF
+-bash-4.2$ chmod 0600 ~/.pgpass
+
+-bash-4.2$ barman cron
+Starting WAL archiving for server oracleedbes
+Starting streaming archiver for server oracleedbes
+
+-bash-4.2$ barman check oracleedbes.appsdba.info
+Server oracleedbes.appsdba.info:
+	WAL archive: FAILED (please make sure WAL shipping is setup)
+	PostgreSQL: OK
+	superuser or standard user with backup privileges: OK
+	PostgreSQL streaming: FAILED (fe_sendauth: no password supplied)
+	wal_level: OK
+	replication slot: FAILED (replication slot 'barman' doesn't exist. Please execute 'barman receive-wal --create-slot oracleedbes.appsdba.info')
+	directories: OK
+	retention policy settings: OK
+	backup maximum age: OK (no last_backup_maximum_age provided)
+	compression settings: OK
+	failed backups: OK (there are 0 failed backups)
+	minimum redundancy requirements: OK (have 0 backups, expected at least 0)
+	pg_basebackup: OK
+	pg_basebackup compatible: FAILED (PostgreSQL version: None, pg_basebackup version: 13.3.7)
+	pg_basebackup supports tablespaces mapping: OK
+	systemid coherence: OK (no system Id stored on disk)
+	pg_receivexlog: FAILED
+	pg_receivexlog compatible: FAILED (PostgreSQL version: None, pg_receivexlog version: None)
+	receive-wal running: FAILED (See the Barman log file for more details)
+	archiver errors: OK
+
+-bash-4.2$ barman show-server oracleedbes.appsdba.info
+Server oracleedbes.appsdba.info:
+	active: True
+	archive_timeout: 0
+	archiver: False
+	archiver_batch_size: 0
+	backup_directory: /var/lib/barman/oracleedbes.appsdba.info
+	backup_method: postgres
+	backup_options: BackupOptions(['concurrent_backup'])
+	bandwidth_limit: None
+	barman_home: /var/lib/barman
+	barman_lock_directory: /var/lib/barman
+	basebackup_retry_sleep: 30
+	basebackup_retry_times: 0
+	basebackups_directory: /var/lib/barman/oracleedbes.appsdba.info/base
+	check_timeout: 30
+	checkpoint_timeout: 300
+	compression: None
+	config_file: /var/lib/edb/as13/data/postgresql.conf
+	connection_error: fe_sendauth: no password supplied
+	conninfo: host=oracleedbes.appsdba.info port=5444 user=barman <font color="red">Status: dbname=demo
+	create_slot: auto
+	current_lsn: 0/1340C6C0
+	current_size: 365096139
+	current_xlog: 000000010000000000000013
+	custom_compression_filter: None
+	custom_decompression_filter: None
+	data_checksums: off
+	data_directory: /var/lib/edb/as13/data
+	description: Example of PostgreSQL Database (Streaming-Only)
+	disabled: False
+	errors_directory: /var/lib/barman/oracleedbes.appsdba.info/errors
+	has_backup_privileges: True
+	hba_file: /var/lib/edb/as13/data/pg_hba.conf
+	hot_standby: on
+	ident_file: /var/lib/edb/as13/data/pg_ident.conf
+	immediate_checkpoint: False
+	included_files: ['/var/lib/edb/as13/data/postgresql.auto.conf']
+	incoming_wals_directory: /var/lib/barman/oracleedbes.appsdba.info/incoming
+	is_in_recovery: False
+	is_superuser: True
+	last_backup_maximum_age: None
+	max_incoming_wals_queue: None
+	max_replication_slots: 10
+	max_wal_senders: 10
+	minimum_redundancy: 0
+	msg_list: []
+	name: oracleedbes.appsdba.info
+	network_compression: False
+	parallel_jobs: 1
+	passive_node: False
+	path_prefix: None
+	pg_basebackup_bwlimit: True
+	pg_basebackup_compatible: None
+	pg_basebackup_installed: True
+	pg_basebackup_path: /bin/pg_basebackup
+	pg_basebackup_tbls_mapping: True
+	pg_basebackup_version: 13.3.7
+	pg_receivexlog_compatible: None
+	pg_receivexlog_installed: False
+	pg_receivexlog_path: None
+	pg_receivexlog_supports_slots: None
+	pg_receivexlog_synchronous: None
+	pg_receivexlog_version: None
+	pgespresso_installed: False
+	post_archive_retry_script: None
+	post_archive_script: None
+	post_backup_retry_script: None
+	post_backup_script: None
+	post_delete_retry_script: None
+	post_delete_script: None
+	post_recovery_retry_script: None
+	post_recovery_script: None
+	post_wal_delete_retry_script: None
+	post_wal_delete_script: None
+	postgres_systemid: 6991208356594608693
+	pre_archive_retry_script: None
+	pre_archive_script: None
+	pre_backup_retry_script: None
+	pre_backup_script: None
+	pre_delete_retry_script: None
+	pre_delete_script: None
+	pre_recovery_retry_script: None
+	pre_recovery_script: None
+	pre_wal_delete_retry_script: None
+	pre_wal_delete_script: None
+	primary_ssh_command: None
+	recovery_options: RecoveryOptions([])
+	replication_slot: None
+	replication_slot_support: True
+	retention_policy: None
+	retention_policy_mode: auto
+	reuse_backup: None
+	server_txt_version: 13.3
+	slot_name: barman
+	ssh_command: None
+	streaming: None
+	streaming_archiver: True
+	streaming_archiver_batch_size: 0
+	streaming_archiver_name: barman_receive_wal
+	streaming_backup_name: barman_streaming_backup
+	streaming_conninfo: host=oracleedbes.appsdba.info port=5444 user=streaming_barman dbname=demo
+	streaming_supported: None
+	streaming_systemid: None
+	streaming_wals_directory: /var/lib/barman/oracleedbes.appsdba.info/streaming
+	synchronous_standby_names: ['']
+	tablespace_bandwidth_limit: None
+	timeline: None
+	wal_compression: off
+	wal_keep_segments: None
+	wal_level: replica
+	wal_retention_policy: main
+	wals_directory: /var/lib/barman/oracleedbes.appsdba.info/wals
+	xlog_segment_size: 16777216
+	xlogpos: None
+	
+

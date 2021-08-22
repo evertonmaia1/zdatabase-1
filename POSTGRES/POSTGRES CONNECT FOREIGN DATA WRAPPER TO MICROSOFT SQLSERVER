@@ -15,7 +15,7 @@ mv master tds_fdw.zip
 unzip tds_fdw.zip
 
 #NAVIGATE AND COMPILE EXTENSION
-cd tds_fdw
+cd tds_fdw-master
 vi Makefile
 PG_CONFIG    = /usr/local/pgsql-9.6.14/bin/pg_config
 make; make install
