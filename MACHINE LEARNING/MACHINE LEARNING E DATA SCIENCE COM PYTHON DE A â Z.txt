@@ -64,4 +64,5 @@ ANEXO - Programaçao básica em python
 
 ----------------------------------------------------------------------
 
-
+#LINKS
+https://colab.research.google.com/drive/1zHkg0u422FxA96zsOwEVcSf8X6GtEQ7G#scrollTo=fCiZKeOFSwig
